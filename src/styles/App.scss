@@ -1,4 +1,88 @@
+/* ================== CZCIONKI ================== */
+/* ==== CORMORANT ==== */
+@font-face {
+  font-family: 'Cormorant';
+  src: url('../../public/fonts/Cormorant/Cormorant-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Cormorant';
+  src: url('../../public/fonts/Cormorant/Cormorant-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+}
+
+/* ==== CRIMSON TEXT (STATIC) ==== */
+@font-face {
+  font-family: 'Crimson Text';
+  src: url('../../public/fonts/Crimson_Text/CrimsonText-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Crimson Text';
+  src: url('../../public/fonts/Crimson_Text/CrimsonText-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Crimson Text';
+  src: url('../../public/fonts/Crimson_Text/CrimsonText-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* ==== EB GARAMOND ==== */
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('../../public/fonts/EB_Garamond/EBGaramond-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('../../public/fonts/EB_Garamond/EBGaramond-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+}
+
+/* ==== LORA ==== */
+@font-face {
+  font-family: 'Lora';
+  src: url('../../public/fonts/Lora/Lora-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Lora';
+  src: url('../../public/fonts/Lora/Lora-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+}
+
+/* ==== OPEN SANS ==== */
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../../public/fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../../public/fonts/Open_Sans/OpenSans-Italic-VariableFont_wdth\,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+}
+
+
+
+/* ================== IMPORTY ================== */
+@import "./variables";
 @import "./components/common/header";
+
+
+
 
 * {
   margin: 0;
@@ -7,20 +91,20 @@
 }
 
 body {
-    //font-family: ;
-    //text-shadow: 0.5px 0.5px rgba(0, 0, 0, 0.1);
+    font-family: $font-main;
+    text-shadow: 0.5px 0.5px rgba(0, 0, 0, 0.08);
 }
 
-h1, h2, h3 {
-    //font-family: ;
-    // text-transform: uppercase;
-    // letter-spacing: 0.1rem;
-    // text-shadow: 1px 1px rgba(0, 0, 0, 0.15);
+h1, h2, h3, #main-nav {
+    font-family: $font-heading;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    text-shadow: 1px 1px rgba(0, 0, 0, 0.15);
 }
 
-.page {
-    //background-color: ;
-    section {
+// .page {
+//     background-color: ;
+//     section {
 
-    }
-}
+//     }
+// }

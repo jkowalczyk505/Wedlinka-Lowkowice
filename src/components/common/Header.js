@@ -5,6 +5,7 @@ import { IoCartOutline } from "react-icons/io5";
 import { HiOutlineUser } from "react-icons/hi";
 
 function Header() {
+    const [menuOpen, setMenuOpen] = useState(false);
     return (
         <header className="header">
             <div className="header-inner">
@@ -12,17 +13,71 @@ function Header() {
                     <img src={logo} alt="logo"></img>
                 </div>
 
-                <nav id="main-nav">
-                    <ul>
-                        <li><a href="#">Kiełbasy</a></li>
-                        <li><a href="#">Wędliny</a></li>
-                        <li><a href="#">Wyroby podrobowe</a></li>
-                        <li><a href="#">Nasze paczki</a></li>
-                        <li><a href="#">Kontakt</a></li>
+                <nav id="main-nav" className={menuOpen ? "open" : ""}>
+                    <ul className="menu" onClick={() => setMenuOpen(false)}>
+                        <li className="menu-item">
+                            <NavLink
+                            to="/kielbasy"
+                            className={({ isActive }) =>
+                                `nav-link ${isActive ? "active" : ""}`
+                            }
+                            >
+                            Kiełbasy
+                            </NavLink>
+                        </li>
+                        <li className="menu-item">
+                            <NavLink
+                            to="/wedliny"
+                            className={({ isActive }) =>
+                                `nav-link ${isActive ? "active" : ""}`
+                            }
+                            >
+                            Wędliny
+                            </NavLink>
+                        </li>
+                        <li className="menu-item">
+                            <NavLink
+                            to="/wyroby-podrobowe"
+                            className={({ isActive }) =>
+                                `nav-link ${isActive ? "active" : ""}`
+                            }
+                            >
+                            Wyroby podrobowe
+                            </NavLink>
+                        </li>
+                        <li className="menu-item">
+                            <NavLink
+                            to="/nasze-paczki"
+                            className={({ isActive }) =>
+                                `nav-link ${isActive ? "active" : ""}`
+                            }
+                            >
+                            Nasze paczki
+                            </NavLink>
+                        </li>
+                        <li className="menu-item">
+                            <NavLink
+                            to="/kontakt"
+                            className={({ isActive }) =>
+                                `nav-link ${isActive ? "active" : ""}`
+                            }
+                            >
+                            Kontakt
+                            </NavLink>
+                        </li>
                     </ul>
                 </nav>
 
-                <div className="account-icons"></div>
+                <div className="account-icons">
+                    <NavLink to="/koszyk">
+                        <IoCartOutline />
+                        Koszyk
+                    </NavLink>
+                    <NavLink to="/konto">
+                        <HiOutlineUser />
+                        Konto
+                    </NavLink>
+                </div>
 
             </div>
         </header>
