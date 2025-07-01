@@ -1,14 +1,11 @@
-const express = require("express");
-const app = express();
-const PORT = process.env.PORT || 3000;
+// server.js
+// 1. Ładujemy .env i testujemy DB jeszcze przed uruchomieniem Expressa
+require("dotenv").config();
+require("./config/db");
 
-require("dotenv").config(); // Jeśli używasz pliku .env
-
-app.use(express.json()); // Parsowanie JSON
-app.get("/", (req, res) => {
-  res.send("Backend działa!");
-});
+const app = require("./app");
+const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
-  console.log(`Serwer działa na porcie ${PORT}`);
+  console.log(`🚀 Serwer działa na porcie ${PORT}`);
 });

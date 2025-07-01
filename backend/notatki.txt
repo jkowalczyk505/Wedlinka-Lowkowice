@@ -6,3 +6,5 @@
 6. Integracja z bramką płatności online
 7. Obsługa powiadomień e-mail- Email do klienta po zakupie, Email do właściciela sklepu (np. nowa sprzedaż), Wysyłka faktury PDF mailem (wFirma), Prosta integracja z SMTP
 * Integracja z pośrednikiem przesyłek
+* Newsletter
+* Hosting u nas
