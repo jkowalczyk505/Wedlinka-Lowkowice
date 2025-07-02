@@ -1,20 +1,23 @@
 .header {
     .header-inner {
-        background-color: $primary-color-lighten;
+        background-color: $white;
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 1rem 5rem;
         margin: 0 auto;
         gap: 2rem;
+
         .logo-wrapper {
             img {
                 width: 9rem;
                 height: auto;
             }
         }
+
         #main-nav {
             flex: 1;
+
             .menu {
                 display: flex;
                 gap: 4rem;
@@ -27,52 +30,58 @@
                 .menu-item {
                     .nav-link {
                         text-decoration: none;
-                        font-size: 1.2rem;
+                        font-size: 1rem;
                         color: $dark-color;
                         font-family: $font-heading;
                         text-transform: uppercase;
 
                         position: relative;
-                        padding-bottom: 0.4rem;
+                        padding: 0.9rem 0;
                         transition: color 0.3s ease;
+
                         &:hover {
-                        color: $secondary-color-lighten;
+                            color: $secondary-color-lighten;
                         }
+
                         &:hover::after {
-                        background: $secondary-color-lighten;
+                            background: $secondary-color-lighten;
                         }
 
                         &.active {
-                        color: $secondary-color;
+                            color: $secondary-color;
                         }
+
                         &.active::after {
-                        background: $secondary-color;
+                            background: $secondary-color;
                         }
 
                         &::after {
-                        content: "";
-                        position: absolute;
-                        bottom: 0;
-                        left: 50%;
-                        width: 0;
-                        height: 2px;
-                        background: $secondary-color-lighten; // domyślnie hover-owy
-                        transition: width 0.3s ease, left 0.3s ease, background 0.3s ease;
+                            content: "";
+                            position: absolute;
+                            bottom: 0;
+                            left: 50%;
+                            width: 0;
+                            transform: translateX(-50%);
+                            height: 3px;
+                            background: $secondary-color-lighten; // domyślnie hover-owy
+                            transition: width 0.3s ease, left 0.3s ease, background 0.3s ease;
                         }
+
                         &:hover::after,
                         &.active::after {
-                        width: 100%;
-                        left: 0;
+                            width: 110%;
                         }
                     }
                 }
             }
         }
+
         .account-icons {
             display: flex;
             gap: 1.8rem;
             padding-left: 2rem;
             border-left: 1px solid $dark-color;
+
             a {
                 display: flex;
                 flex-direction: column;
@@ -85,6 +94,7 @@
                 font-weight: 500;
 
                 transition: color 0.3s ease;
+
                 svg {
                     font-size: 2.8rem;
                     margin-bottom: 0.2rem;
@@ -93,13 +103,16 @@
                 }
 
                 &:hover {
-                color: $secondary-color-lighten;
-                svg { transform: scale(1.05); }
+                    color: $secondary-color-lighten;
+
+                    svg {
+                        transform: scale(1.05);
+                    }
                 }
 
                 // Active — ciemniejszy akcent
                 &.active {
-                color: $secondary-color;
+                    color: $secondary-color;
                 }
             }
         }
