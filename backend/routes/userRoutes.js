@@ -1,9 +1,19 @@
-// routes/userRoutes.js
 const router = require("express").Router();
-const { getMe } = require("../controllers/userController");
+const {
+  getMe,
+  getPublicUser,
+  updateMe,
+  changePassword,
+  changeEmail,
+  deleteMe,
+} = require("../controllers/userController");
 const { protect } = require("../middleware/authMiddleware");
 
-// GET /users/me  – zwraca profil zalogowanego
+router.get("/public/:id", getPublicUser);
 router.get("/me", protect, getMe);
+router.put("/me", protect, updateMe);
+router.put("/me/password", protect, changePassword);
+router.put("/me/email", protect, changeEmail);
+router.delete("/me", protect, deleteMe);
 
 module.exports = router;

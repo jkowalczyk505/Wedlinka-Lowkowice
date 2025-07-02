@@ -38,6 +38,51 @@ const UserModel = {
     );
     return rows[0] || null;
   },
+
+  async findPublicById(id) {
+    const [rows] = await db.query(
+      `SELECT id, name, surname FROM users WHERE id = ?`,
+      [id]
+    );
+    return rows[0] || null;
+  },
+
+  async updateById(id, { name, surname, phone }) {
+    await db.query(
+      `UPDATE users 
+          SET name = ?, surname = ?, phone = ?, updated_at = NOW()
+        WHERE id = ?`,
+      [name, surname, phone, id]
+    );
+  },
+
+  async findByIdWithPassword(id) {
+    const [rows] = await db.query(
+      `SELECT id, email, password_hash AS passwordHash, name, surname, phone, role
+         FROM users
+        WHERE id = ?`,
+      [id]
+    );
+    return rows[0] || null;
+  },
+
+  async updatePassword(id, newHash) {
+    await db.query(
+      `UPDATE users SET password_hash = ?, updated_at = NOW() WHERE id = ?`,
+      [newHash, id]
+    );
+  },
+
+  async updateEmail(id, newEmail) {
+    await db.query(
+      `UPDATE users SET email = ?, updated_at = NOW() WHERE id = ?`,
+      [newEmail, id]
+    );
+  },
+
+  async deleteById(id) {
+    await db.query(`DELETE FROM users WHERE id = ?`, [id]);
+  },
 };
 
 module.exports = UserModel;
