@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import logo from "../../assets/logo.png";
-import { IoCartOutline } from "react-icons/io5";
-import { HiOutlineUser } from "react-icons/hi";
+import { CiUser, CiShoppingCart } from "react-icons/ci";
 
 function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -70,11 +69,11 @@ function Header() {
 
                 <div className="account-icons">
                     <NavLink to="/koszyk">
-                        <IoCartOutline />
+                        <CiShoppingCart />
                         Koszyk
                     </NavLink>
                     <NavLink to="/konto">
-                        <HiOutlineUser />
+                        <CiUser />
                         Konto
                     </NavLink>
                 </div>

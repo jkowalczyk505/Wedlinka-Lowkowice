@@ -1,21 +1,16 @@
-// ==== KOLORY GŁÓWNE (6) ====
-$primary-color:       #e6c48e;   // kremowe tło z logo
-$primary-hover:       #c9a96b;   // lekko ciemniejsze do hovera
-$primary-border:      #b8975a;   // złota obwódka
-$primary-shadow:      #a6834d;   // cień/podświetlenie
+$primary-color:             #e4d78d;
+$primary-color-darken:       #d4b86d;
+$primary-color-lighten:      #e5daa6;
+$accent-color:        #cdbe78;
+$primary-shadow:      #bf9a51;
+$primary-darken:            #b98235;
 
-$highlight-color:     #891f1b;   // ciemny czerwony z górnej części logo
-$highlight-hover:     #a53a2d;   // jaśniejszy odcień do efektów
+$secondary-color:     #5f1112;
+$secondary-lighten:     #98181b;
 
-// ==== KOLORY UZUPEŁNIAJĄCE (3) ====
-$base-text:           #2a1d10;   // ciemny brązowy tekst
-$secondary-text:      #4a3a2a;   // jaśniejszy tekst (np. pomocniczy)
+$dark-color:           #1a1613;
 
-// ==== AKCENT (1) ====
-$accent-color:        #fff6e9;   // jasny kontrastowy kolor do sekcji, boxów
-
-// ==== JASNY OGÓLNY ====
-$background-color:    #ffffff;   // domyślne tło strony
+$white:    #ffffff;
 
 // ==== CZCIONKI ====
 $font-main: 'Open Sans', sans-serif;

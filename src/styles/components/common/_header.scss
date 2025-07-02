@@ -1,5 +1,6 @@
 .header {
     .header-inner {
+        background-color: $primary-color-lighten;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -8,7 +9,7 @@
         gap: 2rem;
         .logo-wrapper {
             img {
-                width: 10rem;
+                width: 9rem;
                 height: auto;
             }
         }
@@ -25,7 +26,11 @@
                 .menu-item {
                     .nav-link {
                         text-decoration: none;
-                        font-size: 1.1rem;
+                        font-size: 1.2rem;
+                        color: $dark-color;
+                        font-family: $font-heading;
+                        text-transform: uppercase;
+                        letter-spacing: 0.05rem;
                     }
                 }
             }
@@ -34,13 +39,16 @@
             display: flex;
             gap: 1.8rem;
             padding-left: 2rem;
-            border-left: 1px solid #ccc;
+            border-left: 1px solid $dark-color;
             a {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                font-size: 0.8rem;
+                font-size: 0.7rem;
+                text-transform: uppercase;
+                font-family: $font-heading;
                 text-decoration: none;
+                color: $dark-color;
                 svg {
                     font-size: 2rem;
                     margin-bottom: 0.2rem;
