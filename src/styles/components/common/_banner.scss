@@ -1,6 +1,6 @@
 .banner {
   width: 100%;
-  height: 60vh;
+  height: 80vh;
   background-size: cover;
   background-position: center;
   position: relative;
@@ -24,23 +24,23 @@
     text-align: center;
 
     .banner__label {
-        font-family: $font-decorative;
-        font-size: 1.8rem;
-        color: $primary-color;
-        margin-bottom: 0.5rem;
+      font-family: $font-decorative;
+      font-size: 1.8rem;
+      color: $primary-color;
+      margin-bottom: 0.5rem;
     }
 
     .banner__title {
-        font-size: 3rem;
-        font-weight: 700;
-        margin: 0 0 1rem 0;
+      font-size: 3rem;
+      font-weight: 700;
+      margin: 0 0 1rem 0;
     }
 
     .banner__subtitle {
       max-width: 50%;
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
-        line-height: 1.5;
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      line-height: 1.5;
     }
   }
 }

@@ -1,0 +1,39 @@
+.auth-page {
+    display: flex;
+    min-height: 100vh;
+
+    .auth-form-side {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: $white;
+    }
+
+    .auth-image-side {
+        flex: 1;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            color: $white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-family: $font-heading;
+
+            h2 {
+                font-size: 2rem;
+                max-width: 80%;
+                padding: 2rem;
+            }
+        }
+    }
+
+}

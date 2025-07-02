@@ -93,6 +93,8 @@
 
 /* ================== IMPORTY ================== */
 @import "./variables";
+@import "./components/forms";
+@import "./components/auth";
 @import "./components/common/header";
 @import "./components/common/banner.scss";
 @import "./components/common/cookie_consent_banner";
