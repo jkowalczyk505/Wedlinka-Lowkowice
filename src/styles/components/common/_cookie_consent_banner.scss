@@ -44,19 +44,4 @@
             }
         }
     }
-
-    .cookie-accept-btn {
-        background: $secondary-color;
-        color: $white;
-        border: none;
-        border-radius: 4px;
-        padding: 0.6rem 1.2rem;
-        cursor: pointer;
-        transition: background 0.2s ease;
-        font-family: $font-main;
-
-        &:hover {
-            background: $secondary-color-darken;
-        }
-    }
 }

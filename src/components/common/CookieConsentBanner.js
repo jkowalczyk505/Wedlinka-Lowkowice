@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { MdOutlineCookie } from "react-icons/md";
+import Button from "../common/Button";
 
 function CookieConsentBanner() {
   const [visible, setVisible] = useState(false);
@@ -29,11 +30,12 @@ function CookieConsentBanner() {
             <a href="/files/Polityka_Prywatnosci.pdf" download>
               polityce prywatności
             </a>
+            .
           </p>
         </div>
-        <button onClick={handleAccept} className="cookie-accept-btn">
+        <Button onClick={handleAccept} variant="red">
           Akceptuję
-        </button>
+        </Button>
       </div>
     )
   );
