@@ -1,4 +1,5 @@
 - seo + sitemap + robots + index podmienic dane + manifest json
 - backend zabezpieczyc
+- reset hasla
 
 - responsywnosc
