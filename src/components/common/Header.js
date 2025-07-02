@@ -9,7 +9,9 @@ function Header() {
         <header className="header">
             <div className="header-inner">
                 <div className="logo-wrapper">
-                    <img src={logo} alt="logo"></img>
+                    <NavLink to="/">
+                        <img src={logo} alt="logo" />
+                    </NavLink>
                 </div>
 
                 <nav id="main-nav" className={menuOpen ? "open" : ""}>
