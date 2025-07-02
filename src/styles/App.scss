@@ -6,6 +6,7 @@
   font-weight: 100 900;
   font-style: normal;
 }
+
 @font-face {
   font-family: 'Cormorant';
   src: url('../../public/fonts/Cormorant/Cormorant-Italic-VariableFont_wght.ttf') format('truetype');
@@ -20,12 +21,14 @@
   font-weight: 400;
   font-style: normal;
 }
+
 @font-face {
   font-family: 'Crimson Text';
   src: url('../../public/fonts/Crimson_Text/CrimsonText-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
 }
+
 @font-face {
   font-family: 'Crimson Text';
   src: url('../../public/fonts/Crimson_Text/CrimsonText-Italic.ttf') format('truetype');
@@ -40,6 +43,7 @@
   font-weight: 100 900;
   font-style: normal;
 }
+
 @font-face {
   font-family: 'EB Garamond';
   src: url('../../public/fonts/EB_Garamond/EBGaramond-Italic-VariableFont_wght.ttf') format('truetype');
@@ -54,6 +58,7 @@
   font-weight: 100 900;
   font-style: normal;
 }
+
 @font-face {
   font-family: 'Lora';
   src: url('../../public/fonts/Lora/Lora-Italic-VariableFont_wght.ttf') format('truetype');
@@ -68,6 +73,7 @@
   font-weight: 100 900;
   font-style: normal;
 }
+
 @font-face {
   font-family: 'Open Sans';
   src: url('../../public/fonts/Open_Sans/OpenSans-Italic-VariableFont_wdth\,wght.ttf') format('truetype');
@@ -104,6 +110,7 @@
 @import "./variables";
 @import "./components/common/header";
 @import "./components/common/banner.scss";
+@import "./components/common/cookie_consent_banner";
 
 
 
@@ -119,16 +126,19 @@ body {
   text-shadow: 0.5px 0.5px rgba(0, 0, 0, 0.08);
 }
 
-h1, h2, h3 {
-    font-family: $font-heading;
-    text-transform: uppercase;
-    letter-spacing: 0.1rem;
-    text-shadow: 1px 1px rgba(0, 0, 0, 0.15);
+h1,
+h2,
+h3 {
+  font-family: $font-heading;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  text-shadow: 1px 1px rgba(0, 0, 0, 0.15);
 }
 
- .page {
-    min-height: 77vh;
-    section {
-      padding: 6rem;
-    }
+.page {
+  min-height: 77vh;
+
+  section {
+    padding: 6rem;
+  }
 }

@@ -1,4 +1,4 @@
-1. Autoryzacja i konta użytkowników
+> 1. Autoryzacja i konta użytkowników
 2. Zarządzanie produktami
 3. Koszyk i zamówienia
 4. Generowanie potwierdzenia PDF i wysyłka
