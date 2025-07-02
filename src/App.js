@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Header from "./components/common/Header";
 import Footer from "./components/common/Footer";
+import CookieConsentBanner from "./components/common/CookieConsentBanner";
 import "./styles/App.scss";
 import routes from "./routes";
 
@@ -16,6 +17,7 @@ function App() {
           ))}
         </Routes>
         <Footer />
+        <CookieConsentBanner />
       </div>
     </Router>
   );
