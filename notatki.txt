@@ -1,5 +1,9 @@
 - seo + sitemap + robots + index podmienic dane + manifest json
 - backend zabezpieczyc
-- reset hasla
+- reset hasla + pamiętaj mnie
+- todo w logowaniu
+- spinner
+- przekierowanie na logowanie z zabronionych linkow
+- nie udalo sie zaladowac tresci
 
 - responsywnosc

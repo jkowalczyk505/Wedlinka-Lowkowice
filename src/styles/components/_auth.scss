@@ -1,39 +1,67 @@
-.auth-page {
-    display: flex;
+.auth-fullscreen {
+    position: relative;
+    width: 100%;
     min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 
-    .auth-form-side {
-        flex: 1;
+    .auth-overlay {
+        background-color: rgba(0, 0, 0, 0.6);
+        width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: $white;
+        padding: 5rem 2rem;
     }
 
-    .auth-image-side {
-        flex: 1;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        position: relative;
+    .auth-card-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        max-width: 1000px;
+    }
 
-        .overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.4);
-            color: $white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-family: $font-heading;
+    .auth-card {
+        background: $white;
+        padding: 5rem;
+        flex: 1 1 480px;
+        max-width: 500px;
 
-            h2 {
-                font-size: 2rem;
-                max-width: 80%;
-                padding: 2rem;
+        &:last-child {
+            position: relative;
+
+            &::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 1px;
+                height: 87%;
+                background-color: rgba(0, 0, 0, 0.10);
             }
         }
+
     }
 
+    @media (max-width: 768px) {
+        .auth-card {
+            border-radius: 8px;
+            max-width: 100%;
+            flex: 1 1 100%;
+        }
+
+        .auth-card:last-child {
+            &::before {
+                display: none;
+            }
+
+            border-left: none;
+            border-top: 1px solid rgba(0, 0, 0, 0.1); // pozioma linia
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    }
 }

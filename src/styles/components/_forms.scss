@@ -1,0 +1,110 @@
+.form-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    h2 {
+        font-family: $font-heading;
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+        color: $dark-color;
+    }
+
+    label {
+        font-weight: 400;
+        color: $dark-color;
+        margin-bottom: 0.5rem;
+        display: block;
+        font-size: 0.9rem;
+    }
+
+    .required {
+        color: $secondary-color;
+        margin-left: 0.25rem;
+    }
+
+    .phone-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        .prefix {
+            color: $dark-color;
+            opacity: 0.6;
+            font-size: 0.95rem;
+            margin-bottom: 1.2rem;
+            margin-right: 1rem;
+        }
+
+    }
+
+
+    input[type="checkbox"] {
+        accent-color: $secondary-color;
+        margin: 0;
+        width: auto;
+
+        &:focus {
+            box-shadow: none;
+        }
+    }
+
+
+    input,
+    textarea,
+    select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid $primary-color;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        margin-bottom: 1.2rem;
+        font-family: $font-main;
+        background: $white;
+        color: $dark-color;
+
+        &:focus {
+            outline: none;
+            border-color: $secondary-color;
+        }
+    }
+
+    .form-error {
+        color: $secondary-color;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .submit-button {
+        margin-top: 1.5rem;
+    }
+
+    .form-note {
+        font-size: 0.85rem;
+        color: $dark-color;
+        opacity: 0.8;
+        margin-top: -0.5rem;
+        margin-bottom: 1.2rem;
+
+        a {
+            color: $secondary-color;
+            text-decoration: underline;
+        }
+    }
+
+    #auth_polityka {
+        margin-bottom: 0;
+    }
+
+    .form-link {
+        color: $secondary-color;
+        font-size: 0.9rem;
+        text-align: right;
+        margin-bottom: 0.5rem;
+
+        a {
+            color: inherit;
+            text-decoration: underline;
+        }
+    }
+}
