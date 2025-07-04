@@ -100,6 +100,8 @@
 @import "./components/common/cookie_consent_banner";
 @import "./components/common/button";
 @import "./components/common/footer";
+@import "./pages/home_page";
+@import "./components/common/category_tile";
 
 
 
@@ -128,6 +130,25 @@ h3 {
   min-height: 77vh;
 
   section {
-    padding: 6rem;
+    padding: 5rem;
+  }
+
+  .creamy-section {
+    background-color: $primary-color-lighten;
+
+    h1,h2,h3 { color: $secondary-color;}
+    color: $dark-color;
+  }
+  .red-section {
+    //background-color: ;
+    // color: ;
+
+    // h1,h1,h3 { color: ;}
+  }
+  .white-section {
+    //background-color: ;
+    // color: ;
+
+    // h1,h1,h3 { color: ;}
   }
 }
