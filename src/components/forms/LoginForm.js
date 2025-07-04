@@ -5,6 +5,7 @@ import Button from "../common/Button";
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -23,7 +24,7 @@ function LoginForm() {
         return;
       }
 
-      // TODO: przekierowanie / zapamiętanie użytkownika
+      // TODO: zapamiętaj użytkownika i przekieruj
       window.location.href = "/";
     } catch (err) {
       setError("Błąd serwera");
@@ -32,8 +33,9 @@ function LoginForm() {
 
   return (
     <FormContainer title="Logowanie" onSubmit={handleSubmit}>
-      {error && <div className="form-error">{error}</div>}
-      <label>Email</label>
+      <label>
+        E-mail<span className="required">*</span>
+      </label>
       <input
         type="email"
         value={email}
@@ -41,13 +43,42 @@ function LoginForm() {
         required
       />
 
-      <label>Hasło</label>
+      <label>
+        Hasło<span className="required">*</span>
+      </label>
       <input
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
       />
+
+      {error && <div className="form-error">{error}</div>}
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: "0.5rem",
+        }}
+      >
+        <label
+          style={{ display: "flex", alignItems: "center", fontSize: "0.9rem" }}
+        >
+          <input
+            type="checkbox"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+            style={{ marginRight: "0.5rem" }}
+          />
+          Zapamiętaj mnie
+        </label>
+
+        <div className="form-link">
+          <a href="#">Nie pamiętasz hasła?</a>
+        </div>
+      </div>
 
       <div className="submit-button">
         <Button type="submit" variant="red">
