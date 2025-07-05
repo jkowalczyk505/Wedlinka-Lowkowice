@@ -1,6 +1,9 @@
 .footer {
-  background: $primary-color;
-  color: $dark-color;
+  background-image: url('/assets/tlo_grafit.png'); // lub '~assets/tlo_grafit.jpg' zależnie od bundlera
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: $white;
   padding: 3rem 2rem 1rem;
   text-shadow: none;
   box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
@@ -31,16 +34,16 @@
         margin-bottom: .6rem;
 
         a {
-          color: $dark-color;
+          color: $white;
           text-decoration: none;
           transition: color .25s;
 
           &:hover {
-            color: $secondary-color-lighten;
+            text-decoration: underline;
           }
 
           &.active {
-            color: $secondary-color;
+            text-decoration: underline;
           }
         }
       }
@@ -87,7 +90,7 @@
   &__heading {
     font-family: $font-heading;
     font-size: 1.1rem;
-    color: $secondary-color-darken;
+    color: $white;
     text-transform: uppercase;
     margin-bottom: 1rem;
   }

@@ -83,17 +83,20 @@ h3 {
     padding: 3rem;
   }
 
-  .creamy-section {
-    background-color: $primary-color-lighten;
+  .dark-section {
+    background-image: url('/assets/tlo_grafit.png'); // lub '~assets/tlo_grafit.jpg' zależnie od bundlera
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: $white; // jasny tekst, np. biały
 
     h1,
     h2,
     h3 {
-      color: $secondary-color;
+      color: $white;
     }
-
-    color: $dark-color;
   }
+
 
   .red-section {
     background-color: $secondary-color;
