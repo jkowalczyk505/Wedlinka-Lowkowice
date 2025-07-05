@@ -3,7 +3,6 @@
 - reset hasla + pamiętaj mnie
 - todo w logowaniu
 - spinner
-- przekierowanie na logowanie z zabronionych linkow
 - nie udalo sie zaladowac tresci
 
 - responsywnosc
