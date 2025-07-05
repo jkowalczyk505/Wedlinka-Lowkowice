@@ -1,11 +1,12 @@
+import React from "react";
 import Banner from "../components/common/Banner";
 import bannerImage from "../assets/home-banner.jpg";
 
-import CategoryTile from "../components/common/CategoryTile";
-import kielbasyImg from "../assets/kielbasy.jpg";
-import wedlinyImg from "../assets/wedliny.jpg";
-import podroboweImg from "../assets/podrobowe.jpg";
-import paczkiImg from "../assets/paczki.jpg";
+import CategoryGrid from "../components/common/categories/CategoryGrid";
+import { customerCategories } from "../data/categories";
+
+import FeaturesSection from "../components/common/FeaturesSection";
+import { homeFeatures, contactFeatures } from "../data/features";
 
 function HomePage() {
     return (
@@ -16,18 +17,20 @@ function HomePage() {
                 title="Wędliny i kiełbasy z tradycją"
                 subtitle="Wędliny, kiełbasy i wyroby podrobowe przygotowywane według tradycyjnych receptur, z najlepszych składników i bez zbędnych dodatków. Kupuj bezpośrednio od producenta."
             />
-            <section className="products-section creamy-section">
-                <div className="products-info">
+            <section className="categories-section creamy-section">
+                <div className="categories-info">
                     <h2>Co znajdziesz w naszej ofercie?</h2>
                     <p>Sprawdź, co oferujemy - wybierz interesującą Cię grupę.</p>
                 </div>
-                <div className="category-grid">
-                    <CategoryTile title="Kiełbasy" image={kielbasyImg} to="/kielbasy" />
-                    <CategoryTile title="Wędliny" image={wedlinyImg} to="/wedliny" />
-                    <CategoryTile title="Wyroby podrobowe" image={podroboweImg} to="/wyroby-podrobowe" />
-                    <CategoryTile title="Paczki" image={paczkiImg} to="/nasze-paczki" />
-                </div>
+                <CategoryGrid items={customerCategories} linkMode={true} />
             </section>
+            <FeaturesSection items={homeFeatures} className="white-section" />
+            <section className="packing-section red-section">
+                <h2>Jak pakujemy?</h2>
+                <p>Quis tempor consequat labore do ea laboris aliqua non eiusmod. Mollit nostrud cupidatat reprehenderit occaecat nisi qui aliquip consectetur Lorem incididunt ullamco est excepteur dolore. Ut enim excepteur id cupidatat. Id et duis voluptate sit ut duis duis esse cupidatat voluptate cillum nisi. Amet minim sit commodo magna irure officia ea occaecat. Nostrud ipsum cupidatat nostrud qui deserunt aute minim non occaecat veniam aliqua ut veniam quis. Consectetur eu irure non esse nisi sunt amet aute est.</p>
+            </section>
+            <section className="about-section white-section"></section>
+            <FeaturesSection items={contactFeatures} className="red-section" />
         </main>
     );
 }

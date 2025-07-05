@@ -1,56 +1,4 @@
 /* ================== CZCIONKI ================== */
-/* ==== CORMORANT ==== */
-@font-face {
-  font-family: 'Cormorant';
-  src: url('../../public/fonts/Cormorant/Cormorant-VariableFont_wght.ttf') format('truetype');
-  font-weight: 100 900;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Cormorant';
-  src: url('../../public/fonts/Cormorant/Cormorant-Italic-VariableFont_wght.ttf') format('truetype');
-  font-weight: 100 900;
-  font-style: italic;
-}
-
-/* ==== CRIMSON TEXT (STATIC) ==== */
-@font-face {
-  font-family: 'Crimson Text';
-  src: url('../../public/fonts/Crimson_Text/CrimsonText-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Crimson Text';
-  src: url('../../public/fonts/Crimson_Text/CrimsonText-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Crimson Text';
-  src: url('../../public/fonts/Crimson_Text/CrimsonText-Italic.ttf') format('truetype');
-  font-weight: 400;
-  font-style: italic;
-}
-
-/* ==== EB GARAMOND ==== */
-@font-face {
-  font-family: 'EB Garamond';
-  src: url('../../public/fonts/EB_Garamond/EBGaramond-VariableFont_wght.ttf') format('truetype');
-  font-weight: 100 900;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'EB Garamond';
-  src: url('../../public/fonts/EB_Garamond/EBGaramond-Italic-VariableFont_wght.ttf') format('truetype');
-  font-weight: 100 900;
-  font-style: italic;
-}
-
 /* ==== LORA ==== */
 @font-face {
   font-family: 'Lora';
@@ -102,6 +50,8 @@
 @import "./components/common/footer";
 @import "./pages/home_page";
 @import "./components/common/category_tile";
+@import "./components/common/category_grid";
+@import "./components/common/features_section";
 
 
 
@@ -114,7 +64,6 @@
 
 body {
   font-family: $font-main;
-  text-shadow: 0.5px 0.5px rgba(0, 0, 0, 0.08);
 }
 
 h1,
@@ -123,7 +72,6 @@ h3 {
   font-family: $font-heading;
   text-transform: uppercase;
   letter-spacing: 0.1rem;
-  text-shadow: 1px 1px rgba(0, 0, 0, 0.15);
 }
 
 .page {
@@ -139,16 +87,32 @@ h3 {
     h1,h2,h3 { color: $secondary-color;}
     color: $dark-color;
   }
+
   .red-section {
-    //background-color: ;
-    // color: ;
+    background-color: $secondary-color;
 
-    // h1,h1,h3 { color: ;}
+    h1,h2,h3 { color: $white;}
+    color: $primary-color-lighten;
+
+    .feature-icon {
+      color: $white;
+    }
+    .feature-title {
+      color: $white;
+    }
   }
+  
   .white-section {
-    //background-color: ;
-    // color: ;
+    background-color: $white;
+    color: $dark-color;
 
-    // h1,h1,h3 { color: ;}
+    h1,h2,h3 { color: $secondary-color;}
+
+    .feature-icon {
+      color: $secondary-color;
+    }
+    .feature-title {
+      color: $secondary-color;
+    }
   }
 }
