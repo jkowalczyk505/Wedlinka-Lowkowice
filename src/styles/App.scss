@@ -92,7 +92,29 @@ h3 {
 
 
   .red-section {
+    position: relative;
     background-color: $secondary-color;
+    overflow: hidden;
+
+    // gradienty na krawędziach (góra, dół, lewo, prawo)
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        linear-gradient(to bottom, darken($secondary-color, 10%), transparent 40%),
+        linear-gradient(to top, darken($secondary-color, 10%), transparent 40%),
+        linear-gradient(to right, darken($secondary-color, 10%), transparent 40%),
+        linear-gradient(to left, darken($secondary-color, 10%), transparent 40%);
+    }
+
+    // elementy nad gradientem
+    >* {
+      position: relative;
+      z-index: 1;
+    }
 
     h1,
     h2,
@@ -102,10 +124,7 @@ h3 {
 
     color: $primary-color;
 
-    .feature-icon {
-      color: $accent-color;
-    }
-
+    .feature-icon,
     .feature-title {
       color: $accent-color;
     }
