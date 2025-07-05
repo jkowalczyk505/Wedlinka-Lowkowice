@@ -10,7 +10,7 @@ export default function CategoryGrid({ items, className = "" }) {
           title={item.title}
           image={item.image}
           icon={item.icon}
-          to={item.to}           // <--- tu było brakujące
+          to={item.to}
         />
       ))}
     </div>

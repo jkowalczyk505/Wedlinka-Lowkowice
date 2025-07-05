@@ -103,6 +103,7 @@
 @import "./pages/home_page";
 @import "./components/common/category_tile";
 @import "./components/common/category_grid";
+@import "./components/common/features_section";
 
 
 
@@ -115,7 +116,6 @@
 
 body {
   font-family: $font-main;
-  text-shadow: 0.5px 0.5px rgba(0, 0, 0, 0.08);
 }
 
 h1,
@@ -124,7 +124,6 @@ h3 {
   font-family: $font-heading;
   text-transform: uppercase;
   letter-spacing: 0.1rem;
-  text-shadow: 1px 1px rgba(0, 0, 0, 0.15);
 }
 
 .page {
@@ -142,14 +141,21 @@ h3 {
   }
   .red-section {
     background-color: $secondary-color;
-    color: $primary-color-lighten;
 
-    h1,h1,h3 { color: $white;}
+    h1,h2,h3 { color: $white;}
+    color: $primary-color-lighten;
   }
   .white-section {
     background-color: $white;
     color: $dark-color;
 
-    h1,h1,h3 { color: $secondary-color;}
+    h1,h2,h3 { color: $secondary-color;}
+    
+    .feature-icon {
+      color: $secondary-color;
+    }
+    .feature-title {
+      color: $secondary-color;
+    }
   }
 }
