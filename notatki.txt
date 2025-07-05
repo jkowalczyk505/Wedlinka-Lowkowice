@@ -7,9 +7,4 @@
 - nie udalo sie zaladowac tresci
 - w stopce odpowiednie linki do plikow, usuniecie/zmiana zbednych podstron + link do fb
 
-HOME:
- - jak pakujemy?
- - krotka sekcja o nas (baner?)
- - nizej niski pasek z ikonkami do kontaktu?
-
 - responsywnosc

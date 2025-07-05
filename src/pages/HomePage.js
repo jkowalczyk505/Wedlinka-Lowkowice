@@ -8,6 +8,10 @@ import { customerCategories } from "../data/categories";
 import FeaturesSection from "../components/common/FeaturesSection";
 import { homeFeatures, contactFeatures } from "../data/features";
 
+import packingImage from "../assets/packing-info.png";
+
+import aboutImage from "../assets/about-section.jpg";
+
 function HomePage() {
     return (
         <main className="page">
@@ -25,11 +29,54 @@ function HomePage() {
                 <CategoryGrid items={customerCategories} linkMode={true} />
             </section>
             <FeaturesSection items={homeFeatures} className="white-section" />
-            <section className="packing-section red-section">
-                <h2>Jak pakujemy?</h2>
-                <p>Quis tempor consequat labore do ea laboris aliqua non eiusmod. Mollit nostrud cupidatat reprehenderit occaecat nisi qui aliquip consectetur Lorem incididunt ullamco est excepteur dolore. Ut enim excepteur id cupidatat. Id et duis voluptate sit ut duis duis esse cupidatat voluptate cillum nisi. Amet minim sit commodo magna irure officia ea occaecat. Nostrud ipsum cupidatat nostrud qui deserunt aute minim non occaecat veniam aliqua ut veniam quis. Consectetur eu irure non esse nisi sunt amet aute est.</p>
+            <section className="packing-section creamy-section">
+                <div className="packing-info-tile">
+                    <div className="packing-info">
+                        <h2>Bezpieczne i świeże dostawy</h2>
+                        <ul>
+                            <li>
+                                <strong>Próżniowe pakowanie:</strong> Produkty są pakowane w szczelne woreczki próżniowe, które chronią je przed dostępem powietrza i wydłużają ich świeżość.
+                            </li>
+                            <li>
+                                <strong>Ochrona termiczna:</strong> Używamy izolacyjnych toreb z warstwą aluminium, które utrzymują niską temperaturę wewnątrz paczki.
+                            </li>
+                            <li>
+                                <strong>Wkłady chłodzące:</strong> Do każdego zamówienia dodajemy zamrożoną wodę w butelkach – dzięki niej wyroby dotrą do Ciebie chłodne, świeże i gotowe do spożycia.
+                            </li>
+                            <li>
+                                <strong>Ekologiczne podejście:</strong> Staramy się ograniczać zbędne opakowania i korzystamy z materiałów, które można łatwo poddać recyklingowi lub ponownie wykorzystać w domu – jak torby termoizolacyjne czy butelki chłodzące.
+                            </li>
+                        </ul>
+                    </div>
+                    <div className="packing-info-image">
+                        <img src={packingImage} alt="Pakowanie produktów" />
+                    </div>
+                </div>
             </section>
-            <section className="about-section white-section"></section>
+            <section className="about-section white-section">
+                <div className="about-tile">
+                    <div className="about-image">
+                        <img src={aboutImage} alt="Nasz zespół i zakład produkcyjny" />
+                    </div>
+                    <div className="about-content">
+                        <p className="subtitle">O nas</p>
+                        <h2>Kim jesteśmy?</h2>
+                        <p>
+                            Jesteśmy rodzinną firmą z tradycjami sięgającymi trzech pokoleń.
+                            Każdego dnia łączymy pasję z rzemiosłem, by tworzyć
+                            najwyższej jakości wędliny i kiełbasy. Nasz zespół to
+                            wykwalifikowani rzeźnicy i specjaliści ds. logistyki, którzy dbają
+                            o każdy etap – od wyboru mięsa, przez produkcję, aż po bezpieczną
+                            dostawę prosto do Twoich drzwi.
+                        </p>
+                        <p>
+                            Ufamy w siłę lokalnych składników i współpracujemy tylko z
+                            sprawdzonymi hodowcami, bo wierzymy, że prawdziwy smak rodzi się
+                            blisko natury.
+                        </p>
+                    </div>
+                </div>
+            </section>
             <FeaturesSection items={contactFeatures} className="red-section" />
         </main>
     );
