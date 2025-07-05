@@ -20,8 +20,11 @@ function Header() {
         method: "POST",
         credentials: "include",
       });
-      setUser(null);
+
       navigate("/");
+      setTimeout(() => {
+        setUser(null);
+      }, 100);
     } catch (err) {
       console.error("Błąd wylogowania:", err);
     }
