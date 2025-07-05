@@ -9,7 +9,7 @@
 
     &.red {
         background-color: $secondary-color;
-        color: $white;
+        color: $primary-color;
 
         &:hover {
             background-color: $secondary-color-darken;
@@ -17,20 +17,20 @@
     }
 
     &.beige {
-        background-color: $primary-color;
+        background-color: $accent-color;
         color: $dark-color;
 
         &:hover {
-            background-color: $primary-color-darken;
+            background-color: $accent-color-darken;
         }
     }
 
     &.dark {
         background-color: $dark-color;
-        color: $white;
+        color: $primary-color;
 
         &:hover {
-            background-color: $darken;
+            background-color: $accent-color-darken;
         }
     }
 }

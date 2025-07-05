@@ -21,7 +21,7 @@ function HomePage() {
         title="Wędliny i kiełbasy z tradycją"
         subtitle="Wędliny, kiełbasy i wyroby podrobowe przygotowywane według tradycyjnych receptur, z najlepszych składników i bez zbędnych dodatków. Kupuj bezpośrednio od producenta."
       />
-      <section className="categories-section creamy-section">
+      <section className="categories-section white-section">
         <div className="categories-info">
           <h2>Co znajdziesz w naszej ofercie?</h2>
           <p>Sprawdź, co oferujemy - wybierz interesującą Cię grupę.</p>
@@ -65,7 +65,7 @@ function HomePage() {
       <section className="about-section white-section">
         <div className="about-tile">
           <div className="about-image">
-            <img src={aboutImage} alt="Nasz zespół i zakład produkcyjny" />
+            <img src={aboutImage} alt="Nasz zespół" />
           </div>
           <div className="about-content">
             <p className="subtitle">O nas</p>

@@ -36,12 +36,12 @@
 
             .card {
                 flex: 1;
-                background-color: $primary-color-lighten;
+                background-color: $primary-color;
                 padding: 1.2rem;
                 display: flex;
                 align-items: center;
                 gap: 1rem;
-                border: 1px solid $primary-color;
+                border: 1px solid $accent-color;
                 border-radius: 6px;
 
                 svg {
@@ -64,7 +64,7 @@
         .btn-primary {
             display: inline-block;
             background-color: $secondary-color;
-            color: $white;
+            color: $primary-color;
             text-decoration: none;
             padding: 0.6rem 1.2rem;
             border-radius: 4px;
@@ -163,10 +163,10 @@
                 display: inline-flex;
                 align-items: center;
                 gap: 0.5rem;
-                background-color: $primary-color-lighten;
+                background-color: $primary-color;
                 color: $dark-color;
                 padding: 0.6rem 1rem;
-                border: 1px solid $primary-color;
+                border: 1px solid $primary-color-darken;
                 border-radius: 4px;
                 text-decoration: none;
                 font-weight: 500;
@@ -178,7 +178,7 @@
 
                 &:hover {
                     background-color: $secondary-color;
-                    color: $white;
+                    color: $primary-color;
                 }
             }
         }
