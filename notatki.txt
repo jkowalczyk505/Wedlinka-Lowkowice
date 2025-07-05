@@ -17,3 +17,4 @@ HOME:
 
 - responsywnosc
 - polityka prywatnosci - wysylka potwierdzen, faktur
+
