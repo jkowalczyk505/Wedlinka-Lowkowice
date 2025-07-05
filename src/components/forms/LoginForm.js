@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import FormContainer from "./FormContainer";
 import Button from "../common/Button";
+import { useAuth } from "../auth/AuthContext";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -8,24 +10,35 @@ function LoginForm() {
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState("");
 
+  const { setUser } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const redirectPath = location.state?.from?.pathname || "/";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+          credentials: "include",
+        }
+      );
+
+      const data = await res.json();
 
       if (!res.ok) {
-        const data = await res.json();
         setError(data.error || "Błąd logowania");
         return;
       }
 
-      // TODO: zapamiętaj użytkownika i przekieruj
-      window.location.href = "/";
+      // aktualizuj użytkownika w kontekście
+      setUser(data);
+      // przekieruj tam, gdzie chciał iść
+      navigate(redirectPath, { replace: true });
     } catch (err) {
       setError("Błąd serwera");
     }

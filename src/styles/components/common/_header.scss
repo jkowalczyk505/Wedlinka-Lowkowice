@@ -82,7 +82,8 @@
             padding-left: 2rem;
             border-left: 1px solid $dark-color;
 
-            a {
+            a,
+            button.account-button {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -92,6 +93,9 @@
                 text-decoration: none;
                 color: $dark-color;
                 font-weight: 500;
+                background: none;
+                border: none;
+                cursor: pointer;
 
                 transition: color 0.3s ease;
 
@@ -110,11 +114,11 @@
                     }
                 }
 
-                // Active — ciemniejszy akcent
                 &.active {
                     color: $secondary-color;
                 }
             }
         }
+
     }
 }

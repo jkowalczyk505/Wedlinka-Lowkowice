@@ -35,12 +35,15 @@ function RegisterForm() {
     }
 
     try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, surname, phone, email, password }),
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/auth/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, surname, phone, email, password }),
+          credentials: "include",
+        }
+      );
 
       const data = await res.json();
 
@@ -50,7 +53,6 @@ function RegisterForm() {
       }
 
       setSuccess("Konto zostało założone pomyślnie!");
-      // Opcjonalnie przekierowanie:
       // window.location.href = "/";
     } catch (err) {
       setError("Błąd serwera.");
@@ -93,11 +95,13 @@ function RegisterForm() {
           name="phone"
           value={formData.phone}
           onChange={(e) => {
-            const onlyDigits = e.target.value.replace(/\D/g, "");
-            if (onlyDigits.length <= 9) {
-              setFormData((prev) => ({ ...prev, phone: onlyDigits }));
+            const digits = e.target.value.replace(/\D/g, "");
+            if (digits.length <= 9) {
+              setFormData((prev) => ({ ...prev, phone: digits }));
             }
           }}
+          inputMode="numeric"
+          pattern="\d{9}"
           required
         />
       </div>
