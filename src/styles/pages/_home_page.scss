@@ -1,0 +1,25 @@
+.page {
+    .products-section {
+        .products-info {
+            justify-items: center;
+            h2 {
+                font-size: 2rem;
+            }
+            p {
+                margin-top: 1rem;
+                font-size: 1.2rem;
+            }
+        }
+        .category-grid {
+            padding: 0 5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 3rem;
+
+            @media (max-width: 768px) {
+                grid-template-columns: 1fr;
+            }
+        }
+    }
+}

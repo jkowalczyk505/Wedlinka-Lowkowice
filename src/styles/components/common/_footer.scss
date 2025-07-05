@@ -35,7 +35,7 @@
           transition: color .25s;
 
           &:hover { color: $secondary-color-lighten; }
-          &.active { color: $secondary-color-darken; }
+          &.active { color: $secondary-color; }
         }
       }
     }
@@ -62,12 +62,14 @@
       a {
         width: 34px; height: 34px;
         display: flex; align-items: center; justify-content: center;
-        background: $secondary-color;
-        color: $white;
+        background: $secondary-color-darken;
+        color: $primary-color-lighten;
         border-radius: 50%;
         transition: background .25s;
 
-        &:hover { background: $secondary-color-darken; }
+        &:hover { 
+          background: $darken;
+        }
       }
     }
   }
