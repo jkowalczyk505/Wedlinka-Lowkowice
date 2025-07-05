@@ -52,6 +52,7 @@
 @import "./components/common/category_tile";
 @import "./components/common/category_grid";
 @import "./components/common/features_section";
+@import "./pages/account/accout_page";
 
 
 
@@ -84,33 +85,49 @@ h3 {
   .creamy-section {
     background-color: $primary-color-lighten;
 
-    h1,h2,h3 { color: $secondary-color;}
+    h1,
+    h2,
+    h3 {
+      color: $secondary-color;
+    }
+
     color: $dark-color;
   }
 
   .red-section {
     background-color: $secondary-color;
 
-    h1,h2,h3 { color: $white;}
+    h1,
+    h2,
+    h3 {
+      color: $white;
+    }
+
     color: $primary-color-lighten;
 
     .feature-icon {
       color: $white;
     }
+
     .feature-title {
       color: $white;
     }
   }
-  
+
   .white-section {
     background-color: $white;
     color: $dark-color;
 
-    h1,h2,h3 { color: $secondary-color;}
+    h1,
+    h2,
+    h3 {
+      color: $secondary-color;
+    }
 
     .feature-icon {
       color: $secondary-color;
     }
+
     .feature-title {
       color: $secondary-color;
     }

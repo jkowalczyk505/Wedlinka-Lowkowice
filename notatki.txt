@@ -4,6 +4,7 @@
 - todo w logowaniu
 - spinner
 - nie udalo sie zaladowac tresci
+- animacje
 - w stopce odpowiednie linki do plikow, usuniecie/zmiana zbednych podstron + link do fb
 
 HOME:
@@ -12,3 +13,4 @@ HOME:
  - nizej niski pasek z ikonkami do kontaktu?
 
 - responsywnosc
+- polityka prywatnosci - wysylka potwierdzen, faktur
