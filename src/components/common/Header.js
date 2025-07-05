@@ -1,16 +1,30 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
-import { CiUser, CiShoppingCart } from "react-icons/ci";
+import { CiUser, CiShoppingCart, CiLogout } from "react-icons/ci";
 import { useAuth } from "../auth/AuthContext";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth(); // <-- pobieramy użytkownika
+  const { user, setUser } = useAuth();
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const handleAccountClick = () => {
     navigate(user ? "/konto" : "/logowanie");
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch(`${API_URL}/api/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      setUser(null);
+      navigate("/");
+    } catch (err) {
+      console.error("Błąd wylogowania:", err);
+    }
   };
 
   return (
@@ -82,10 +96,24 @@ function Header() {
             <CiShoppingCart />
             Koszyk
           </NavLink>
-          <button className="account-button" onClick={handleAccountClick}>
-            <CiUser />
-            Konto
-          </button>
+
+          {user ? (
+            <>
+              <button className="account-button" onClick={handleAccountClick}>
+                <CiUser />
+                Konto
+              </button>
+              <button className="account-button" onClick={handleLogout}>
+                <CiLogout />
+                Wyloguj
+              </button>
+            </>
+          ) : (
+            <button className="account-button" onClick={handleAccountClick}>
+              <CiUser />
+              Konto
+            </button>
+          )}
         </div>
       </div>
     </header>
