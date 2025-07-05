@@ -14,19 +14,12 @@
   font-style: italic;
 }
 
-/* ==== ROBOTO ==== */
+/* ==== ROBOTO SLAB ==== */
 @font-face {
-  font-family: 'Roboto';
-  src: url('../../public/fonts/Roboto/Roboto-VariableFont_wdth\,wght.ttf') format('truetype');
+  font-family: 'Roboto Slab';
+  src: url('../../public/fonts/Roboto_Slab/RobotoSlab-VariableFont_wght.ttf') format('truetype');
   font-weight: 100 900;
-  font-style: normal
-}
-
-@font-face {
-  font-family: 'Roboto';
-  src: url('../../public/fonts/Roboto/Roboto-Italic-VariableFont_wdth\,wght.ttf') format('truetype');
-  font-weight: 100 900;
-  font-style: italic;
+  font-style: normal;
 }
 
 /* ==== QUINTESSENTIAL ==== */
@@ -37,6 +30,48 @@
   font-style: normal;
 }
 
+
+@font-face {
+  font-family: 'Bad Script';
+  src: url('../../public/fonts/Bad_Script/BadScript-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Bilbo';
+  src: url('../../public/fonts/Bilbo/Bilbo-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Moon Dance';
+  src: url('../../public/fonts/Moon_Dance/MoonDance-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Playball';
+  src: url('../../public/fonts/Playball/Playball-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Tangerine';
+  src: url('../../public/fonts/Tangerine/Tangerine-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Tangerine';
+  src: url('../../public/fonts/Tangerine/Tangerine-Bold.ttf');
+  font-weight: 600;
+  font-style: normal;
+}
 
 
 /* ================== IMPORTY ================== */
