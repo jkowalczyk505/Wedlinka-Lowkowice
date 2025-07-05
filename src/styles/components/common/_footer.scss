@@ -68,7 +68,8 @@
         transition: background .25s;
 
         &:hover { 
-          background: $darken;
+          background: $primary-color-darken;
+          color: $secondary-color-darken;
         }
       }
     }

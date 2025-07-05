@@ -6,7 +6,7 @@ import CategoryGrid from "../components/common/categories/CategoryGrid";
 import { customerCategories } from "../data/categories";
 
 import FeaturesSection from "../components/common/FeaturesSection";
-import { homeFeatures } from "../data/features";
+import { homeFeatures, contactFeatures } from "../data/features";
 
 function HomePage() {
     return (
@@ -29,6 +29,8 @@ function HomePage() {
                 <h2>Jak pakujemy?</h2>
                 <p>Quis tempor consequat labore do ea laboris aliqua non eiusmod. Mollit nostrud cupidatat reprehenderit occaecat nisi qui aliquip consectetur Lorem incididunt ullamco est excepteur dolore. Ut enim excepteur id cupidatat. Id et duis voluptate sit ut duis duis esse cupidatat voluptate cillum nisi. Amet minim sit commodo magna irure officia ea occaecat. Nostrud ipsum cupidatat nostrud qui deserunt aute minim non occaecat veniam aliqua ut veniam quis. Consectetur eu irure non esse nisi sunt amet aute est.</p>
             </section>
+            <section className="about-section white-section"></section>
+            <FeaturesSection items={contactFeatures} className="red-section" />
         </main>
     );
 }
