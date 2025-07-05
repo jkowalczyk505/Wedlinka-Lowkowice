@@ -5,5 +5,6 @@
 - spinner
 - przekierowanie na logowanie z zabronionych linkow
 - nie udalo sie zaladowac tresci
+- w stopce odpowiednie linki do plikow, usuniecie/zmiana zbednych podstron + link do fb
 
 - responsywnosc

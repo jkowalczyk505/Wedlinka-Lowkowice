@@ -1,11 +1,9 @@
+import React from "react";
 import Banner from "../components/common/Banner";
 import bannerImage from "../assets/home-banner.jpg";
 
-import CategoryTile from "../components/common/CategoryTile";
-import kielbasyImg from "../assets/kielbasy.jpg";
-import wedlinyImg from "../assets/wedliny.jpg";
-import podroboweImg from "../assets/podrobowe.jpg";
-import paczkiImg from "../assets/paczki.jpg";
+import CategoryGrid from "../components/common/categories/CategoryGrid";
+import { customerCategories } from "../data/categories";
 
 function HomePage() {
     return (
@@ -21,12 +19,11 @@ function HomePage() {
                     <h2>Co znajdziesz w naszej ofercie?</h2>
                     <p>Sprawdź, co oferujemy - wybierz interesującą Cię grupę.</p>
                 </div>
-                <div className="category-grid">
-                    <CategoryTile title="Kiełbasy" image={kielbasyImg} to="/kielbasy" />
-                    <CategoryTile title="Wędliny" image={wedlinyImg} to="/wedliny" />
-                    <CategoryTile title="Wyroby podrobowe" image={podroboweImg} to="/wyroby-podrobowe" />
-                    <CategoryTile title="Paczki" image={paczkiImg} to="/nasze-paczki" />
-                </div>
+                <CategoryGrid items={customerCategories} linkMode={true} />
+            </section>
+            <section className="white-section">
+                <h1>Tralalla</h1>
+                <p>Nostrud ad do Lorem sint anim dolor do sint pariatur. Aute mollit et commodo incididunt duis cillum. Enim sint sint esse et Lorem consequat id consequat in non nisi. Irure et amet aliquip aliqua sint enim id. Lorem tempor cupidatat esse enim tempor occaecat. Excepteur et cupidatat ipsum pariatur aute exercitation. Mollit ad dolor ullamco occaecat occaecat eu qui laboris nulla.</p>
             </section>
         </main>
     );

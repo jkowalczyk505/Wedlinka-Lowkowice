@@ -102,6 +102,7 @@
 @import "./components/common/footer";
 @import "./pages/home_page";
 @import "./components/common/category_tile";
+@import "./components/common/category_grid";
 
 
 
@@ -140,15 +141,15 @@ h3 {
     color: $dark-color;
   }
   .red-section {
-    //background-color: ;
-    // color: ;
+    background-color: $secondary-color;
+    color: $primary-color-lighten;
 
-    // h1,h1,h3 { color: ;}
+    h1,h1,h3 { color: $white;}
   }
   .white-section {
-    //background-color: ;
-    // color: ;
+    background-color: $white;
+    color: $dark-color;
 
-    // h1,h1,h3 { color: ;}
+    h1,h1,h3 { color: $secondary-color;}
   }
 }
