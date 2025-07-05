@@ -12,5 +12,8 @@ HOME:
  - krotka sekcja o nas (baner?)
  - nizej niski pasek z ikonkami do kontaktu?
 
+ ACCOUNT
+ - dashboard
+
 - responsywnosc
 - polityka prywatnosci - wysylka potwierdzen, faktur
