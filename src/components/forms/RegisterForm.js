@@ -1,6 +1,7 @@
 import { useState } from "react";
 import FormContainer from "./FormContainer";
 import Button from "../common/Button";
+import Spinner from "../common/Spinner";
 
 function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ function RegisterForm() {
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -26,11 +28,26 @@ function RegisterForm() {
     e.preventDefault();
     setError("");
     setSuccess("");
+    setIsSubmitting(true);
 
     const { name, surname, phone, email, password, confirmPassword } = formData;
 
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setError("Hasło musi mieć min. 8 znaków, zawierać dużą literę i cyfrę.");
+      setIsSubmitting(false);
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError("Hasła muszą być takie same.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!/^\d{9}$/.test(phone)) {
+      setError("Telefon musi składać się z dokładnie 9 cyfr.");
+      setIsSubmitting(false);
       return;
     }
 
@@ -49,20 +66,28 @@ function RegisterForm() {
 
       if (!res.ok) {
         setError(data.error || "Rejestracja nie powiodła się.");
+        setIsSubmitting(false);
         return;
       }
 
       setSuccess("Konto zostało założone pomyślnie!");
-      // window.location.href = "/";
+      setFormData({
+        name: "",
+        surname: "",
+        phone: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
     } catch (err) {
       setError("Błąd serwera.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <FormContainer title="Rejestracja" onSubmit={handleSubmit}>
-      {success && <div className="form-success">{success}</div>}
-
       <label>
         Imię <span className="required">*</span>
       </label>
@@ -152,10 +177,18 @@ function RegisterForm() {
       </div>
 
       <div className="submit-button">
-        <Button type="submit" variant="red">
-          Zarejestruj się
+        <Button type="submit" variant="red" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <>
+              <Spinner size="small" /> &nbsp;Rejestracja...
+            </>
+          ) : (
+            "Zarejestruj się"
+          )}
         </Button>
       </div>
+
+      {success && <div className="form-success">{success}</div>}
     </FormContainer>
   );
 }

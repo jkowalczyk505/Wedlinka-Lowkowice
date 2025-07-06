@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect, useContext } from "react";
+import Spinner from "../common/Spinner"; // Upewnij się, że ścieżka jest poprawna
 
 const AuthContext = createContext();
 
@@ -17,14 +18,14 @@ export function AuthProvider({ children }) {
         });
 
         if (res.status === 401) {
-          // Jeśli access_token wygasł – spróbuj odświeżyć
+          // Spróbuj odświeżyć token
           const refreshRes = await fetch(`${API_URL}/api/auth/refresh`, {
             method: "POST",
             credentials: "include",
           });
 
           if (refreshRes.ok) {
-            // Po odświeżeniu – ponów próbę pobrania danych
+            // Ponownie sprawdź sesję
             res = await fetch(`${API_URL}/api/users/me`, {
               method: "GET",
               credentials: "include",
@@ -50,7 +51,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={{ user, setUser, loading }}>
-      {children}
+      {loading ? <Spinner fullscreen /> : children}
     </AuthContext.Provider>
   );
 }

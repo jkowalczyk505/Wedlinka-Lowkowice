@@ -43,7 +43,8 @@ exports.register = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, remember } = req.body;
+
     const user = await User.findByEmail(email);
     if (!user) return res.status(401).json({ error: "Nieprawidłowe dane" });
 
@@ -58,17 +59,23 @@ exports.login = async (req, res, next) => {
       expiresIn: JWT_REFRESH_EXPIRES,
     });
 
+    const accessMaxAge = remember ? msToNum(JWT_EXPIRES) : 6 * 60 * 60 * 1000; // 6h
+    const refreshMaxAge = remember
+      ? msToNum(JWT_REFRESH_EXPIRES)
+      : 24 * 60 * 60 * 1000; // 1 dzień
+
     res.cookie(COOKIE_NAME, accessToken, {
       httpOnly: COOKIE_HTTPONLY === "true",
       secure: COOKIE_SECURE === "true",
       sameSite: COOKIE_SAMESITE,
-      maxAge: msToNum(JWT_EXPIRES), // helper niżej
+      maxAge: accessMaxAge,
     });
+
     res.cookie(REFRESH_COOKIE_NAME, refreshToken, {
       httpOnly: REFRESH_COOKIE_HTTPONLY === "true",
       secure: REFRESH_COOKIE_SECURE === "true",
       sameSite: REFRESH_COOKIE_SAMESITE,
-      maxAge: msToNum(JWT_REFRESH_EXPIRES),
+      maxAge: refreshMaxAge,
     });
 
     res.json({

@@ -3,7 +3,7 @@
     bottom: 2rem;
     left: 1rem;
     right: 1rem;
-    background: $primary-color;
+    background: $accent-color;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 1.5rem 2rem;
     display: flex;
@@ -15,7 +15,7 @@
     margin: 0 auto;
 
     .cookie-icon {
-        color: $accent-color-darken;
+        color: $dark-color;
         flex-shrink: 0;
     }
 
@@ -26,7 +26,7 @@
             margin: 0 0 0.5rem 0;
             font-size: 1.1rem;
             font-weight: 400;
-            color: $accent-color-darken;
+            color: $dark-color;
         }
 
         p {

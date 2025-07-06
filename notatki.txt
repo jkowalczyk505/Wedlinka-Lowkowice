@@ -1,8 +1,6 @@
 - seo + sitemap + robots + index podmienic dane + manifest json
 - backend zabezpieczyc
-- reset hasla + pamiętaj mnie
-- todo w logowaniu
-- spinner
+- reset hasla
 - nie udalo sie zaladowac tresci
 - animacje
 - w stopce odpowiednie linki do plikow, usuniecie/zmiana zbednych podstron + link do fb

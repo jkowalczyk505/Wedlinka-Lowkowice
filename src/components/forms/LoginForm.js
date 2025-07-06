@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import FormContainer from "./FormContainer";
 import Button from "../common/Button";
+import Spinner from "../common/Spinner"; // <== dodaj to jeśli masz komponent spinnera
 import { useAuth } from "../auth/AuthContext";
 
 function LoginForm() {
@@ -9,6 +10,7 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { setUser } = useAuth();
   const location = useLocation();
@@ -17,13 +19,16 @@ function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setError("");
+
     try {
       const res = await fetch(
         `${process.env.REACT_APP_API_URL}/api/auth/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ email, password, remember }),
           credentials: "include",
         }
       );
@@ -32,15 +37,15 @@ function LoginForm() {
 
       if (!res.ok) {
         setError(data.error || "Błąd logowania");
+        setIsSubmitting(false);
         return;
       }
 
-      // aktualizuj użytkownika w kontekście
       setUser(data);
-      // przekieruj tam, gdzie chciał iść
       navigate(redirectPath, { replace: true });
     } catch (err) {
       setError("Błąd serwera");
+      setIsSubmitting(false);
     }
   };
 
@@ -94,8 +99,14 @@ function LoginForm() {
       </div>
 
       <div className="submit-button">
-        <Button type="submit" variant="red">
-          Zaloguj się
+        <Button type="submit" variant="red" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <>
+              <Spinner size="small" /> &nbsp;Logowanie...
+            </>
+          ) : (
+            "Zaloguj się"
+          )}
         </Button>
       </div>
     </FormContainer>
