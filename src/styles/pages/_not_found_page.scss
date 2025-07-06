@@ -1,0 +1,32 @@
+.page-404 {
+    text-align: center;
+    padding: 6rem 2rem;
+    background-image: url('/assets/pattern.png');
+    background-size: cover;
+    background-position: center;
+
+    h1 {
+        font-size: 10rem;
+        color: $secondary-color;
+        font-family: $font-heading;
+    }
+
+    h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        font-family: $font-heading;
+        color: $secondary-color;
+    }
+
+    p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        font-family: $font-main;
+        color: $dark-color;
+    }
+
+    .button-wrapper {
+        display: flex;
+        justify-content: center;
+    }
+}

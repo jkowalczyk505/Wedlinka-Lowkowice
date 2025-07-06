@@ -2,7 +2,6 @@
 - backend zabezpieczyc
 - reset hasla
 - nie udalo sie zaladowac tresci
-- 404 strona
 - scrolltotop
 - animacje
 - w stopce odpowiednie linki do plikow, usuniecie/zmiana zbednych podstron + link do fb
