@@ -43,6 +43,16 @@ function Header() {
           <ul className="menu" onClick={() => setMenuOpen(false)}>
             <li className="menu-item">
               <NavLink
+                to="/"
+                className={({ isActive }) =>
+                  `nav-link ${isActive ? "active" : ""}`
+                }
+              >
+                Strona główna
+              </NavLink>
+            </li>
+            <li className="menu-item">
+              <NavLink
                 to="/kielbasy"
                 className={({ isActive }) =>
                   `nav-link ${isActive ? "active" : ""}`

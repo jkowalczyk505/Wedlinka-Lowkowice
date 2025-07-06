@@ -12,6 +12,8 @@ import packingImage from "../assets/packing-info.png";
 
 import aboutImage from "../assets/about-section.jpg";
 
+import GallerySlider from "../components/common/GallerySlider";
+
 function HomePage() {
   return (
     <main className="page">
@@ -26,7 +28,7 @@ function HomePage() {
           <h2>Co znajdziesz w naszej ofercie?</h2>
           <p>Sprawdź, co oferujemy - wybierz interesującą Cię grupę.</p>
         </div>
-        <CategoryGrid items={customerCategories} linkMode={true} />
+        <CategoryGrid items={customerCategories} />
       </section>
       <FeaturesSection items={homeFeatures} className="red-section" />
       <section className="packing-section dark-section">
@@ -87,6 +89,9 @@ function HomePage() {
         </div>
       </section>
       <FeaturesSection items={contactFeatures} className="red-section" />
+      <section className="gallery-section white-section">
+        <GallerySlider />
+      </section>
     </main>
   );
 }
