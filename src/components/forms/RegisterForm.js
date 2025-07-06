@@ -1,7 +1,7 @@
 import { useState } from "react";
 import FormContainer from "./FormContainer";
 import Button from "../common/Button";
-import Spinner from "../common/Spinner"; // jeśli masz spinner
+import Spinner from "../common/Spinner";
 
 function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -32,8 +32,21 @@ function RegisterForm() {
 
     const { name, surname, phone, email, password, confirmPassword } = formData;
 
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setError("Hasło musi mieć min. 8 znaków, zawierać dużą literę i cyfrę.");
+      setIsSubmitting(false);
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError("Hasła muszą być takie same.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!/^\d{9}$/.test(phone)) {
+      setError("Telefon musi składać się z dokładnie 9 cyfr.");
       setIsSubmitting(false);
       return;
     }

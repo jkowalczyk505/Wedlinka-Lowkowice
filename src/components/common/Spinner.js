@@ -1,6 +1,12 @@
-function Spinner({ fullscreen = false }) {
+function Spinner({ fullscreen = false, size = "default" }) {
+  const className = fullscreen
+    ? "spinner-overlay"
+    : size === "small"
+    ? "spinner-small"
+    : "spinner-inline";
+
   return (
-    <div className={fullscreen ? "spinner-overlay" : "spinner-inline"}>
+    <div className={className}>
       <div className="spinner" />
     </div>
   );
