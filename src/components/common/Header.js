@@ -21,14 +21,21 @@ function Header() {
         credentials: "include",
       });
 
-      navigate("/");
-      setTimeout(() => {
-        setUser(null);
-      }, 100);
+      setUser(null);
+      window.location.href = "/";
     } catch (err) {
       console.error("Błąd wylogowania:", err);
     }
   };
+
+  const navItems = [
+    { to: "/", label: "Strona główna" },
+    { to: "/kielbasy", label: "Kiełbasy" },
+    { to: "/wedliny", label: "Wędliny" },
+    { to: "/wyroby-podrobowe", label: "Wyroby podrobowe" },
+    { to: "/nasze-paczki", label: "Nasze paczki" },
+    { to: "/kontakt", label: "Kontakt" },
+  ];
 
   return (
     <header className="header">
@@ -41,66 +48,18 @@ function Header() {
 
         <nav id="main-nav" className={menuOpen ? "open" : ""}>
           <ul className="menu" onClick={() => setMenuOpen(false)}>
-            <li className="menu-item">
-              <NavLink
-                to="/"
-                className={({ isActive }) =>
-                  `nav-link ${isActive ? "active" : ""}`
-                }
-              >
-                Strona główna
-              </NavLink>
-            </li>
-            <li className="menu-item">
-              <NavLink
-                to="/kielbasy"
-                className={({ isActive }) =>
-                  `nav-link ${isActive ? "active" : ""}`
-                }
-              >
-                Kiełbasy
-              </NavLink>
-            </li>
-            <li className="menu-item">
-              <NavLink
-                to="/wedliny"
-                className={({ isActive }) =>
-                  `nav-link ${isActive ? "active" : ""}`
-                }
-              >
-                Wędliny
-              </NavLink>
-            </li>
-            <li className="menu-item">
-              <NavLink
-                to="/wyroby-podrobowe"
-                className={({ isActive }) =>
-                  `nav-link ${isActive ? "active" : ""}`
-                }
-              >
-                Wyroby podrobowe
-              </NavLink>
-            </li>
-            <li className="menu-item">
-              <NavLink
-                to="/nasze-paczki"
-                className={({ isActive }) =>
-                  `nav-link ${isActive ? "active" : ""}`
-                }
-              >
-                Nasze paczki
-              </NavLink>
-            </li>
-            <li className="menu-item">
-              <NavLink
-                to="/kontakt"
-                className={({ isActive }) =>
-                  `nav-link ${isActive ? "active" : ""}`
-                }
-              >
-                Kontakt
-              </NavLink>
-            </li>
+            {navItems.map(({ to, label }) => (
+              <li className="menu-item" key={to}>
+                <NavLink
+                  to={to}
+                  className={({ isActive }) =>
+                    `nav-link ${isActive ? "active" : ""}`
+                  }
+                >
+                  {label}
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </nav>
 
@@ -110,21 +69,15 @@ function Header() {
             Koszyk
           </NavLink>
 
-          {user ? (
-            <>
-              <button className="account-button" onClick={handleAccountClick}>
-                <CiUser />
-                Konto
-              </button>
-              <button className="account-button" onClick={handleLogout}>
-                <CiLogout />
-                Wyloguj
-              </button>
-            </>
-          ) : (
-            <button className="account-button" onClick={handleAccountClick}>
-              <CiUser />
-              Konto
+          <button className="account-button" onClick={handleAccountClick}>
+            <CiUser />
+            Konto
+          </button>
+
+          {user && (
+            <button className="account-button" onClick={handleLogout}>
+              <CiLogout />
+              Wyloguj
             </button>
           )}
         </div>

@@ -18,7 +18,7 @@ export async function AuthFetch(url, options = {}) {
         credentials: "include",
       });
     } else {
-      logout();
+      res.status = 498; // custom status żeby frontend wiedział że refresh się nie udał
     }
   }
 
@@ -26,6 +26,6 @@ export async function AuthFetch(url, options = {}) {
 }
 
 export function logout() {
-  localStorage.removeItem("user"); // jeśli używasz
-  window.location.href = "/logowanie";
+  localStorage.removeItem("user");
+  window.location.href = "/";
 }

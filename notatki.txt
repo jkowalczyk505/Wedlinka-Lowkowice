@@ -12,6 +12,7 @@ HOME:
 
  ACCOUNT
  - dashboard
+ - usun konto
 
 - responsywnosc
 - polityka prywatnosci - wysylka potwierdzen, faktur
