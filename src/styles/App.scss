@@ -50,7 +50,10 @@
 @import "./pages/account/account_dashboard";
 @import "./pages/account/account_details";
 
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
 
+@import "./components/common/gallery_slider";
 
 
 * {
