@@ -1,6 +1,6 @@
 - seo + sitemap + robots + index podmienic dane + manifest json
 - backend zabezpieczyc
-- reset hasla + pamiętaj mnie
+- reset hasla
 - todo w logowaniu
 - spinner
 - nie udalo sie zaladowac tresci
