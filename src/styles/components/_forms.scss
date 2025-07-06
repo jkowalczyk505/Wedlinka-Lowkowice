@@ -49,6 +49,11 @@
         }
     }
 
+    input:disabled {
+        background-color: #f9f9f9;
+        color: #888;
+    }
+
 
     input,
     textarea,

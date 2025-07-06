@@ -2,6 +2,7 @@ import { useState } from "react";
 import FormContainer from "./FormContainer";
 import Button from "../common/Button";
 import Spinner from "../common/Spinner";
+import { AuthFetch } from "../auth/AuthFetch";
 
 function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -52,13 +53,12 @@ function RegisterForm() {
     }
 
     try {
-      const res = await fetch(
+      const res = await AuthFetch(
         `${process.env.REACT_APP_API_URL}/api/auth/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, surname, phone, email, password }),
-          credentials: "include",
         }
       );
 

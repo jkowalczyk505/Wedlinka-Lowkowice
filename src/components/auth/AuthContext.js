@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import Spinner from "../common/Spinner"; // Upewnij się, że ścieżka jest poprawna
+import Spinner from "../common/Spinner";
+import { AuthFetch } from "./AuthFetch";
 
 const AuthContext = createContext();
 
@@ -12,10 +13,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        let res = await fetch(`${API_URL}/api/users/me`, {
-          method: "GET",
-          credentials: "include",
-        });
+        let res = await AuthFetch(`${API_URL}/api/users/me`, { method: "GET" });
 
         if (res.status === 401) {
           // Spróbuj odświeżyć token
