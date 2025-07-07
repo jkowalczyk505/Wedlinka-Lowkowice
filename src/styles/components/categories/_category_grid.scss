@@ -4,4 +4,9 @@
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
             margin-top: 3rem;
+
+            .category-tile-wrapper {
+            opacity: 0;                       /* startowo niewidoczny */
+            transform: translateY(1rem);
+            }
 }

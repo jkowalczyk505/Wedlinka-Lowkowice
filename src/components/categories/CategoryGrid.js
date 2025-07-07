@@ -1,17 +1,12 @@
+// src/components/categories/CategoryGrid.js
 import React from "react";
-import CategoryTile from "./CategoryTile";
+import AnimatedCategoryTile from "./AnimatedCategoryTile";
 
 export default function CategoryGrid({ items, className = "" }) {
   return (
     <div className={`category-grid ${className}`}>
-      {items.map(item => (
-        <CategoryTile
-          key={item.id}
-          title={item.title}
-          image={item.image}
-          icon={item.icon}
-          to={item.to}
-        />
+      {items.map((item, idx) => (
+        <AnimatedCategoryTile key={item.id} item={item} index={idx} />
       ))}
     </div>
   );

@@ -14,7 +14,13 @@ import aboutImage from "../assets/about-section.jpg";
 
 import GallerySlider from "../components/common/GallerySlider";
 
+import useInView from "../hooks/useInView";
+
 function HomePage() {
+
+  const [packImgRef,  packInView]  = useInView(0.2);   // prawy obraz „Jak pakujemy”
+  const [aboutImgRef, aboutInView] = useInView(0.2);   // lewy obraz w sekcji About
+
   return (
     <main className="page">
       <Banner
@@ -60,14 +66,32 @@ function HomePage() {
             </ul>
           </div>
           <div className="packing-info-image">
-            <img src={packingImage} alt="Pakowanie produktów" />
+            <img
+              ref={packImgRef}
+              src={packingImage}
+              alt="Pakowanie produktów"
+              className={
+                packInView
+                  ? "animate--slide-in-right"   // start animacji
+                  : "ghost"                     // ukryty do czasu inView
+              }
+            />
           </div>
         </div>
       </section>
       <section className="about-section white-section">
         <div className="about-tile">
           <div className="about-image">
-            <img src={aboutImage} alt="Nasz zespół" />
+            <img
+              ref={aboutImgRef}
+              src={aboutImage}
+              alt="Nasz zespół"
+              className={
+                aboutInView
+                  ? "animate--slide-in-left"
+                  : "ghost"
+              }
+            />
           </div>
           <div className="about-content">
             <p className="subtitle">O nas</p>

@@ -20,8 +20,10 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
     text-align: center;
+    .banner__content {
+      justify-items: center;
+    }
 
     .banner__label {
       font-family: $font-decorative;

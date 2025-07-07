@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Spinner from "./Spinner"; // Upewnij się, że masz taki komponent
+import Spinner from "./Spinner";
+import useInView from "../../hooks/useInView";
 
 function Banner({ title, subtitle, label, backgroundImage }) {
   const [loaded, setLoaded] = useState(false);
@@ -9,6 +10,8 @@ function Banner({ title, subtitle, label, backgroundImage }) {
     img.src = backgroundImage;
     img.onload = () => setLoaded(true);
   }, [backgroundImage]);
+
+  const [ref, inView] = useInView();
 
   return (
     <section
@@ -24,9 +27,11 @@ function Banner({ title, subtitle, label, backgroundImage }) {
       )}
 
       <div className="banner__overlay">
-        {label && <p className="banner__label">{label}</p>}
-        {title && <h1 className="banner__title">{title}</h1>}
-        {subtitle && <p className="banner__subtitle">{subtitle}</p>}
+        <div ref={ref} className={`banner__content ${inView ? "animate--fade-in-up" : ""}`}>
+          {label && <p className="banner__label">{label}</p>}
+          {title && <h1 className="banner__title">{title}</h1>}
+          {subtitle && <p className="banner__subtitle">{subtitle}</p>}
+        </div>
       </div>
     </section>
   );
