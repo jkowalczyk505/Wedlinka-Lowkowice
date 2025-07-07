@@ -43,12 +43,14 @@
 @import "./components/common/footer";
 @import "./components/common/spinner";
 @import "./pages/home_page";
+@import "./pages/not_found_page";
 @import "./components/common/categories/category_tile";
 @import "./components/common/categories/category_grid";
 @import "./components/common/features_section";
 @import "./pages/account/accout_page";
 @import "./pages/account/account_dashboard";
 @import "./pages/contact_page";
+@import "./pages/account/account_details";
 
 @import "slick-carousel/slick/slick.css";
 @import "slick-carousel/slick/slick-theme.css";

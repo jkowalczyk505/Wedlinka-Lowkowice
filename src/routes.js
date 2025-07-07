@@ -1,7 +1,7 @@
 // src/routes.js
 import React from "react";
 import { Navigate } from "react-router-dom";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
+import NotFoundPage from "./pages/NotFoundPage";
 import ProtectedLayout from "./components/auth/ProtectedLayout";
 import AccountPage from "./pages/account/AccountPage";
 import AccountDashboard from "./pages/account/AccountDashboard";
@@ -39,5 +39,5 @@ export default [
   },
 
   // ewentualnie catch-all 404
-  { path: "*", element: <Navigate to="/" replace /> },
+  { path: "*", element: <NotFoundPage /> },
 ];

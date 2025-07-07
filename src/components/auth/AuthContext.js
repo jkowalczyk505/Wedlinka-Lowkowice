@@ -1,36 +1,25 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import Spinner from "../common/Spinner"; // Upewnij się, że ścieżka jest poprawna
+import Spinner from "../common/Spinner";
+import { AuthFetch } from "./AuthFetch";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [logoutInProgress, setLogoutInProgress] = useState(false);
 
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        let res = await fetch(`${API_URL}/api/users/me`, {
-          method: "GET",
-          credentials: "include",
-        });
+        let res = await AuthFetch(`${API_URL}/api/users/me`, { method: "GET" });
 
-        if (res.status === 401) {
-          // Spróbuj odświeżyć token
-          const refreshRes = await fetch(`${API_URL}/api/auth/refresh`, {
-            method: "POST",
-            credentials: "include",
-          });
-
-          if (refreshRes.ok) {
-            // Ponownie sprawdź sesję
-            res = await fetch(`${API_URL}/api/users/me`, {
-              method: "GET",
-              credentials: "include",
-            });
-          }
+        if (res.status === 498) {
+          setUser(null);
+          return;
         }
 
         if (res.ok) {
@@ -43,6 +32,7 @@ export function AuthProvider({ children }) {
         setUser(null);
       } finally {
         setLoading(false);
+        setAuthChecked(true); // ⬅️ ustawiamy dopiero po zakończeniu
       }
     };
 
@@ -50,7 +40,16 @@ export function AuthProvider({ children }) {
   }, [API_URL]);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        loading,
+        authChecked,
+        logoutInProgress,
+        setLogoutInProgress,
+      }}
+    >
       {loading ? <Spinner fullscreen /> : children}
     </AuthContext.Provider>
   );
