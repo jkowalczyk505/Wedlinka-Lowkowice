@@ -31,11 +31,15 @@ const UserModel = {
 
   async findById(id) {
     const [rows] = await db.query(
-      `SELECT id, email, name, surname, phone, role, created_at AS createdAt, updated_at AS updatedAt
-         FROM users
-        WHERE id = ?`,
+      `SELECT id, email, name, surname, phone, role,
+          street, apartment_number AS apartmentNumber,
+          postal_code AS postalCode, city,
+          created_at AS createdAt, updated_at AS updatedAt
+   FROM users
+   WHERE id = ?`,
       [id]
     );
+
     return rows[0] || null;
   },
 
@@ -53,6 +57,19 @@ const UserModel = {
           SET name = ?, surname = ?, phone = ?, updated_at = NOW()
         WHERE id = ?`,
       [name, surname, phone, id]
+    );
+  },
+
+  async updateAddress(id, { street, apartmentNumber, postalCode, city }) {
+    await db.query(
+      `UPDATE users SET 
+       street = ?, 
+       apartment_number = ?, 
+       postal_code = ?, 
+       city = ?, 
+       updated_at = NOW()
+     WHERE id = ?`,
+      [street, apartmentNumber, postalCode, city, id]
     );
   },
 

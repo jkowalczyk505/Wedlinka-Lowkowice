@@ -5,20 +5,19 @@ import Button from "../../components/common/Button";
 import { AuthFetch } from "../../components/auth/AuthFetch";
 
 function AccountDetails() {
-  const { user, setUser } = useAuth();
+  const { setUser } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     surname: "",
     phone: "",
   });
   const [initialFormData, setInitialFormData] = useState(null);
-  const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // email change state
   const [emailData, setEmailData] = useState({
     newEmail: "",
     password: "",
@@ -27,20 +26,36 @@ function AccountDetails() {
   const [emailChangeSuccess, setEmailChangeSuccess] = useState("");
   const [emailChangeError, setEmailChangeError] = useState("");
 
+  const [email, setEmail] = useState("");
+
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
-    if (user) {
-      const data = {
-        name: user.name || "",
-        surname: user.surname || "",
-        phone: user.phone || "",
-      };
-      setFormData(data);
-      setInitialFormData(data);
-      setLoading(false);
-    }
-  }, [user]);
+    const fetchData = async () => {
+      try {
+        const res = await AuthFetch(`${API_URL}/api/users/me`);
+        const data = await res.json();
+
+        if (res.ok) {
+          const { name = "", surname = "", phone = "", email = "" } = data;
+          const form = { name, surname, phone };
+
+          setFormData(form);
+          setInitialFormData(form);
+          setEmail(email);
+          setUser(data);
+        } else {
+          setError("Nie udało się pobrać danych użytkownika.");
+        }
+      } catch (err) {
+        setError("Błąd połączenia z serwerem.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [API_URL, setUser]);
 
   const isChanged = () => {
     if (!initialFormData) return false;
@@ -95,7 +110,6 @@ function AccountDetails() {
 
       if (!res.ok) {
         setError(data.error || "Błąd podczas zapisu");
-        setSaving(false);
         return;
       }
 
@@ -132,12 +146,12 @@ function AccountDetails() {
 
       if (!res.ok) {
         setEmailChangeError(data.error || "Błąd podczas zmiany e-maila");
-        setEmailChangeLoading(false);
         return;
       }
 
       setEmailChangeSuccess("E-mail został zmieniony");
       setUser((prev) => ({ ...prev, email: emailData.newEmail }));
+      setEmail(emailData.newEmail);
       setEmailData({ newEmail: "", password: "" });
     } catch (err) {
       setEmailChangeError("Błąd serwera");
@@ -151,10 +165,8 @@ function AccountDetails() {
   return (
     <div className="account-details">
       <div className="account-columns">
-        {/* Lewa kolumna – Dane osobowe */}
         <div className="personal-data">
           <h2>Dane osobowe</h2>
-
           <form onSubmit={handleSubmit} className="form-wrapper">
             <label>Imię</label>
             <input
@@ -216,12 +228,11 @@ function AccountDetails() {
           </form>
         </div>
 
-        {/* Prawa kolumna – Zmiana e-maila */}
         <div className="email-change">
           <h2>Zmień adres e-mail</h2>
           <form onSubmit={handleEmailChangeSubmit} className="form-wrapper">
             <label>Aktualny e-mail</label>
-            <input type="email" value={user.email} disabled />
+            <input type="email" value={email} disabled />
 
             <label>Nowy e-mail</label>
             <input
