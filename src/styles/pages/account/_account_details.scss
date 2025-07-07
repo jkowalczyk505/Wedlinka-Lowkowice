@@ -1,12 +1,42 @@
 .account-details {
-    max-width: 600px;
-    font-family: $font-main;
+    display: flex;
+
+    .account-columns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3rem;
+        max-width: 1200px;
+        width: 100%;
+        justify-content: space-between;
+        position: relative;
+    }
+
+    .personal-data,
+    .email-change {
+        flex: 1 1 45%;
+        min-width: 400px;
+        padding: 0 2rem;
+    }
+
+    .email-change {
+        position: relative;
+
+        &::before {
+            content: "";
+            position: absolute;
+            left: -1.5rem;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: $dark-color-lighten;
+            opacity: 0.3;
+        }
+    }
 
     h2 {
         font-family: $font-heading;
         color: $secondary-color;
-        font-size: 1.5rem;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
+        text-transform: uppercase;
     }
-
 }
