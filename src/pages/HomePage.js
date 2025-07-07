@@ -2,7 +2,7 @@ import React from "react";
 import Banner from "../components/common/Banner";
 import bannerImage from "../assets/home-banner.jpg";
 
-import CategoryGrid from "../components/common/categories/CategoryGrid";
+import CategoryGrid from "../components/categories/CategoryGrid";
 import { customerCategories } from "../data/categories";
 
 import FeaturesSection from "../components/common/FeaturesSection";

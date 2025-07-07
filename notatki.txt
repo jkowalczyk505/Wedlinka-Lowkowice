@@ -5,16 +5,13 @@
 - scrolltotop
 - animacje
 - w stopce odpowiednie linki do plikow, usuniecie/zmiana zbednych podstron + link do fb
-
-HOME:
- - jak pakujemy?
- - krotka sekcja o nas (baner?)
- - nizej niski pasek z ikonkami do kontaktu?
+- walidacja contactform?
+- w stopce i na kontakt prawdziwe adresy/telefony itp
 
  ACCOUNT
  - dashboard
  - usun konto
 
 - responsywnosc
-- polityka prywatnosci - wysylka potwierdzen, faktur
+- polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy
 

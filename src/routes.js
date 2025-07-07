@@ -12,10 +12,12 @@ import ChangePassword from "./pages/account/ChangePassword";
 import ReviewList from "./pages/account/ReviewList";
 import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
+import ContactPage from "./pages/ContactPage";
 
 export default [
   { path: "/", element: <HomePage /> },
   { path: "/logowanie", element: <AuthPage /> },
+  { path: "/kontakt", element: <ContactPage /> },
 
   {
     path: "/konto",
