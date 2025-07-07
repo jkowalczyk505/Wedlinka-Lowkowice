@@ -53,12 +53,13 @@ function RegisterForm() {
     }
 
     try {
-      const res = await AuthFetch(
+      const res = await fetch(
         `${process.env.REACT_APP_API_URL}/api/auth/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, surname, phone, email, password }),
+          credentials: "include",
         }
       );
 

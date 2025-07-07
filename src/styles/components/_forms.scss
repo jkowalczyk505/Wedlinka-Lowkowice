@@ -118,4 +118,33 @@
             text-decoration: underline;
         }
     }
+
+    .postal-code-group {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-bottom: 1.2rem;
+
+        .postal-digit {
+            padding: 0;
+            margin: 0;
+            width: 2.5rem;
+            height: 2.5rem;
+            font-size: 1.3rem;
+            text-align: center;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            background-color: white;
+        }
+
+        .dash {
+            font-size: 1.4rem;
+            margin: 0 0.2rem;
+            user-select: none;
+            pointer-events: none;
+            font-family: 'Courier New', monospace;
+        }
+    }
+
 }

@@ -40,6 +40,27 @@ exports.updateMe = async (req, res, next) => {
   }
 };
 
+exports.updateAddress = async (req, res, next) => {
+  try {
+    const { street, apartmentNumber, postalCode, city } = req.body;
+
+    if (!street || !apartmentNumber || !postalCode || !city) {
+      return res.status(400).json({ error: "Brak wymaganych pól adresu" });
+    }
+
+    await User.updateAddress(req.user.id, {
+      street,
+      apartmentNumber,
+      postalCode,
+      city,
+    });
+
+    res.json({ message: "Adres zaktualizowany" });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.changePassword = async (req, res, next) => {
   try {
     const { oldPassword, newPassword } = req.body;
