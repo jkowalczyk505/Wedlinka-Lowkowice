@@ -1,0 +1,64 @@
+.page {
+    .contact-section {
+        padding: 0;
+        .contact-tile {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: stretch;
+
+            > div {
+                flex: 1 1 50%;
+                max-width: 50%;
+                padding: 4rem 8rem;
+            }
+
+            .contact-info {
+                align-items: center;
+                background-color: $primary-color-less-darken;
+                display: flex;
+                flex-direction: column;
+                height: 100%; 
+                h2 {
+                    margin-bottom: 2rem;
+                }
+
+                .contact-box {
+                    width: 70%;
+                    gap: 1rem;
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    text-align: center;
+                    padding: 1.2rem;
+                    background: $primary-color;
+                    border-radius: 6px;
+                    margin-bottom: 1rem;
+                    border: 1px solid $primary-color-darken;
+
+                    .icon {
+                        font-size: 2rem;
+                        color: $secondary-color;
+                        margin-right: 1rem;
+                    }
+
+                    p {
+                        font-size: 1rem;
+                        line-height: 1.4;
+                    }
+                }
+            }
+            .contact-form {
+                height: 100%;
+                background-color: $primary-color;
+
+                .form-wrapper {
+                    h2 {
+                        font-size: 1.5rem;
+                    }
+                }
+            }
+        }
+    }
+}
