@@ -30,10 +30,10 @@ function Header() {
 
   const navItems = [
     { to: "/", label: "Strona główna" },
-    { to: "/kielbasy", label: "Kiełbasy" },
-    { to: "/wedliny", label: "Wędliny" },
-    { to: "/wyroby-podrobowe", label: "Wyroby podrobowe" },
-    { to: "/nasze-paczki", label: "Nasze paczki" },
+    { to: "/sklep/kielbasy", label: "Kiełbasy" },
+    { to: "/sklep/wedliny", label: "Wędliny" },
+    { to: "/sklep/wyroby-podrobowe", label: "Wyroby podrobowe" },
+    { to: "/sklep/nasze-paczki", label: "Nasze paczki" },
     { to: "/kontakt", label: "Kontakt" },
   ];
 

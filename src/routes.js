@@ -13,11 +13,20 @@ import ReviewList from "./pages/account/ReviewList";
 import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
 import ContactPage from "./pages/ContactPage";
+import CategoryPage from "./pages/CategoryPage";
 
 export default [
   { path: "/", element: <HomePage /> },
   { path: "/logowanie", element: <AuthPage /> },
   { path: "/kontakt", element: <ContactPage /> },
+  {
+    path: "/sklep",
+    //element: <AllProductsPage />
+  },
+  {
+    path: "/sklep/:slug",
+    element: <CategoryPage />
+  },
 
   {
     path: "/konto",
@@ -39,5 +48,7 @@ export default [
   },
 
   // ewentualnie catch-all 404
-  { path: "*", element: <NotFoundPage /> },
+  { path: "/404", element: <NotFoundPage /> },
+  { path: "*", element: <Navigate to="/404" replace /> },
+
 ];

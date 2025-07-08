@@ -1,9 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+
 import Banner from "../components/common/Banner";
 import bannerImage from "../assets/home-banner.jpg";
 
 import CategoryGrid from "../components/categories/CategoryGrid";
 import { customerCategories } from "../data/categories";
+import Button from "../components/common/Button";
 
 import FeaturesSection from "../components/common/FeaturesSection";
 import { homeFeatures, contactFeatures } from "../data/features";
@@ -17,6 +20,7 @@ import GallerySlider from "../components/common/GallerySlider";
 import useInView from "../hooks/useInView";
 
 function HomePage() {
+  const navigate = useNavigate();
 
   const [packImgRef,  packInView]  = useInView(0.5);   // prawy obraz „Jak pakujemy”
   const [aboutImgRef, aboutInView] = useInView(0.5);   // lewy obraz w sekcji About
@@ -35,6 +39,11 @@ function HomePage() {
           <p>Sprawdź, co oferujemy - wybierz interesującą Cię grupę.</p>
         </div>
         <CategoryGrid items={customerCategories} />
+        <div className="show-all-btn">
+          <Button variant='red' onClick={() => navigate("/sklep")}>
+            Pokaż wszystkie
+          </Button>
+        </div>
       </section>
       <FeaturesSection items={homeFeatures} className="red-section" />
       <section className="packing-section dark-section">

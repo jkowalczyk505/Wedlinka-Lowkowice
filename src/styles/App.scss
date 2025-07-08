@@ -54,6 +54,7 @@
 @import "./pages/account/account_details";
 @import "./animations";
 @import "./pages/account/address_form";
+@import "./pages/category_page";
 
 @import "slick-carousel/slick/slick.css";
 @import "slick-carousel/slick/slick-theme.css";
@@ -141,6 +142,29 @@ h3 {
 
   .white-section {
     background-color: $primary-color;
+    color: $dark-color;
+
+    h1,
+    h2,
+    h3 {
+      color: $secondary-color;
+    }
+
+    .feature-icon {
+      color: $secondary-color;
+    }
+
+    .feature-title {
+      color: $secondary-color;
+    }
+  }
+
+  .pattern-section {
+    background-color: $primary-color-less-darken;
+    background-image: url("../assets/pattern.png");
+    background-repeat: repeat;
+    background-size: auto;
+
     color: $dark-color;
 
     h1,
