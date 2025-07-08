@@ -18,6 +18,29 @@
         font-size: 0.9rem;
     }
 
+    .password-wrapper {
+        position: relative;
+        width: 60%;
+
+        input {
+            width: 90%;
+        }
+
+        .eye-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-left: 0.5rem;
+            color: $secondary-color;
+            outline: none;
+
+            &:hover {
+                color: $secondary-color-darken;
+            }
+        }
+    }
+
+
     .required {
         color: $secondary-color;
         margin-left: 0.25rem;
