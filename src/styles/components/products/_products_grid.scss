@@ -1,0 +1,23 @@
+.products-grid {
+  display: grid;
+  gap: 2rem;
+  padding: 2rem 0;
+
+  // na duże ekrany: 4 kolumny po równo
+  grid-template-columns: repeat(4, 1fr);
+
+  // poniżej 1024px — 3 kolumny
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  // poniżej 768px — 2 kolumny
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  // poniżej 480px — 1 kolumna
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}

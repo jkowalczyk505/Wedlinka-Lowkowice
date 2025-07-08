@@ -1,0 +1,15 @@
+.products-grid-section {
+    flex: 1;              // rozciągnij tę sekcję do dołu
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .no-products {
+        font-size: 1.5rem;
+        align-self: center;
+    }
+    .custom-button {
+        margin-top: 1.5rem
+    }
+}

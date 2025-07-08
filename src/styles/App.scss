@@ -55,6 +55,8 @@
 @import "./animations";
 @import "./pages/account/address_form";
 @import "./pages/category_page";
+@import "./components/products/products_grid";
+@import "./components/products/product_tile";
 
 @import "slick-carousel/slick/slick.css";
 @import "slick-carousel/slick/slick-theme.css";
@@ -81,6 +83,8 @@ h3 {
 
 .page {
   min-height: 77vh;
+  display: flex;
+  flex-direction: column;
 
   section {
     padding: 3rem;

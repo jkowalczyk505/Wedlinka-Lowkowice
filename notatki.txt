@@ -5,6 +5,7 @@
 - walidacja contactform
 - w stopce i na kontakt prawdziwe adresy/telefony itp
 - ikona ilosci przy koszyku
+- srednia ocena produktu z backendu
 
 - responsywnosc
 - polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy
@@ -13,7 +14,6 @@ ACCOUNT
 - dashboard
 - moje zamowienia - zamowienia, faktury
 - usun konto
-- zmiana hasła
 
 NA KONIEC
 - MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza
