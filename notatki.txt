@@ -1,18 +1,23 @@
-- seo + sitemap + robots + index podmienic dane + manifest json
-- backend zabezpieczyc
-- reset hasla
 - nie udalo sie zaladowac tresci
 - scrolltotop
 - animacje
 - w stopce odpowiednie linki do plikow, usuniecie/zmiana zbednych podstron + link do fb
-- walidacja contactform + ma sie wysylac formularz na maila
+- walidacja contactform
 - w stopce i na kontakt prawdziwe adresy/telefony itp
 - ikona ilosci przy koszyku
 
- ACCOUNT
- - dashboard
- - usun konto
-
 - responsywnosc
 - polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy
+
+ACCOUNT
+- dashboard
+- usun konto
+- zmiana hasła
+
+NA KONIEC
+- MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza
+- BACKEND zabezpieczyc
+- baza i backend przenieść
+- seo + sitemap + robots + index podmienic dane + manifest json
+
 
