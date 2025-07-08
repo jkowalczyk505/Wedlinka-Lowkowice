@@ -3,6 +3,7 @@ import { useAuth } from "../../components/auth/AuthContext";
 import Spinner from "../../components/common/Spinner";
 import Button from "../../components/common/Button";
 import { AuthFetch } from "../../components/auth/AuthFetch";
+import InfoTip from "../../components/common/InfoTip";
 
 function AccountDetails() {
   const { setUser } = useAuth();
@@ -167,6 +168,10 @@ function AccountDetails() {
       <div className="account-columns">
         <div className="personal-data">
           <h2>Dane osobowe</h2>
+          <InfoTip>
+            Te dane osobowe zostaną automatycznie wstawione podczas składania
+            zamówienia, ale możesz je wtedy zmienić.
+          </InfoTip>
           <form onSubmit={handleSubmit} className="form-wrapper">
             <label>Imię</label>
             <input

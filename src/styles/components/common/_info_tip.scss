@@ -1,0 +1,24 @@
+.info-tip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: $primary-color-less-darken;
+    padding: 1rem;
+    border-left: 4px solid $accent-color-darken;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    color: #333;
+    margin-bottom: 1rem;
+
+    .info-icon {
+        width: 20px;
+        height: 20px;
+        color: $accent-color-darken;
+        flex-shrink: 0;
+    }
+
+    .info-text {
+        flex: 1;
+        line-height: 1.4;
+    }
+}

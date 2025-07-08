@@ -4,6 +4,7 @@ import Spinner from "../../components/common/Spinner";
 import Button from "../../components/common/Button";
 import { AuthFetch } from "../../components/auth/AuthFetch";
 import { MapPin } from "lucide-react";
+import InfoTip from "../../components/common/InfoTip";
 
 function AddressForm() {
   const [addressData, setAddressData] = useState({
@@ -208,7 +209,10 @@ function AddressForm() {
       <div className="account-columns">
         <div className="personal-data">
           <h2>Dane adresowe</h2>
-
+          <InfoTip>
+            Te dane adresowe zostaną automatycznie wstawione podczas składania
+            zamówienia, ale możesz je wtedy zmienić.
+          </InfoTip>
           <form onSubmit={handleSubmit} className="form-wrapper">
             <label>Ulica i numer</label>
             <input
