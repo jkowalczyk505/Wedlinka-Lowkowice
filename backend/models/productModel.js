@@ -57,6 +57,14 @@ const ProductModel = {
     return rows[0] || null;
   },
 
+  async findByCategory(category) {
+    const [rows] = await db.query(
+      "SELECT * FROM products WHERE category = ? AND is_deleted = 0",
+      [category]
+    );
+    return rows;
+  },
+
   async updateById(id, updatedProduct) {
     const fields = [];
     const values = [];
