@@ -18,8 +18,8 @@ import useInView from "../hooks/useInView";
 
 function HomePage() {
 
-  const [packImgRef,  packInView]  = useInView(0.2);   // prawy obraz „Jak pakujemy”
-  const [aboutImgRef, aboutInView] = useInView(0.2);   // lewy obraz w sekcji About
+  const [packImgRef,  packInView]  = useInView(0.5);   // prawy obraz „Jak pakujemy”
+  const [aboutImgRef, aboutInView] = useInView(0.5);   // lewy obraz w sekcji About
 
   return (
     <main className="page">

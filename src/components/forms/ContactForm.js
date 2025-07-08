@@ -26,6 +26,18 @@ export default function ContactForm() {
           placeholder="Napisz, w czym możemy pomóc..."
         />
 
+        <p className="form-note">
+          Wysyłając formularz, akceptujesz{" "}
+          <a
+            href="/files/Polityka_Prywatnosci.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            politykę prywatności
+          </a>
+          .
+        </p>
+
         <Button type="submit" variant="red">
           Wyślij wiadomość
         </Button>
