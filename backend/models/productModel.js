@@ -2,7 +2,7 @@ const db = require("../config/db");
 
 const ProductModel = {
   async create(product) {
-    const {
+    let {
       name,
       category,
       slug,
@@ -16,10 +16,14 @@ const ProductModel = {
       image,
     } = product;
 
+    if (vat_rate === undefined || vat_rate === null || vat_rate === "") {
+      vat_rate = 0.05;
+    }
+
     const [result] = await db.query(
       `INSERT INTO products 
-        (name, category, slug, description, ingredients, allergens, unit, quantity, price_net, vat_rate, image, is_available, is_deleted, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 0, NOW(), NOW())`,
+        (name, category, slug, description, ingredients, allergens, unit, quantity, price_net, vat_rate, image)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         name,
         category,
