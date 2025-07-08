@@ -2,6 +2,7 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const db = require("./config/db");
+const path = require("path");
 
 const app = express();
 
@@ -22,6 +23,11 @@ app.use((req, res, next) => {
 
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
+
+app.use(
+  "/uploads/products",
+  express.static(path.join(__dirname, "uploads", "products"))
+);
 
 app.use((err, req, res, next) => {
   console.error(err);
