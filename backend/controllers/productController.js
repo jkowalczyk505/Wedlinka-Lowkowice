@@ -91,12 +91,13 @@ exports.deleteProduct = async (req, res) => {
     if (!product)
       return res.status(404).json({ error: "Nie znaleziono produktu" });
 
-    if (product.image) {
-      const imgPath = path.join(uploadDir, product.image);
-      if (fs.existsSync(imgPath)) {
-        fs.unlinkSync(imgPath);
-      }
-    }
+    // NIE USUWAMY ZDJĘCIA Z BACKENDU
+    // if (product.image) {
+    //   const imgPath = path.join(uploadDir, product.image);
+    //   if (fs.existsSync(imgPath)) {
+    //     fs.unlinkSync(imgPath);
+    //   }
+    // }
 
     await ProductModel.softDeleteById(req.params.id);
     res.json({ message: "Produkt usunięty (logicznie)" });

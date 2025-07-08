@@ -78,7 +78,9 @@ const ProductModel = {
 
   async softDeleteById(id) {
     await db.query(
-      `UPDATE products SET is_deleted = 1, updated_at = NOW() WHERE id = ?`,
+      `UPDATE products 
+     SET is_deleted = 1, is_available = 0, updated_at = NOW() 
+     WHERE id = ?`,
       [id]
     );
   },
