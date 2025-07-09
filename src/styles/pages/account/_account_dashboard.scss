@@ -232,4 +232,24 @@
             }
         }
     }
+
+    .account-delete {
+        h2 {
+            font-family: $font-heading;
+            color: $secondary-color;
+            text-transform: uppercase;
+            letter-spacing: 0.05rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-tip {
+            width: fit-content;
+            ;
+        }
+
+        .btn {
+            margin-top: 1rem;
+        }
+    }
+
 }

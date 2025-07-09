@@ -1,5 +1,11 @@
 const db = require("../config/db");
 
+function formatDecimal(value) {
+  if (value == null) return null;
+  const num = parseFloat(value);
+  return Number.isInteger(num) ? `${num}` : num.toLocaleString("pl-PL");
+}
+
 const ProductModel = {
   async create(product) {
     let {
@@ -46,7 +52,11 @@ const ProductModel = {
     const [rows] = await db.query(
       `SELECT * FROM products WHERE is_deleted = 0`
     );
-    return rows;
+    return rows.map((row) => ({
+      ...row,
+      quantity: formatDecimal(row.quantity),
+      price_net: formatDecimal(row.price_net),
+    }));
   },
 
   async findById(id) {
@@ -54,7 +64,14 @@ const ProductModel = {
       `SELECT * FROM products WHERE id = ? AND is_deleted = 0`,
       [id]
     );
-    return rows[0] || null;
+    const row = rows[0];
+    return row
+      ? {
+          ...row,
+          quantity: formatDecimal(row.quantity),
+          price_net: formatDecimal(row.price_net),
+        }
+      : null;
   },
 
   async findByCategory(category) {
@@ -62,7 +79,11 @@ const ProductModel = {
       "SELECT * FROM products WHERE category = ? AND is_deleted = 0",
       [category]
     );
-    return rows;
+    return rows.map((row) => ({
+      ...row,
+      quantity: formatDecimal(row.quantity),
+      price_net: formatDecimal(row.price_net),
+    }));
   },
 
   async updateById(id, updatedProduct) {

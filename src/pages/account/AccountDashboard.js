@@ -13,6 +13,11 @@ import {
   Key,
   FileText,
 } from "lucide-react";
+import Button from "../../components/common/Button";
+import InfoTip from "../../components/common/InfoTip";
+import ConfirmDialog from "../../components/common/ConfirmDialog";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 const AccountDashboard = () => {
   const { user } = useAuth();
@@ -20,6 +25,7 @@ const AccountDashboard = () => {
   const [stats, setStats] = useState({ total: 0, pending: 0, unpaid: 0 });
   const [cartItems, setCartItems] = useState([]);
   const [invoices, setInvoices] = useState([]);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     // statystyki zamówień
@@ -144,6 +150,39 @@ const AccountDashboard = () => {
           <MoreHorizontal size={24} aria-label="Więcej faktur" />
         </Link>
       </section>
+      {/* ▷ Usuwanie konta */}
+      <section className="account-delete">
+        <h2>Usuń konto</h2>
+        <InfoTip>Usunięcie konta jest nieodwracalne!</InfoTip>
+        <Button variant="red" onClick={() => setShowConfirm(true)}>
+          Usuń konto
+        </Button>
+      </section>
+      {showConfirm && (
+        <ConfirmDialog
+          text="Czy na pewno chcesz usunąć swoje konto? Tej operacji nie można cofnąć."
+          onCancel={() => setShowConfirm(false)}
+          onConfirm={async () => {
+            try {
+              const res = await fetch(`${API_URL}/api/users/me`, {
+                method: "DELETE",
+                credentials: "include",
+              });
+
+              if (res.status === 204) {
+                window.location.href = "/";
+              } else {
+                const data = await res.json();
+                alert(data.error || "Błąd podczas usuwania konta.");
+              }
+            } catch {
+              alert("Nie udało się połączyć z serwerem.");
+            } finally {
+              setShowConfirm(false);
+            }
+          }}
+        />
+      )}
     </div>
   );
 };

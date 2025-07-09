@@ -8,7 +8,7 @@
 - srednia ocena produktu z backendu
 
 - responsywnosc
-- polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy
+- polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy, okres przechowywania danych invoices + shipping_details (5lat? jak porzucone nieoplacone to krocej)
 
 PRODUKTY
 - srednia ocena wyswietlana - jak?
@@ -19,12 +19,13 @@ PRODUKTY
 ACCOUNT
 - dashboard
 - moje zamowienia - zamowienia, faktury
-- usun konto
 
 NA KONIEC
 - MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza
 - BACKEND zabezpieczyc
 - baza i backend przenieść
 - seo + sitemap + robots + index podmienic dane + manifest json
+- anonimazacja danych users zgodnie z RODO (zmienic markAsDeleted? + pola bazy users możliwe na NULL?)
+- archiwizacja i/lub usuwanie kont, danych z zamowien itp - czyszczenie tabel? cron?
 
 

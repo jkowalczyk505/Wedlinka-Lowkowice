@@ -102,7 +102,7 @@ exports.changeEmail = async (req, res, next) => {
 
 exports.deleteMe = async (req, res, next) => {
   try {
-    await User.deleteById(req.user.id);
+    await User.markAsDeleted(req.user.id);
     res.status(204).end();
   } catch (err) {
     next(err);
