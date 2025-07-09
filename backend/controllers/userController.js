@@ -101,8 +101,25 @@ exports.changeEmail = async (req, res, next) => {
 };
 
 exports.deleteMe = async (req, res, next) => {
+  const userId = req.user.id;
+
   try {
-    await User.markAsDeleted(req.user.id);
+    await db.query(`DELETE FROM cart_items WHERE user_id = ?`, [userId]);
+    await User.markAsDeleted(userId);
+
+    // Usuń ciasteczka JWT
+    res.clearCookie(COOKIE_NAME, {
+      httpOnly: true,
+      secure: COOKIE_SECURE === "true",
+      sameSite: COOKIE_SAMESITE,
+    });
+
+    res.clearCookie(REFRESH_COOKIE_NAME, {
+      httpOnly: true,
+      secure: REFRESH_COOKIE_SECURE === "true",
+      sameSite: REFRESH_COOKIE_SAMESITE,
+    });
+
     res.status(204).end();
   } catch (err) {
     next(err);
