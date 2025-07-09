@@ -4,7 +4,7 @@ import { Home, User, Lock, Star, ListOrdered, MapPin } from "lucide-react"; // n
 
 const AccountPage = () => {
   return (
-    <div className="page white-section account-page-container">
+    <div className="white-section account-page-container">
       {/* Sidebar */}
       <aside className="account-sidebar">
         <h2>Moje Konto</h2>

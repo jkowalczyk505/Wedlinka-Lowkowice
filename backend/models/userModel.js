@@ -23,7 +23,7 @@ const UserModel = {
     const [rows] = await db.query(
       `SELECT id, email, password_hash AS passwordHash, name, surname, phone, role 
          FROM users 
-        WHERE email = ?`,
+        WHERE email = ? AND is_deleted = 0`,
       [email]
     );
     return rows[0] || null;
@@ -36,7 +36,7 @@ const UserModel = {
           postal_code AS postalCode, city,
           created_at AS createdAt, updated_at AS updatedAt
    FROM users
-   WHERE id = ?`,
+   WHERE id = ? AND is_deleted = 0`,
       [id]
     );
 
@@ -45,7 +45,7 @@ const UserModel = {
 
   async findPublicById(id) {
     const [rows] = await db.query(
-      `SELECT id, name, surname FROM users WHERE id = ?`,
+      `SELECT id, name, surname FROM users WHERE id = ? AND is_deleted = 0`,
       [id]
     );
     return rows[0] || null;
@@ -55,7 +55,7 @@ const UserModel = {
     await db.query(
       `UPDATE users 
           SET name = ?, surname = ?, phone = ?, updated_at = NOW()
-        WHERE id = ?`,
+        WHERE id = ? AND is_deleted = 0`,
       [name, surname, phone, id]
     );
   },
@@ -68,7 +68,7 @@ const UserModel = {
        postal_code = ?, 
        city = ?, 
        updated_at = NOW()
-     WHERE id = ?`,
+     WHERE id = ? AND is_deleted = 0`,
       [street, apartmentNumber, postalCode, city, id]
     );
   },
@@ -77,7 +77,7 @@ const UserModel = {
     const [rows] = await db.query(
       `SELECT id, email, password_hash AS passwordHash, name, surname, phone, role
          FROM users
-        WHERE id = ?`,
+        WHERE id = ? AND is_deleted = 0`,
       [id]
     );
     return rows[0] || null;
@@ -85,20 +85,23 @@ const UserModel = {
 
   async updatePassword(id, newHash) {
     await db.query(
-      `UPDATE users SET password_hash = ?, updated_at = NOW() WHERE id = ?`,
+      `UPDATE users SET password_hash = ?, updated_at = NOW() WHERE id = ? AND is_deleted = 0`,
       [newHash, id]
     );
   },
 
   async updateEmail(id, newEmail) {
     await db.query(
-      `UPDATE users SET email = ?, updated_at = NOW() WHERE id = ?`,
+      `UPDATE users SET email = ?, updated_at = NOW() WHERE id = ? AND is_deleted = 0`,
       [newEmail, id]
     );
   },
 
-  async deleteById(id) {
-    await db.query(`DELETE FROM users WHERE id = ?`, [id]);
+  async markAsDeleted(id) {
+    await db.query(
+      `UPDATE users SET is_deleted = 1, updated_at = NOW() WHERE id = ?`,
+      [id]
+    );
   },
 };
 
