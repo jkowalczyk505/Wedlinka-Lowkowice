@@ -8,7 +8,8 @@ import { logout } from "../auth/AuthUtils";
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const { user, setUser } = useAuth();
+  const { user, setUser, setLogoutInProgress } = useAuth();
+
   const API_URL = process.env.REACT_APP_API_URL;
 
   const handleAccountClick = () => {
@@ -16,6 +17,7 @@ function Header() {
   };
 
   const handleLogout = () => {
+    setLogoutInProgress(true);
     logout(setUser);
   };
 

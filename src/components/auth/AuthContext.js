@@ -44,6 +44,11 @@ export function AuthProvider({ children }) {
     fetchUser();
   }, [API_URL]);
 
+  // 🔐 Blokuj cały interfejs jeśli trwa wylogowanie
+  if (logoutInProgress) {
+    return <Spinner fullscreen />;
+  }
+
   return (
     <AuthContext.Provider
       value={{
