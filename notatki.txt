@@ -28,6 +28,7 @@ NA KONIEC
 - baza i backend przenieść
 - seo + sitemap + robots + index podmienic dane + manifest json
 - anonimazacja danych users zgodnie z RODO (zmienic markAsDeleted? + pola bazy users możliwe na NULL?)
+- ustaiwneie uzytkownika na usunietego uniemozliwia zalozenie kolejnego na ten sam email
 - archiwizacja i/lub usuwanie kont, danych z zamowien itp - czyszczenie tabel? cron?
 
 

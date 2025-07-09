@@ -4,9 +4,11 @@ import logo from "../../assets/logo.png";
 import { CiUser, CiShoppingCart, CiLogout } from "react-icons/ci";
 import { useAuth } from "../auth/AuthContext";
 import { logout } from "../auth/AuthUtils";
+import CartDrawer from "../cart/CartDrawer";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const navigate = useNavigate();
   const { user, setUser, setLogoutInProgress } = useAuth();
 
@@ -57,10 +59,10 @@ function Header() {
         </nav>
 
         <div className="account-icons">
-          <NavLink to="/koszyk">
+          <button className="account-button" onClick={() => setCartOpen(true)}>
             <CiShoppingCart />
             Koszyk
-          </NavLink>
+          </button>
 
           <button className="account-button" onClick={handleAccountClick}>
             <CiUser />
@@ -75,6 +77,7 @@ function Header() {
           )}
         </div>
       </div>
+      <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </header>
   );
 }
