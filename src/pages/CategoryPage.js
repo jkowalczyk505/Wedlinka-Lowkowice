@@ -1,68 +1,56 @@
+// src/pages/CategoryPage.js
 import React, { useEffect, useState } from "react";
 import { useParams, Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
+
 import ProductsGrid from "../components/products/ProductsGrid";
 import Spinner from "../components/common/Spinner";
 import Button from "../components/common/Button";
 
-function CategoryPage() {
-  const { slug } = useParams();
-  const navigate = useNavigate();                  // ← tu
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+// helpery
+import { getCategoryMeta } from "../utils/product";
 
-  const allowedSlugs = [
-    "wedliny",
-    "kielbasy",
-    "wyroby-podrobowe",
-    "nasze-paczki",
-  ];
-  const categoryTitles = {
-    wedliny: "Wędliny",
-    kielbasy: "Kiełbasy",
-    "wyroby-podrobowe": "Wyroby podrobowe",
-    "nasze-paczki": "Nasze paczki",
-  };
-  const slugToCategoryName = {
-    wedliny: "wędliny",
-    kielbasy: "kiełbasy",
-    "wyroby-podrobowe": "wyroby podrobowe",
-    "nasze-paczki": "paczki",
-  };
-  const categoryName = slugToCategoryName[slug];
+export default function CategoryPage() {
+  const { slug }   = useParams();
+  const navigate   = useNavigate();
+  const [products, setProducts] = useState([]);
+  const [loading,  setLoading]  = useState(true);
+
+  // meta może być null, ale hooki muszą się wywołać zawsze
+  const meta = getCategoryMeta(slug);
 
   useEffect(() => {
-    if (!allowedSlugs.includes(slug)) return;
+    // jeśli meta nie istnieje, nie pobieramy danych
+    if (!meta) return;
 
+    const { apiCategory } = meta;
     setLoading(true);
     setProducts([]);
 
     axios
       .get(
         `${process.env.REACT_APP_API_URL}/api/products/category/${encodeURIComponent(
-          categoryName
+          apiCategory
         )}`
       )
-      .then((res) => {
-        setProducts(res.data);
-      })
+      .then((res) => setProducts(res.data))
       .catch((err) => {
         if (err.response?.status === 404) {
+          // brak produktów → zostawiamy pustą tablicę
           setProducts([]);
         } else {
           console.error("Błąd ładowania produktów:", err);
         }
       })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [slug]);
+      .finally(() => setLoading(false));
+  }, [meta]); // uruchom ponownie, gdy zmieni się slug→meta
 
-  if (!allowedSlugs.includes(slug)) {
+  // dopiero po hookach możemy przerwać render
+  if (!meta) {
     return <Navigate to="/404" replace />;
   }
 
-  const title = categoryTitles[slug];
+  const { title } = meta;
 
   return (
     <main className="page">
@@ -87,5 +75,3 @@ function CategoryPage() {
     </main>
   );
 }
-
-export default CategoryPage;
