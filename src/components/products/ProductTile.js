@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ReactComponent as DefaultIcon } from "../../assets/szynka-ikona.svg";
 import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 import AddToCartButton from "../common/AddToCart";
+import { formatGrossPrice, formatQuantity } from "../../utils/product";
 
 function ProductTile({ product }) {
   const {
@@ -15,13 +16,7 @@ function ProductTile({ product }) {
     averageRating = 2.5,
   } = product;
 
-  // Obliczamy cenę brutto i formatujemy po polsku (z przecinkiem)
-  const grossPrice = (
-    parseFloat(price_net) * (1 + parseFloat(vat_rate))
-  ).toLocaleString("pl-PL", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+  const grossPrice = formatGrossPrice(price_net, vat_rate);
 
   const imgUrl = `${process.env.REACT_APP_API_URL}/uploads/products/${image}`;
 
@@ -48,12 +43,7 @@ function ProductTile({ product }) {
       <div className="product-content">
         <h3 className="product-name">{name}</h3>
         <p className="product-quantity">
-          Ilość:{" "}
-          {parseFloat(quantity).toLocaleString("pl-PL", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}{" "}
-          {unit}
+          Ilość: {formatQuantity(quantity)} {unit}
         </p>
 
         <div className="product-rating">

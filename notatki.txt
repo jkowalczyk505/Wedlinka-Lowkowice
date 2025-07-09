@@ -11,6 +11,8 @@
 - polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy, okres przechowywania danych invoices + shipping_details (5lat? jak porzucone nieoplacone to krocej)
 
 PRODUKTY
+- sklep ogolny
+- sekcja intro - kategoria, breadcrumbs, sortowanie
 - srednia ocena wyswietlana - jak?
 - dodawanie do koszyka i alert
 - link w tytule i zdjeciu
