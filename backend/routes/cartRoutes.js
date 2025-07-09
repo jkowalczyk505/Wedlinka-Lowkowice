@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const cartController = require("../controllers/cartController");
-const auth = require("../middleware/auth");
+const { protect } = require("../middleware/authMiddleware");
 
-router.use(auth); // zabezpieczenie: tylko zalogowani
+router.use(protect);
 
 router.get("/", cartController.getCart);
 router.post("/", cartController.addToCart);

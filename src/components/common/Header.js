@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { CiUser, CiShoppingCart, CiLogout } from "react-icons/ci";
 import { useAuth } from "../auth/AuthContext";
+import { logout } from "../auth/AuthUtils";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,18 +15,8 @@ function Header() {
     navigate(user ? "/konto" : "/logowanie");
   };
 
-  const handleLogout = async () => {
-    try {
-      await fetch(`${API_URL}/api/auth/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
-
-      setUser(null);
-      window.location.href = "/";
-    } catch (err) {
-      console.error("Błąd wylogowania:", err);
-    }
+  const handleLogout = () => {
+    logout(setUser);
   };
 
   const navItems = [

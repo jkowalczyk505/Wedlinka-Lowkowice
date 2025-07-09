@@ -170,6 +170,8 @@ const AccountDashboard = () => {
               });
 
               if (res.status === 204) {
+                localStorage.removeItem("cart"); // ⬅️ Dodane
+                localStorage.removeItem("user"); // ⬅️ Dodane
                 window.location.href = "/";
               } else {
                 const data = await res.json();

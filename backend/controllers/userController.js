@@ -1,6 +1,16 @@
 // controllers/userController.js
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
+const db = require("../config/db");
+
+const {
+  COOKIE_NAME,
+  REFRESH_COOKIE_NAME,
+  COOKIE_SECURE,
+  COOKIE_SAMESITE,
+  REFRESH_COOKIE_SECURE,
+  REFRESH_COOKIE_SAMESITE,
+} = process.env;
 
 exports.getMe = async (req, res, next) => {
   try {

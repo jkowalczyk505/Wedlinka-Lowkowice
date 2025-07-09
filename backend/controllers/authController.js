@@ -115,8 +115,16 @@ exports.refresh = (req, res) => {
 };
 
 exports.logout = (req, res) => {
-  res.clearCookie(COOKIE_NAME);
-  res.clearCookie(REFRESH_COOKIE_NAME);
+  res.clearCookie(COOKIE_NAME, {
+    httpOnly: COOKIE_HTTPONLY === "true",
+    secure: COOKIE_SECURE === "true",
+    sameSite: COOKIE_SAMESITE,
+  });
+  res.clearCookie(REFRESH_COOKIE_NAME, {
+    httpOnly: REFRESH_COOKIE_HTTPONLY === "true",
+    secure: REFRESH_COOKIE_SECURE === "true",
+    sameSite: REFRESH_COOKIE_SAMESITE,
+  });
   res.status(204).end();
 };
 

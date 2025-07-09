@@ -1,6 +1,6 @@
 const API_URL = process.env.REACT_APP_API_URL;
 
-export async function AuthFetch(url, options = {}) {
+export async function AuthFetch(url, options = {}, setUser = null) {
   let res = await fetch(url, {
     ...options,
     credentials: "include",
@@ -18,14 +18,10 @@ export async function AuthFetch(url, options = {}) {
         credentials: "include",
       });
     } else {
-      res.status = 498; // custom status żeby frontend wiedział że refresh się nie udał
+      res.status = 498;
+      if (setUser) setUser(null); // <–– wyczyść usera jeśli przekazany
     }
   }
 
   return res;
-}
-
-export function logout() {
-  localStorage.removeItem("user");
-  window.location.href = "/";
 }
