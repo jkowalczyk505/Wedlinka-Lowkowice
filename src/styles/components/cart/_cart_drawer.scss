@@ -2,10 +2,10 @@
     position: fixed;
     top: 0;
     right: -100%;
-    width: 360px;
+    width: 380px;
     height: 100%;
     background: $primary-color;
-    padding: 1rem;
+    padding: 1rem 2rem;
     transition: right 0.3s ease;
     z-index: 2000;
     display: flex;
@@ -19,7 +19,6 @@
     .cart-header {
         display: flex;
         justify-content: flex-end;
-        margin-bottom: 1rem;
 
         .close-button {
             font-size: 3rem;
@@ -50,20 +49,20 @@
 
             .item-left {
                 display: flex;
-                gap: 0.75rem;
-                align-items: center;
+                gap: 1rem;
 
                 img {
-                    width: 56px;
-                    height: 56px;
+                    width: 70px;
+                    height: 70px;
                     object-fit: cover;
-                    border-radius: 4px;
                 }
 
                 .item-info {
                     .product-name {
+                        font-size: 1.2rem;
                         font-weight: 600;
                         margin-bottom: 0.25rem;
+                        color: $secondary-color;
                     }
 
                     .product-qty {
@@ -74,20 +73,23 @@
             }
 
             .remove-button {
-                font-size: 1.2rem;
-                color: #999;
+                font-size: 1.4rem;
+                color: $dark-color-lighten;
+                padding: 0.1rem 0.5rem;
+                border-radius: 50%;
+                border: 1px solid $dark-color-lighten;
                 background: none;
-                border: none;
                 cursor: pointer;
 
                 &:hover {
-                    color: #e00;
+                    color: $secondary-color;
+                    border-color: $secondary-color;
                 }
             }
         }
 
         .empty-message {
-            padding: 1rem;
+            padding: 0 1rem;
             text-align: center;
             color: $dark-color-lighten
         }

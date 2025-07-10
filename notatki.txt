@@ -5,6 +5,7 @@
 - walidacja contactform
 - w stopce i na kontakt prawdziwe adresy/telefony itp
 - ikona ilosci przy koszyku
+- toast i/lub alert
 - srednia ocena produktu z backendu
 
 - responsywnosc
@@ -21,6 +22,10 @@ PRODUKTY
 ACCOUNT
 - dashboard
 - moje zamowienia - zamowienia, faktury
+
+KOSZYK
+- prawy border w X uciety
+- zdjecie dla produktu bez zdjecia
 
 NA KONIEC
 - MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza
