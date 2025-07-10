@@ -6,10 +6,13 @@
 - w stopce i na kontakt prawdziwe adresy/telefony itp
 - ikona ilosci przy koszyku
 - toast i/lub alert
-- srednia ocena produktu z backendu
 
 - responsywnosc
 - polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy, okres przechowywania danych invoices + shipping_details (5lat? jak porzucone nieoplacone to krocej)
+
+BACKEND
+- generowanie slugu
+- srednia ocena produktu
 
 PRODUKTY
 - sklep ogolny
