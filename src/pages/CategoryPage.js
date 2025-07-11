@@ -13,11 +13,11 @@ import SortDropdown from "../components/common/SortDropdown";
 import { getCategoryMeta } from "../utils/product";
 
 export default function CategoryPage() {
-  const { slug }   = useParams();
-  const navigate   = useNavigate();
+  const { slug } = useParams();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
-  const [loading,  setLoading]  = useState(true);
-  const [sort, setSort] = useState("default");              // ← stan sortowania
+  const [loading, setLoading] = useState(true);
+  const [sort, setSort] = useState("default"); // ← stan sortowania
 
   const meta = getCategoryMeta(slug);
   useEffect(() => {
@@ -27,9 +27,9 @@ export default function CategoryPage() {
     setProducts([]);
     axios
       .get(
-        `${process.env.REACT_APP_API_URL}/api/products/category/${encodeURIComponent(
-          apiCategory
-        )}?sort=${sort}`                              // ← możesz podłączyć query sort
+        `${
+          process.env.REACT_APP_API_URL
+        }/api/products/category/${encodeURIComponent(apiCategory)}?sort=${sort}` // ← możesz podłączyć query sort
       )
       .then((res) => setProducts(res.data))
       .catch((err) => {
@@ -37,7 +37,7 @@ export default function CategoryPage() {
         else console.error("Błąd ładowania produktów:", err);
       })
       .finally(() => setLoading(false));
-  }, [meta, sort]);                                     // ← reload na zmianę sort
+  }, [meta, sort]); // ← reload na zmianę sort
 
   if (!meta) return <Navigate to="/404" replace />;
 
@@ -47,31 +47,28 @@ export default function CategoryPage() {
     <main className="page">
       <section className="intro-category-section dark-section">
         <div className="intro-header">
-        <div className="breadcrumbs-wrapper">
-          <Breadcrumbs
-            crumbs={[
-              { label: "Strona główna", to: "/" },
-              { label: title }
-            ]}
-          />
-        </div>
+          <div className="breadcrumbs-wrapper">
+            <Breadcrumbs
+              crumbs={[{ label: "Strona główna", to: "/" }, { label: title }]}
+            />
+          </div>
 
-        <h1>{title}</h1>
+          <h1>{title}</h1>
 
-        <div className="sort-wrapper">
-          <SortDropdown
-            value={sort}
-            options={[
-              { value: "default", label: "Domyślnie" },
-              { value: "price-asc", label: "Cena ↑" },
-              { value: "price-desc", label: "Cena ↓" },
-              { value: "name-asc", label: "Nazwa A–Z" },
-              { value: "name-desc", label: "Nazwa Z–A" }
-            ]}
-            onChange={(e) => setSort(e.target.value)}
-          />
+          <div className="sort-wrapper">
+            <SortDropdown
+              value={sort}
+              options={[
+                { value: "default", label: "Domyślnie" },
+                { value: "price-asc", label: "Cena ↑" },
+                { value: "price-desc", label: "Cena ↓" },
+                { value: "name-asc", label: "Nazwa A–Z" },
+                { value: "name-desc", label: "Nazwa Z–A" },
+              ]}
+              onChange={(e) => setSort(e.target.value)}
+            />
+          </div>
         </div>
-      </div>
       </section>
 
       <section className="products-grid-section pattern-section">

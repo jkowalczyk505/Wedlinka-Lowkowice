@@ -11,6 +11,7 @@ BACKEND
 - generowanie slugu
 - srednia ocena produktu
 - zabezpieczenie multera - przy bledzie niezapisywanie i nienadpisywanie zdjec, brak usuwania starych
+- sortowanie
 
 PRODUKTY
 - sklep ogolny
@@ -21,9 +22,6 @@ PRODUKTY
 ACCOUNT
 - dashboard
 - moje zamowienia - zamowienia, faktury
-
-KOSZYK
-- zdjecie dla produktu bez zdjecia
 
 NA KONIEC
 - MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza

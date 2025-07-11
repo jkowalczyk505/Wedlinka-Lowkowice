@@ -1,37 +1,72 @@
 .product-tile {
     background-color: $primary-color;
-    border-radius: 12px;
-    border: 1px solid $primary-color-darken;
-    transition: box-shadow .15s linear;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     min-height: 500px;
-    overflow: hidden; 
+    overflow: hidden;
 
-    &:hover {
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
 
     .image-wrapper {
         position: relative;
         flex: 0 0 50%;
         min-height: 50%;
         background-color: $primary-color-less-darken;
-        img.product-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        overflow: hidden;
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 60%, rgba(0, 0, 0, 0.7) 100%);
+            pointer-events: none;
+            z-index: 1;
         }
+
+        img.product-image,
         svg.product-image.default-icon {
-            height: 100%;
             width: 100%;
+            height: 100%;
             object-fit: cover;
+            transition: transform 0.6s ease, filter 0.6s ease;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0);
+            transition: background-color 0.6s ease;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        &:hover {
+
+            img.product-image,
+            svg.product-image.default-icon {
+                transform: scale(1.05);
+            }
+
+            &::after {
+                background-color: rgba(0, 0, 0, 0.3);
+            }
         }
 
         &.unavailable {
+
+            &::before {
+                background: none;
+            }
+
             img.product-image,
             svg.product-image.default-icon {
                 opacity: 0.3;
+                transform: none;
+            }
+
+            &::after {
+                background-color: transparent;
             }
 
             .unavailable-badge {
@@ -48,9 +83,11 @@
                 letter-spacing: 0.05rem;
                 pointer-events: none;
                 font-weight: 600;
+                z-index: 3;
             }
         }
     }
+
 
     .product-content {
         flex: 0 0 50%;
@@ -60,17 +97,19 @@
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        
+
         .product-name {
             font-weight: 600;
             font-size: 1.5rem;
             text-transform: none;
             letter-spacing: 0;
             color: $dark-color;
+
             .product-link {
                 color: inherit;
                 text-decoration: none;
                 transition: color 0.2s ease;
+
                 &:hover {
                     color: $secondary-color;
                 }
@@ -84,6 +123,7 @@
 
         .product-rating {
             margin-top: 0.5rem;
+
             .star {
                 color: $primary-color-darken;
                 font-size: 1.1rem;
@@ -92,6 +132,7 @@
                 &.filled {
                     color: $accent-color;
                 }
+
                 &.half {
                     color: $accent-color;
                 }
@@ -101,7 +142,7 @@
         .product-price {
             font-size: 1.4rem;
             margin-top: 0.7rem;
-            margin-bottom: auto; 
+            margin-bottom: auto;
             font-weight: 450;
         }
     }
