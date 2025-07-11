@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import Button from "../common/Button";
 import Spinner from "../common/Spinner";
 import { ReactComponent as DefaultIcon } from "../../assets/szynka-ikona.svg";
-import { categoryToSlug } from "../../utils/product"; // ⬅️ nowy import
+import { categoryToSlug, formatQuantity } from "../../utils/product";
 
 const CartDrawer = ({ isOpen, onClose }) => {
   const { items, removeItem, reloadCart, loading } = useCart();
@@ -81,6 +81,9 @@ const CartDrawer = ({ isOpen, onClose }) => {
                     />
                     <div className="item-info">
                       <div className="product-name">{product.name}</div>
+                      <div className="product-unit">
+                        Ilość: {formatQuantity(product.quantity)} {product.unit}
+                      </div>
                       <div className="product-qty">
                         {quantity} ×{" "}
                         {(

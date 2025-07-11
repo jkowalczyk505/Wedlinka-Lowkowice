@@ -16,7 +16,7 @@ function ProductTile({ product }) {
     unit,
     is_available,
     averageRating = 2.5,
-    slug
+    slug,
   } = product;
 
   const { addItem } = useCart();
@@ -32,7 +32,7 @@ function ProductTile({ product }) {
   const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
 
   return (
-    <div className={`product-tile ${!is_available ? 'unavailable' : ''}`}>
+    <div className={`product-tile ${!is_available ? "unavailable" : ""}`}>
       <div className={`image-wrapper ${!is_available ? "unavailable" : ""}`}>
         {/* całość obrazka w linku */}
         <Link to={slug} className="image-link">
@@ -53,7 +53,9 @@ function ProductTile({ product }) {
       </div>
       <div className="product-content">
         <h3 className="product-name">
-          <Link to={slug} className="product-link">{name}</Link>
+          <Link to={slug} className="product-link">
+            {name}
+          </Link>
         </h3>
         <p className="product-quantity">
           Ilość: {formatQuantity(quantity)} {unit}

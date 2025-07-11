@@ -1,4 +1,3 @@
-// src/components/cart/CartContext.jsx
 import {
   createContext,
   useContext,
@@ -8,6 +7,7 @@ import {
 } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { useAlert } from "../common/alert/AlertContext";
+import { formatQuantity } from "../../utils/product";
 
 const CartContext = createContext();
 
@@ -90,13 +90,14 @@ export function CartProvider({ children }) {
     if (isLoggedIn) {
       try {
         const { data, removed } = await fetchCart();
-        if (removed)
+        if (removed) {
           showAlert(
             `Usunięto ${removed} niedostępny${
               removed === 1 ? "" : "e"
             } produkt${removed > 1 ? "y" : ""} z koszyka.`,
             "info"
           );
+        }
         setItems(mapFromBackend(data));
       } catch {
         setItems([]);
@@ -105,13 +106,14 @@ export function CartProvider({ children }) {
       const local = JSON.parse(localStorage.getItem("cart") || "[]");
       const { validated, removed } = await validateLocalCart(local);
 
-      if (removed)
+      if (removed) {
         showAlert(
           `Usunięto ${removed} niedostępny${removed === 1 ? "" : "e"} produkt${
             removed > 1 ? "y" : ""
           } z koszyka.`,
           "info"
         );
+      }
 
       setItems(validated);
       localStorage.setItem("cart", JSON.stringify(validated));
@@ -128,13 +130,14 @@ export function CartProvider({ children }) {
       if (isLoggedIn) {
         try {
           const { data, removed } = await fetchCart();
-          if (removed)
+          if (removed) {
             showAlert(
               `Usunięto ${removed} niedostępny${
                 removed === 1 ? "" : "e"
               } produkt${removed > 1 ? "y" : ""} z koszyka.`,
               "info"
             );
+          }
           setItems(mapFromBackend(data));
         } catch {
           setItems([]);
@@ -159,34 +162,30 @@ export function CartProvider({ children }) {
       const localCart = localStorage.getItem("cart");
       if (!localCart) return;
 
-      const { data } = await fetchCart(); // sprawdzamy, czy coś już jest
-      if (data.items?.length) {
-        localStorage.removeItem("cart");
-        return;
-      }
-
       const { validated } = await validateLocalCart(JSON.parse(localCart));
 
-      await Promise.all(
-        validated.map((item) =>
-          fetch(`${API_URL}/api/cart`, {
+      for (const localItem of validated) {
+        try {
+          await fetch(`${API_URL}/api/cart`, {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              productId: item.product.id,
-              quantity: item.quantity,
+              productId: localItem.product.id,
+              quantity: localItem.quantity,
             }),
-          })
-        )
-      );
+          });
+        } catch (e) {
+          // możesz dodać alert jeśli chcesz
+        }
+      }
 
       localStorage.removeItem("cart");
-      await reloadCart(); // pobierz świeżą zawartość
+      await reloadCart(); // pobierz po scaleniu
     };
 
     mergeCart();
-  }, [user, isLoggedIn, API_URL, validateLocalCart, fetchCart, reloadCart]);
+  }, [user, isLoggedIn, API_URL, validateLocalCart, reloadCart]);
 
   /* ------------------------ flush do localStorage u gościa ------------------------ */
   useEffect(() => {
@@ -205,27 +204,55 @@ export function CartProvider({ children }) {
     }
 
     setItems((prev) => {
+      let updated;
       const idx = prev.findIndex((i) => i.product.id === product.id);
       if (idx > -1) {
-        const copy = [...prev];
-        copy[idx].quantity += quantity;
-        return copy;
+        updated = [...prev];
+        updated[idx].quantity += quantity;
+      } else {
+        updated = [...prev, { product, quantity }];
       }
-      return [...prev, { product, quantity }];
+      if (!isLoggedIn) {
+        localStorage.setItem("cart", JSON.stringify(updated)); // ← zapis od razu
+      }
+      return updated;
     });
 
+    /* ---------- zapis na serwerze (jeżeli zalogowany) ---------- */
     if (isLoggedIn) {
-      await fetch(`${API_URL}/api/cart`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: product.id, quantity }),
-      });
+      try {
+        await fetch(`${API_URL}/api/cart`, {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId: product.id, quantity }),
+        });
+      } catch {
+        showAlert("Nie udało się zsynchronizować koszyka z serwerem.", "error");
+      }
     }
+
+    /* ---------- komunikat dla użytkownika ---------- */
+    const totalAmount = quantity * (parseFloat(product.quantity) || 1);
+    const unitLabel = product.unit || "szt.";
+
+    showAlert(
+      `Dodano “${product.name}” (${formatQuantity(
+        totalAmount
+      )} ${unitLabel}) do koszyka.`,
+      "success"
+    );
   };
 
   const removeItem = async (productId) => {
-    setItems((prev) => prev.filter((i) => i.product.id !== productId));
+    setItems((prev) => {
+      const updated = prev.filter((i) => i.product.id !== productId);
+      if (!isLoggedIn) {
+        localStorage.setItem("cart", JSON.stringify(updated));
+      }
+      return updated;
+    });
+
     if (isLoggedIn) {
       await fetch(`${API_URL}/api/cart/${productId}`, {
         method: "DELETE",
@@ -235,14 +262,16 @@ export function CartProvider({ children }) {
   };
 
   const clearCart = async () => {
-    setItems([]);
+    setItems(() => {
+      if (!isLoggedIn) localStorage.removeItem("cart");
+      return [];
+    });
+
     if (isLoggedIn) {
       await fetch(`${API_URL}/api/cart`, {
         method: "DELETE",
         credentials: "include",
       });
-    } else {
-      localStorage.removeItem("cart");
     }
   };
 
