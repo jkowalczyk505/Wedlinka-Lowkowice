@@ -5,12 +5,15 @@ import { CiUser, CiShoppingCart, CiLogout } from "react-icons/ci";
 import { useAuth } from "../auth/AuthContext";
 import { logout } from "../auth/AuthUtils";
 import CartDrawer from "../cart/CartDrawer";
+import { useCart } from "../cart/CartContext";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const navigate = useNavigate();
   const { user, setUser, setLogoutInProgress } = useAuth();
+  const { items } = useCart();
+  const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
 
   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -60,8 +63,11 @@ function Header() {
 
         <div className="account-icons">
           <button className="account-button" onClick={() => setCartOpen(true)}>
-            <CiShoppingCart />
-            Koszyk
+            <div className="cart-icon-wrapper">
+              <CiShoppingCart />
+              {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+            </div>
+            <span>Koszyk</span>
           </button>
 
           <button className="account-button" onClick={handleAccountClick}>

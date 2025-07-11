@@ -122,6 +122,30 @@
                     color: $secondary-color;
                 }
             }
+
+            .cart-icon-wrapper {
+                position: relative;
+                display: inline-block;
+
+                svg {
+                    font-size: 2.8rem;
+                }
+
+                .cart-count {
+                    position: absolute;
+                    top: -4px;
+                    right: -10px;
+                    background: $secondary-color;
+                    color: $primary-color;
+                    font-size: 0.7rem;
+                    border-radius: 50%;
+                    padding: 0.4rem;
+                    line-height: 1;
+                    min-width: 23px;
+                    text-align: center;
+                }
+            }
+
         }
 
     }

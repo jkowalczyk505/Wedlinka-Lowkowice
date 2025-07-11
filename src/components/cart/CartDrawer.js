@@ -2,6 +2,7 @@ import React from "react";
 import { useCart } from "./CartContext";
 import { Link } from "react-router-dom";
 import Button from "../common/Button";
+import { ReactComponent as DefaultIcon } from "../../assets/szynka-ikona.svg";
 
 const CartDrawer = ({ isOpen, onClose }) => {
   const { items, removeItem } = useCart();
@@ -32,10 +33,14 @@ const CartDrawer = ({ isOpen, onClose }) => {
             validItems.map(({ product, quantity }) => (
               <li key={product.id}>
                 <div className="item-left">
-                  <img
-                    src={`${process.env.REACT_APP_API_URL}/uploads/products/${product.image}`}
-                    alt={product.name}
-                  />
+                  {product.image ? (
+                    <img
+                      src={`${process.env.REACT_APP_API_URL}/uploads/products/${product.image}`}
+                      alt={product.name}
+                    />
+                  ) : (
+                    <DefaultIcon className="product-image default-icon" />
+                  )}
 
                   <div className="item-info">
                     <div className="product-name">{product.name}</div>

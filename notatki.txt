@@ -4,10 +4,9 @@
 - w stopce odpowiednie linki do plikow, usuniecie/zmiana zbednych podstron + link do fb
 - walidacja contactform
 - w stopce i na kontakt prawdziwe adresy/telefony itp
-- ikona ilosci przy koszyku
 - toast i/lub alert
 
-- responsywnosc
+- responsywnosc + duże ekrany
 - polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy, okres przechowywania danych invoices + shipping_details (5lat? jak porzucone nieoplacone to krocej)
 
 BACKEND
@@ -28,14 +27,18 @@ ACCOUNT
 - moje zamowienia - zamowienia, faktury
 
 KOSZYK
-- prawy border w X uciety
 - zdjecie dla produktu bez zdjecia
 
 NA KONIEC
 - MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza
-- BACKEND zabezpieczyc
+- BACKEND zabezpieczyc - rate limit, helmet, cors (www i bez www), ukrycie express
 - baza i backend przenieść
-- seo + sitemap + robots + index podmienic dane + manifest json
+- middleware (app.use) do przekierowania www na bez www
+- seo + sitemap + robots + index jak zhkr (+og.jpg) + manifest json
+- wysłać sitemap do google
+- react helmet async
+- env production
+- htaccess - react router SPA + http->https + przekierowanie www
 - anonimazacja danych users zgodnie z RODO (zmienic markAsDeleted? + pola bazy users możliwe na NULL?)
 - ustaiwneie uzytkownika na usunietego uniemozliwia zalozenie kolejnego na ten sam email
 - archiwizacja i/lub usuwanie kont, danych z zamowien itp - czyszczenie tabel? cron?
