@@ -1,17 +1,24 @@
 .intro-category-section {
-  position: relative;      // potrzebne do absolutnego pozycjonowania okruchów
-  text-align: center;      // centrowanie H1
-  display: block;          // nie musisz flex
+  padding: 2rem 1.6rem;
 
-  .breadcrumbs {
-    position: absolute;
-    top: 50%;
-    left: 3rem;          // lub inna wartość paddingu
-    transform: translateY(-50%);
-  }
+  .intro-header {
+    display: grid;
+    grid-template-columns: 200px 1fr 200px;
+    align-items: center;
+    column-gap: 2rem;
 
-  h1 {
-    font-size: 2.5rem;
+    // tytuł w samym środku
+    h1 {
+      margin: 0;
+      text-align: center;
+      font-size: 2.5rem;
+      font-family: $font-decorative;
+      color: $primary-color;
+    }
+
+    .sort-wrapper {
+        justify-self: right;
+    }
   }
 }
 
