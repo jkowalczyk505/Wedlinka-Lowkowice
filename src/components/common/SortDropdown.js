@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Select from 'react-select';
 
 const CUSTOM_BORDER = '#ffffff';
-const HOVER_COLOR  = '#c21f22';
+const HOVER_COLOR  = '#98181b';
 const TEXT_COLOR   = '#ffffff';
 
 const customStyles = {
@@ -16,8 +16,8 @@ const customStyles = {
       ? HOVER_COLOR
       : CUSTOM_BORDER,
     boxShadow: state.isFocused
-      ? `0 0 0 1px ${HOVER_COLOR}`
-      : `0 0 0 1px ${CUSTOM_BORDER}`,
+      ? `0 0 0 1px ${CUSTOM_BORDER}`
+      : `0 0 0 1px ${HOVER_COLOR}`,
     transition: 'border-color 0.2s ease',
     '&:hover': {
       borderColor: HOVER_COLOR,     // ← ramka na hover
