@@ -1,0 +1,27 @@
+.breadcrumbs {
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+
+  .crumb {
+    display: flex;
+    align-items: center;
+
+    .breadcrumb-link {
+      color: $primary-color;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    .breadcrumb-current {
+      color: $dark-color-lighten;
+    }
+
+    .separator {
+      margin: 0 0.5rem;
+      color: $dark-color-lighten;
+    }
+  }
+}

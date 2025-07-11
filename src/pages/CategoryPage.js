@@ -6,6 +6,7 @@ import axios from "axios";
 import ProductsGrid from "../components/products/ProductsGrid";
 import Spinner from "../components/common/Spinner";
 import Button from "../components/common/Button";
+import Breadcrumbs from "../components/common/Breadcrumbs";
 
 // helpery
 import { getCategoryMeta } from "../utils/product";
@@ -55,6 +56,12 @@ export default function CategoryPage() {
   return (
     <main className="page">
       <section className="intro-category-section dark-section">
+        <Breadcrumbs
+          crumbs={[
+            { label: "Strona główna", to: "/" },
+            { label: title }       // <-- brak `to` → będzie current
+          ]}
+        />
         <h1>{title}</h1>
       </section>
 

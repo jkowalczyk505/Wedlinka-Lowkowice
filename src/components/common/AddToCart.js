@@ -1,5 +1,5 @@
 import React from "react";
-import { FaBasketShopping } from "react-icons/fa6";
+import { PiBasket } from "react-icons/pi";
 import PropTypes from "prop-types";
 
 export default function AddToCartButton({ onClick, disabled }) {
@@ -9,7 +9,7 @@ export default function AddToCartButton({ onClick, disabled }) {
       onClick={onClick}
       disabled={disabled}
     >
-      <FaBasketShopping className="icon" />
+      <PiBasket className="icon" />
       <span>Dodaj do koszyka</span>
     </button>
   );

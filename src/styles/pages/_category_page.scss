@@ -1,3 +1,20 @@
+.intro-category-section {
+  position: relative;      // potrzebne do absolutnego pozycjonowania okruchów
+  text-align: center;      // centrowanie H1
+  display: block;          // nie musisz flex
+
+  .breadcrumbs {
+    position: absolute;
+    top: 50%;
+    left: 3rem;          // lub inna wartość paddingu
+    transform: translateY(-50%);
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+}
+
 .products-grid-section {
     flex: 1;              // rozciągnij tę sekcję do dołu
     display: flex;
