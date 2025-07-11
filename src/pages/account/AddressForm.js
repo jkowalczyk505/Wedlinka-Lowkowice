@@ -5,6 +5,7 @@ import Button from "../../components/common/Button";
 import { AuthFetch } from "../../components/auth/AuthFetch";
 import { MapPin } from "lucide-react";
 import InfoTip from "../../components/common/InfoTip";
+import { useAlert } from "../../components/common/alert/AlertContext";
 
 function AddressForm() {
   const [addressData, setAddressData] = useState({
@@ -18,10 +19,9 @@ function AddressForm() {
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
   const [postalDigits, setPostalDigits] = useState(["", "", "", "", ""]);
 
+  const { showAlert } = useAlert();
   const API_URL = process.env.REACT_APP_API_URL;
   const { user, setUser } = useAuth();
 
@@ -49,10 +49,10 @@ function AddressForm() {
           setAddressData(address);
           setInitialAddressData({ ...address, postalCode });
         } else {
-          setError("Nie udało się pobrać danych adresowych.");
+          showAlert("Nie udało się pobrać danych adresowych.", "error");
         }
       } catch (err) {
-        setError("Błąd połączenia z serwerem.");
+        showAlert("Błąd połączenia z serwerem.", "error");
       } finally {
         setLoading(false);
       }
@@ -75,12 +75,10 @@ function AddressForm() {
     const { name, value } = e.target;
 
     if (name === "apartmentNumber") {
-      // tylko cyfry lub pusty
       if (/^\d*$/.test(value)) {
         setAddressData((prev) => ({ ...prev, [name]: value }));
       }
     } else if (name === "postalCode") {
-      // tylko cyfry i myślnik, max 6 znaków, automatyczny format
       let sanitized = value.replace(/[^\d]/g, "");
       if (sanitized.length > 5) sanitized = sanitized.slice(0, 5);
       if (sanitized.length > 2) {
@@ -92,8 +90,6 @@ function AddressForm() {
     }
 
     setEditing(true);
-    setError("");
-    setSuccess("");
   };
 
   const getPostalCode = () => {
@@ -110,10 +106,7 @@ function AddressForm() {
     newDigits[index] = val;
     setPostalDigits(newDigits);
     setEditing(true);
-    setError("");
-    setSuccess("");
 
-    // Auto-focus next
     if (val && index < 4) {
       const next = document.getElementById(`postal-${index + 1}`);
       if (next) next.focus();
@@ -125,12 +118,10 @@ function AddressForm() {
 
     if (key === "Backspace") {
       if (postalDigits[index]) {
-        // Usuwa wartość
         const newDigits = [...postalDigits];
         newDigits[index] = "";
         setPostalDigits(newDigits);
       } else if (index > 0) {
-        // Przesuwa focus wstecz
         const prev = document.getElementById(`postal-${index - 1}`);
         if (prev) prev.focus();
       }
@@ -151,21 +142,17 @@ function AddressForm() {
     if (initialAddressData) {
       setAddressData(initialAddressData);
       setEditing(false);
-      setError("");
-      setSuccess("");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    setError("");
-    setSuccess("");
 
     const fullPostalCode = getPostalCode();
 
     if (!validatePostalCodeFormat(fullPostalCode)) {
-      setError("Kod pocztowy musi być w formacie 12-345.");
+      showAlert("Kod pocztowy musi być w formacie 12-345.", "error");
       setSaving(false);
       return;
     }
@@ -183,7 +170,7 @@ function AddressForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Błąd podczas zapisu");
+        showAlert(data.error || "Błąd podczas zapisu", "error");
         return;
       }
 
@@ -193,10 +180,11 @@ function AddressForm() {
         ...addressData,
         postalCode: fullPostalCode,
       }));
-      setSuccess("Adres został zaktualizowany");
+
+      showAlert("Adres został zaktualizowany", "success");
       setEditing(false);
     } catch (err) {
-      setError("Błąd serwera");
+      showAlert("Błąd serwera", "error");
     } finally {
       setSaving(false);
     }
@@ -234,9 +222,8 @@ function AddressForm() {
             <label>Kod pocztowy</label>
             <div className="postal-code-group">
               {postalDigits.map((digit, i) => (
-                <>
+                <span key={i}>
                   <input
-                    key={i}
                     id={`postal-${i}`}
                     type="text"
                     inputMode="numeric"
@@ -247,12 +234,8 @@ function AddressForm() {
                     onKeyDown={(e) => handlePostalDigitKeyDown(e, i)}
                     required
                   />
-                  {i === 1 && (
-                    <span className="dash" key="dash">
-                      -
-                    </span>
-                  )}
-                </>
+                  {i === 1 && <span className="dash">-</span>}
+                </span>
               ))}
             </div>
 
@@ -264,9 +247,6 @@ function AddressForm() {
               onChange={handleChange}
               required
             />
-
-            {error && <div className="form-error">{error}</div>}
-            {success && <div className="form-success">{success}</div>}
 
             {editing && isChanged() && (
               <div

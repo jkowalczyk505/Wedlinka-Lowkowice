@@ -2,7 +2,7 @@ import { useState } from "react";
 import FormContainer from "./FormContainer";
 import Button from "../common/Button";
 import Spinner from "../common/Spinner";
-import { AuthFetch } from "../auth/AuthFetch";
+import { useAlert } from "../common/alert/AlertContext";
 
 function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -14,9 +14,8 @@ function RegisterForm() {
     confirmPassword: "",
   });
 
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { showAlert } = useAlert();
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -27,27 +26,28 @@ function RegisterForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
     setIsSubmitting(true);
 
     const { name, surname, phone, email, password, confirmPassword } = formData;
 
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
     if (!passwordRegex.test(password)) {
-      setError("Hasło musi mieć min. 8 znaków, zawierać dużą literę i cyfrę.");
+      showAlert(
+        "Hasło musi mieć min. 8 znaków, zawierać dużą literę i cyfrę.",
+        "error"
+      );
       setIsSubmitting(false);
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Hasła muszą być takie same.");
+      showAlert("Hasła muszą być takie same.", "error");
       setIsSubmitting(false);
       return;
     }
 
     if (!/^\d{9}$/.test(phone)) {
-      setError("Telefon musi składać się z dokładnie 9 cyfr.");
+      showAlert("Telefon musi składać się z dokładnie 9 cyfr.", "error");
       setIsSubmitting(false);
       return;
     }
@@ -66,12 +66,13 @@ function RegisterForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Rejestracja nie powiodła się.");
+        showAlert(data.error || "Rejestracja nie powiodła się.", "error");
         setIsSubmitting(false);
         return;
       }
 
-      setSuccess("Konto zostało założone pomyślnie!");
+      showAlert("Konto zostało założone pomyślnie!", "success");
+
       setFormData({
         name: "",
         surname: "",
@@ -81,7 +82,7 @@ function RegisterForm() {
         confirmPassword: "",
       });
     } catch (err) {
-      setError("Błąd serwera.");
+      showAlert("Błąd serwera.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -165,8 +166,6 @@ function RegisterForm() {
         required
       />
 
-      {error && <div className="form-error">{error}</div>}
-
       <div className="form-note" id="auth_polityka">
         Twoje dane osobowe zostaną użyte do obsługi twojej wizyty na naszej
         stronie, zarządzania dostępem do twojego konta oraz w innych celach
@@ -188,8 +187,6 @@ function RegisterForm() {
           )}
         </Button>
       </div>
-
-      {success && <div className="form-success">{success}</div>}
     </FormContainer>
   );
 }

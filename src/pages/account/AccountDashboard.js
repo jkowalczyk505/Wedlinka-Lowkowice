@@ -16,6 +16,7 @@ import {
 import Button from "../../components/common/Button";
 import InfoTip from "../../components/common/InfoTip";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
+import { useAlert } from "../../components/common/alert/AlertContext";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -26,6 +27,7 @@ const AccountDashboard = () => {
   const [cartItems, setCartItems] = useState([]);
   const [invoices, setInvoices] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     // statystyki zamówień

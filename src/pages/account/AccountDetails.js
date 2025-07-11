@@ -4,30 +4,29 @@ import Spinner from "../../components/common/Spinner";
 import Button from "../../components/common/Button";
 import { AuthFetch } from "../../components/auth/AuthFetch";
 import InfoTip from "../../components/common/InfoTip";
+import { useAlert } from "../../components/common/alert/AlertContext";
 
 function AccountDetails() {
   const { setUser } = useAuth();
+  const { showAlert } = useAlert();
+
   const [formData, setFormData] = useState({
     name: "",
     surname: "",
     phone: "",
   });
+
   const [initialFormData, setInitialFormData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [email, setEmail] = useState("");
 
   const [emailData, setEmailData] = useState({
     newEmail: "",
     password: "",
   });
   const [emailChangeLoading, setEmailChangeLoading] = useState(false);
-  const [emailChangeSuccess, setEmailChangeSuccess] = useState("");
-  const [emailChangeError, setEmailChangeError] = useState("");
-
-  const [email, setEmail] = useState("");
 
   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -46,10 +45,10 @@ function AccountDetails() {
           setEmail(email);
           setUser(data);
         } else {
-          setError("Nie udało się pobrać danych użytkownika.");
+          showAlert("Nie udało się pobrać danych użytkownika.", "error");
         }
       } catch (err) {
-        setError("Błąd połączenia z serwerem.");
+        showAlert("Błąd połączenia z serwerem.", "error");
       } finally {
         setLoading(false);
       }
@@ -69,8 +68,6 @@ function AccountDetails() {
 
   const handleFieldFocus = () => {
     setEditing(true);
-    setSuccess("");
-    setError("");
   };
 
   const handleChange = (e) => {
@@ -89,16 +86,12 @@ function AccountDetails() {
     if (initialFormData) {
       setFormData(initialFormData);
       setEditing(false);
-      setError("");
-      setSuccess("");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    setError("");
-    setSuccess("");
 
     try {
       const res = await AuthFetch(`${API_URL}/api/users/me`, {
@@ -110,16 +103,16 @@ function AccountDetails() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Błąd podczas zapisu");
+        showAlert(data.error || "Błąd podczas zapisu", "error");
         return;
       }
 
-      setSuccess("Dane zaktualizowane");
+      showAlert("Dane zaktualizowane", "success");
       setInitialFormData(formData);
       setUser((prev) => ({ ...prev, ...formData }));
       setEditing(false);
     } catch (err) {
-      setError("Błąd serwera");
+      showAlert("Błąd serwera", "error");
     } finally {
       setSaving(false);
     }
@@ -133,8 +126,6 @@ function AccountDetails() {
   const handleEmailChangeSubmit = async (e) => {
     e.preventDefault();
     setEmailChangeLoading(true);
-    setEmailChangeError("");
-    setEmailChangeSuccess("");
 
     try {
       const res = await AuthFetch(`${API_URL}/api/users/me/email`, {
@@ -146,16 +137,16 @@ function AccountDetails() {
       const data = await res.json();
 
       if (!res.ok) {
-        setEmailChangeError(data.error || "Błąd podczas zmiany e-maila");
+        showAlert(data.error || "Błąd podczas zmiany e-maila", "error");
         return;
       }
 
-      setEmailChangeSuccess("E-mail został zmieniony");
+      showAlert("E-mail został zmieniony", "success");
       setUser((prev) => ({ ...prev, email: emailData.newEmail }));
       setEmail(emailData.newEmail);
       setEmailData({ newEmail: "", password: "" });
     } catch (err) {
-      setEmailChangeError("Błąd serwera");
+      showAlert("Błąd serwera", "error");
     } finally {
       setEmailChangeLoading(false);
     }
@@ -208,9 +199,6 @@ function AccountDetails() {
               />
             </div>
 
-            {error && <div className="form-error">{error}</div>}
-            {success && <div className="form-success">{success}</div>}
-
             {editing && isChanged() && (
               <div
                 className="submit-button"
@@ -256,13 +244,6 @@ function AccountDetails() {
               onChange={handleEmailFieldChange}
               required
             />
-
-            {emailChangeError && (
-              <div className="form-error">{emailChangeError}</div>
-            )}
-            {emailChangeSuccess && (
-              <div className="form-success">{emailChangeSuccess}</div>
-            )}
 
             <div className="submit-button">
               <Button type="submit" variant="red" disabled={emailChangeLoading}>
