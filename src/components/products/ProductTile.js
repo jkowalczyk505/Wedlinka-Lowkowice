@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { ReactComponent as DefaultIcon } from "../../assets/szynka-ikona.svg";
 import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 import AddToCartButton from "../common/AddToCart";
@@ -14,6 +15,7 @@ function ProductTile({ product }) {
     unit,
     is_available,
     averageRating = 2.5,
+    slug
   } = product;
 
   const grossPrice = formatGrossPrice(price_net, vat_rate);
@@ -27,8 +29,8 @@ function ProductTile({ product }) {
   const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
 
   return (
-    <div className="product-tile">
-      <div className="image-wrapper">
+    <div className={`product-tile ${!is_available ? 'unavailable' : ''}`}>
+      <div className={`image-wrapper ${!is_available ? 'unavailable' : ''}`}>
         {!imgError && image ? (
           <img
             src={imgUrl}
@@ -39,9 +41,14 @@ function ProductTile({ product }) {
         ) : (
           <DefaultIcon className="product-image default-icon" />
         )}
+        {!is_available && (
+          <span className="unavailable-badge">Niedostępny</span>
+        )}
       </div>
       <div className="product-content">
-        <h3 className="product-name">{name}</h3>
+        <h3 className="product-name">
+          <Link to={slug} className="product-link">{name}</Link>
+        </h3>
         <p className="product-quantity">
           Ilość: {formatQuantity(quantity)} {unit}
         </p>

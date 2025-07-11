@@ -14,18 +14,23 @@ import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
 import ContactPage from "./pages/ContactPage";
 import CategoryPage from "./pages/CategoryPage";
+import ProductPage from "./pages/ProductPage";
 
 export default [
   { path: "/", element: <HomePage /> },
   { path: "/logowanie", element: <AuthPage /> },
   { path: "/kontakt", element: <ContactPage /> },
   {
-    path: "/sklep",
-    //element: <AllProductsPage />
+    path: "/sklep/:categorySlug/:productSlug",
+    element: <ProductPage />,
   },
   {
     path: "/sklep/:slug",
-    element: <CategoryPage />
+    element: <CategoryPage />,
+  },
+    {
+    path: "/sklep",
+    //element: <AllProductsPage />
   },
 
   {
