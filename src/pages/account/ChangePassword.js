@@ -5,6 +5,7 @@ import Button from "../../components/common/Button";
 import { AuthFetch } from "../../components/auth/AuthFetch";
 import { Lock, Eye, EyeOff } from "lucide-react";
 import InfoTip from "../../components/common/InfoTip";
+import { useAlert } from "../../components/common/alert/AlertContext";
 
 function ChangePassword() {
   const [formData, setFormData] = useState({
@@ -15,13 +16,12 @@ function ChangePassword() {
 
   const [saving, setSaving] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState("");
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const API_URL = process.env.REACT_APP_API_URL;
   const { user } = useAuth();
+  const { showAlert } = useAlert();
 
   const calculateStrength = (password) => {
     const regex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
@@ -39,8 +39,6 @@ function ChangePassword() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setError("");
-    setSuccess("");
 
     if (name === "newPassword") {
       setPasswordStrength(calculateStrength(value));
@@ -57,14 +55,13 @@ function ChangePassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    setError("");
-    setSuccess("");
 
     const { oldPassword, newPassword } = formData;
 
     if (!isFormValid()) {
-      setError(
-        "Nowe hasło musi mieć min. 8 znaków, zawierać dużą literę i cyfrę oraz być powtórzone poprawnie."
+      showAlert(
+        "Nowe hasło musi mieć min. 8 znaków, dużą literę, cyfrę i być powtórzone poprawnie.",
+        "error"
       );
       setSaving(false);
       return;
@@ -80,15 +77,15 @@ function ChangePassword() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Błąd podczas zmiany hasła.");
+        showAlert(data.error || "Błąd podczas zmiany hasła.", "error");
         return;
       }
 
-      setSuccess("Hasło zostało zmienione.");
+      showAlert("Hasło zostało zmienione!", "success");
       setFormData({ oldPassword: "", newPassword: "", confirmPassword: "" });
       setPasswordStrength("");
     } catch (err) {
-      setError("Błąd serwera.");
+      showAlert("Błąd serwera.", "error");
     } finally {
       setSaving(false);
     }
@@ -159,9 +156,6 @@ function ChangePassword() {
                 </div>
               </div>
             )}
-
-            {error && <div className="form-error">{error}</div>}
-            {success && <div className="form-success">{success}</div>}
 
             <div className="submit-button">
               <Button type="submit" variant="red" disabled={saving}>

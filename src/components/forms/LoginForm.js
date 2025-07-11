@@ -3,17 +3,18 @@ import { useLocation, useNavigate } from "react-router-dom";
 import FormContainer from "./FormContainer";
 import Button from "../common/Button";
 import Spinner from "../common/Spinner";
-import { AuthFetch } from "../auth/AuthFetch"; // lub odpowiednia ścieżka
 import { useAuth } from "../auth/AuthContext";
+import { useAlert } from "../common/alert/AlertContext";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
-  const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { setUser } = useAuth();
+  const { showAlert } = useAlert();
+
   const location = useLocation();
   const navigate = useNavigate();
   const redirectPath = location.state?.from?.pathname || "/";
@@ -21,7 +22,6 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setError("");
 
     try {
       const res = await fetch(
@@ -37,7 +37,7 @@ function LoginForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Błąd logowania");
+        showAlert(data.error || "Błąd logowania", "error");
         setIsSubmitting(false);
         return;
       }
@@ -45,7 +45,7 @@ function LoginForm() {
       setUser(data);
       navigate(redirectPath, { replace: true });
     } catch (err) {
-      setError("Błąd serwera");
+      showAlert("Błąd serwera", "error");
       setIsSubmitting(false);
     }
   };
@@ -71,8 +71,6 @@ function LoginForm() {
         onChange={(e) => setPassword(e.target.value)}
         required
       />
-
-      {error && <div className="form-error">{error}</div>}
 
       <div
         style={{

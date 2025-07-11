@@ -16,6 +16,23 @@ const CartDrawer = ({ isOpen, onClose }) => {
   const validItems = items.filter((i) => i?.product);
   const isEmpty = validItems.length === 0;
 
+  const CartItemImage = ({ src, alt }) => {
+    const [hasError, setHasError] = React.useState(false);
+
+    if (!src || hasError) {
+      return <DefaultIcon className="product-image default-icon" />;
+    }
+
+    return (
+      <img
+        src={src}
+        alt={alt}
+        className="product-image"
+        onError={() => setHasError(true)}
+      />
+    );
+  };
+
   return (
     <>
       {isOpen && <div className="cart-overlay" onClick={onClose} />}
@@ -33,14 +50,10 @@ const CartDrawer = ({ isOpen, onClose }) => {
             validItems.map(({ product, quantity }) => (
               <li key={product.id}>
                 <div className="item-left">
-                  {product.image ? (
-                    <img
-                      src={`${process.env.REACT_APP_API_URL}/uploads/products/${product.image}`}
-                      alt={product.name}
-                    />
-                  ) : (
-                    <DefaultIcon className="product-image default-icon" />
-                  )}
+                  <CartItemImage
+                    src={`${process.env.REACT_APP_API_URL}/uploads/products/${product.image}`}
+                    alt={product.name}
+                  />
 
                   <div className="item-info">
                     <div className="product-name">{product.name}</div>
@@ -68,7 +81,11 @@ const CartDrawer = ({ isOpen, onClose }) => {
         {!isEmpty && (
           <div className="cart-footer">
             <div className="total">
-              Łączna kwota: <em>{total.toFixed(2)} zł</em>
+              <em>
+                <span>Łączna kwota: </span>
+                <span>{total.toFixed(2)} zł</span>
+              </em>
+              <span>z VAT</span>
             </div>
             <Link to="/koszyk" onClick={onClose}>
               <Button variant="red">Przejdź do koszyka</Button>

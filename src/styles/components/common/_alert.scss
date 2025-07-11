@@ -1,0 +1,48 @@
+.alert {
+    position: fixed;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    opacity: 0;
+    background: $primary-color;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.9rem;
+    pointer-events: auto;
+    animation: slideFadeIn 0.4s ease forwards;
+
+    &.alert-success {
+        border-left: 5px solid $accent-color-darken;
+        color: $accent-color-darken;
+    }
+
+    &.alert-error {
+        border-left: 5px solid $secondary-color-lighten;
+        color: $secondary-color-lighten;
+    }
+
+    &.alert-info {
+        border-left: 5px solid $dark-color;
+        color: $dark-color;
+    }
+
+    .close {
+        background: none;
+        border: none;
+        font-size: 1.6rem;
+        cursor: pointer;
+        color: inherit;
+    }
+}
+
+@keyframes slideFadeIn {
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
