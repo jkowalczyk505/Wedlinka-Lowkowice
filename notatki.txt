@@ -19,9 +19,6 @@ PRODUKTY
 - sekcja intro - kategoria, breadcrumbs, sortowanie
 - srednia ocena wyswietlana
 - dodawanie do koszyka i alert
-- link w tytule i zdjeciu
-- efekty na hover
-- przycisk koszyka wystylowac
 
 ACCOUNT
 - dashboard

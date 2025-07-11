@@ -33,20 +33,23 @@ function ProductTile({ product }) {
 
   return (
     <div className={`product-tile ${!is_available ? 'unavailable' : ''}`}>
-      <div className={`image-wrapper ${!is_available ? 'unavailable' : ''}`}>
-        {!imgError && image ? (
-          <img
-            src={imgUrl}
-            alt={name}
-            className="product-image"
-            onError={() => setImgError(true)}
-          />
-        ) : (
-          <DefaultIcon className="product-image default-icon" />
-        )}
-        {!is_available && (
-          <span className="unavailable-badge">Niedostępny</span>
-        )}
+      <div className={`image-wrapper ${!is_available ? "unavailable" : ""}`}>
+        {/* całość obrazka w linku */}
+        <Link to={slug} className="image-link">
+          {!imgError && image ? (
+            <img
+              src={imgUrl}
+              alt={name}
+              className="product-image"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <DefaultIcon className="product-image default-icon" />
+          )}
+          {!is_available && (
+            <span className="unavailable-badge">Niedostępny</span>
+          )}
+        </Link>
       </div>
       <div className="product-content">
         <h3 className="product-name">
