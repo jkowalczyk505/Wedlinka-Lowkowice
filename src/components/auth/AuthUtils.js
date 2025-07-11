@@ -1,5 +1,14 @@
-export function logout() {
-  // Możesz dodać czyszczenie localStorage jeśli coś tam masz
-  localStorage.removeItem("user"); // opcjonalnie
-  window.location.href = "/logowanie"; // ⬅️ wymusza pełne odświeżenie i czysty kontekst
+export async function logout(setUser) {
+  try {
+    await fetch(`${process.env.REACT_APP_API_URL}/api/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+  } catch (e) {
+    console.warn("Nie udało się wylogować", e);
+  }
+
+  if (setUser) setUser(null);
+  localStorage.removeItem("cart");
+  window.location.href = "/";
 }

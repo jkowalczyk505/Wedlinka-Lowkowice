@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import Spinner from "../common/Spinner";
 import { AuthFetch } from "./AuthFetch";
+import { logout as logoutFn } from "./AuthUtils";
 
 const AuthContext = createContext();
 
@@ -15,7 +16,11 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        let res = await AuthFetch(`${API_URL}/api/users/me`, { method: "GET" });
+        let res = await AuthFetch(
+          `${API_URL}/api/users/me`,
+          { method: "GET" },
+          setUser
+        );
 
         if (res.status === 498) {
           setUser(null);
@@ -39,6 +44,11 @@ export function AuthProvider({ children }) {
     fetchUser();
   }, [API_URL]);
 
+  // 🔐 Blokuj cały interfejs jeśli trwa wylogowanie
+  if (logoutInProgress) {
+    return <Spinner fullscreen />;
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -48,6 +58,7 @@ export function AuthProvider({ children }) {
         authChecked,
         logoutInProgress,
         setLogoutInProgress,
+        logout: () => logoutFn(setUser),
       }}
     >
       {loading ? <Spinner fullscreen /> : children}

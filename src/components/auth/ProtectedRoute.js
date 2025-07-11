@@ -8,13 +8,13 @@ function ProtectedRoute({ children }) {
 
   if (loading || !authChecked) return <Spinner fullscreen />;
 
-  if (!user && logoutInProgress) return <Spinner fullscreen />;
+  if (logoutInProgress) return <Spinner fullscreen />;
 
-  return user ? (
-    children
-  ) : (
-    <Navigate to="/logowanie" replace state={{ from: location }} />
-  );
+  if (!user) {
+    return <Navigate to="/logowanie" replace state={{ from: location }} />;
+  }
+
+  return children;
 }
 
 export default ProtectedRoute;

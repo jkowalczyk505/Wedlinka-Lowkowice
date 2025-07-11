@@ -3,29 +3,27 @@ import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { CiUser, CiShoppingCart, CiLogout } from "react-icons/ci";
 import { useAuth } from "../auth/AuthContext";
+import { logout } from "../auth/AuthUtils";
+import CartDrawer from "../cart/CartDrawer";
+import { useCart } from "../cart/CartContext";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const navigate = useNavigate();
-  const { user, setUser } = useAuth();
+  const { user, setUser, setLogoutInProgress } = useAuth();
+  const { items } = useCart();
+  const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
+
   const API_URL = process.env.REACT_APP_API_URL;
 
   const handleAccountClick = () => {
     navigate(user ? "/konto" : "/logowanie");
   };
 
-  const handleLogout = async () => {
-    try {
-      await fetch(`${API_URL}/api/auth/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
-
-      setUser(null);
-      window.location.href = "/";
-    } catch (err) {
-      console.error("Błąd wylogowania:", err);
-    }
+  const handleLogout = () => {
+    setLogoutInProgress(true);
+    logout(setUser);
   };
 
   const navItems = [
@@ -64,10 +62,13 @@ function Header() {
         </nav>
 
         <div className="account-icons">
-          <NavLink to="/koszyk">
-            <CiShoppingCart />
-            Koszyk
-          </NavLink>
+          <button className="account-button" onClick={() => setCartOpen(true)}>
+            <div className="cart-icon-wrapper">
+              <CiShoppingCart />
+              {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+            </div>
+            <span>Koszyk</span>
+          </button>
 
           <button className="account-button" onClick={handleAccountClick}>
             <CiUser />
@@ -82,6 +83,7 @@ function Header() {
           )}
         </div>
       </div>
+      <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </header>
   );
 }

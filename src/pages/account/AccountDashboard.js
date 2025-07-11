@@ -20,7 +20,7 @@ import ConfirmDialog from "../../components/common/ConfirmDialog";
 const API_URL = process.env.REACT_APP_API_URL;
 
 const AccountDashboard = () => {
-  const { user } = useAuth();
+  const { user, setLogoutInProgress, logout, setUser } = useAuth();
 
   const [stats, setStats] = useState({ total: 0, pending: 0, unpaid: 0 });
   const [cartItems, setCartItems] = useState([]);
@@ -164,19 +164,23 @@ const AccountDashboard = () => {
           onCancel={() => setShowConfirm(false)}
           onConfirm={async () => {
             try {
+              setLogoutInProgress(true); // ⬅️ bardzo ważne!
+
               const res = await fetch(`${API_URL}/api/users/me`, {
                 method: "DELETE",
                 credentials: "include",
               });
 
               if (res.status === 204) {
-                window.location.href = "/";
+                logout(setUser); // ⬅️ ładne czyszczenie + przekierowanie
               } else {
                 const data = await res.json();
                 alert(data.error || "Błąd podczas usuwania konta.");
+                setLogoutInProgress(false); // fallback
               }
             } catch {
               alert("Nie udało się połączyć z serwerem.");
+              setLogoutInProgress(false); // fallback
             } finally {
               setShowConfirm(false);
             }

@@ -4,6 +4,7 @@ import { ReactComponent as DefaultIcon } from "../../assets/szynka-ikona.svg";
 import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 import AddToCartButton from "../common/AddToCart";
 import { formatGrossPrice, formatQuantity } from "../../utils/product";
+import { useCart } from "../cart/CartContext";
 
 function ProductTile({ product }) {
   const {
@@ -17,6 +18,8 @@ function ProductTile({ product }) {
     averageRating = 2.5,
     slug
   } = product;
+
+  const { addItem } = useCart();
 
   const grossPrice = formatGrossPrice(price_net, vat_rate);
 
@@ -69,10 +72,10 @@ function ProductTile({ product }) {
         <p className="product-price">{grossPrice} zł</p>
 
         <div className="product-action">
-         <AddToCartButton
-           onClick={() => alert(`Produkt dodany do koszyka`)}
-           disabled={!is_available}
-         />
+          <AddToCartButton
+            onClick={() => addItem(product, 1)}
+            disabled={!is_available}
+          />
         </div>
       </div>
     </div>
