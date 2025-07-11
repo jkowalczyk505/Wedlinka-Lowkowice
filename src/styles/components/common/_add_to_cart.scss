@@ -1,0 +1,29 @@
+// src/components/common/add_to_cart.scss
+
+.add-to-cart-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;              // odstęp między ikoną a tekstem
+  background: none;         // brak wypełnienia
+  border: none;             // brak obramowania
+  font-size: 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: $font-main;
+  transition: color 0.2s ease;
+
+  .icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+  }
+
+  &:hover:not(:disabled) {
+    color: $secondary-color;  // np. czerwony na hover
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
