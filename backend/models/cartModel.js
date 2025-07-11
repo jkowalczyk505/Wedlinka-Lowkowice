@@ -13,6 +13,8 @@ const CartModel = {
                p.price_net,
                p.unit,
                p.image,
+               p.slug,
+               p.category,
                p.is_available,
                p.is_deleted
          FROM  cart_items ci

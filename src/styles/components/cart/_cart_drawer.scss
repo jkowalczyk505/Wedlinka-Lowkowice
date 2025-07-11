@@ -81,6 +81,13 @@
                 }
             }
 
+            .link-reset {
+                display: flex;
+                /* utrzymuje dotychczasowy układ */
+                color: inherit;
+                text-decoration: none;
+            }
+
             .remove-button {
                 font-size: 1.4rem;
                 color: $dark-color-lighten;
