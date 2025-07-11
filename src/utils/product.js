@@ -6,11 +6,25 @@
  * te z myślnikiem muszą być w cudzysłowach.
  */
 const SLUG_MAP = {
-  wedliny:            { title: "Wędliny",          apiCategory: "wędliny" },
-  kielbasy:           { title: "Kiełbasy",         apiCategory: "kiełbasy" },
-  "wyroby-podrobowe": { title: "Wyroby podrobowe",  apiCategory: "wyroby podrobowe" },
-  "nasze-paczki":     { title: "Nasze paczki",     apiCategory: "paczki" },
+  wedliny: { title: "Wędliny", apiCategory: "wędliny" },
+  kielbasy: { title: "Kiełbasy", apiCategory: "kiełbasy" },
+  "wyroby-podrobowe": {
+    title: "Wyroby podrobowe",
+    apiCategory: "wyroby podrobowe",
+  },
+  "nasze-paczki": { title: "Nasze paczki", apiCategory: "paczki" },
 };
+
+/**
+ * Zamienia api-kategorię z bazy (np. "wędliny") na slug z URL-a ("wedliny").
+ * Gdy nie znajdzie – zwraca niezmieniony parametr.
+ */
+export function categoryToSlug(apiCategory) {
+  for (const [slug, meta] of Object.entries(SLUG_MAP)) {
+    if (meta.apiCategory === apiCategory) return slug;
+  }
+  return apiCategory;
+}
 
 /**
  * Zwraca metadane dla danej ścieżki (slug) lub null,

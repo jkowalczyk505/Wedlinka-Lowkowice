@@ -33,6 +33,8 @@ export function CartProvider({ children }) {
           vat_rate: i.vat_rate ?? 8,
           unit: i.unit,
           image: i.image,
+          slug: i.slug,
+          category: i.category,
           is_available: i.is_available,
           is_deleted: i.is_deleted,
         },
