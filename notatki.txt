@@ -3,7 +3,6 @@
 - w stopce odpowiednie linki do plikow, usuniecie/zmiana zbednych podstron + link do fb
 - walidacja contactform
 - w stopce i na kontakt prawdziwe adresy/telefony itp
-- toast i/lub alert
 
 - responsywnosc + duże ekrany
 - polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy, okres przechowywania danych invoices + shipping_details (5lat? jak porzucone nieoplacone to krocej)

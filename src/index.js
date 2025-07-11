@@ -8,12 +8,12 @@ import { AlertProvider } from "./components/common/alert/AlertContext";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <CartProvider>
-        <AlertProvider>
+    <AlertProvider>
+      <AuthProvider>
+        <CartProvider>
           <App />
-        </AlertProvider>
-      </CartProvider>
-    </AuthProvider>
+        </CartProvider>
+      </AuthProvider>
+    </AlertProvider>
   </React.StrictMode>
 );
