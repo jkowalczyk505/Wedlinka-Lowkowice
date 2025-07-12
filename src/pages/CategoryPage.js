@@ -58,7 +58,10 @@ export default function CategoryPage() {
         <div className="intro-header">
           <div className="breadcrumbs-wrapper">
             <Breadcrumbs
-              crumbs={[{ label: "Strona główna", to: "/" }, { label: title }]}
+              crumbs={[
+                { label: "Strona główna", to: "/" }, 
+                { label: "Sklep", to: "/sklep" },
+                { label: title }]}
             />
           </div>
 
