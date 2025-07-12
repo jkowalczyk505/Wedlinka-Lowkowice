@@ -14,6 +14,7 @@ import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
 import ContactPage from "./pages/ContactPage";
 import CategoryPage from "./pages/CategoryPage";
+import AllProductsPage from "./pages/AllProductsPage";
 import ProductPage from "./pages/ProductPage";
 
 export default [
@@ -28,9 +29,9 @@ export default [
     path: "/sklep/:slug",
     element: <CategoryPage />,
   },
-    {
+  {
     path: "/sklep",
-    //element: <AllProductsPage />
+    element: <AllProductsPage />
   },
 
   {
