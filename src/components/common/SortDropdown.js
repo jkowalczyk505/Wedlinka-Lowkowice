@@ -93,7 +93,7 @@ export default function SortDropdown({ value, options, onChange }) {
       <Select
         inputId="sort-select"
         value={selected}
-        onChange={(opt) => onChange(opt.value)}
+        onChange={(option) => onChange(option.value)}
         options={options}
         styles={customStyles}
         isSearchable={false}
