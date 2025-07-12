@@ -5,8 +5,14 @@ const path = require("path");
 const uploadDir = path.join(__dirname, "..", "uploads", "products");
 
 exports.getAllProducts = async (req, res) => {
-  const products = await ProductModel.findAll();
-  res.json(products);
+  try {
+    const { sort } = req.query;
+    const products = await ProductModel.findAllSorted(sort);
+    res.json(products);
+  } catch (err) {
+    console.error("GET ALL PRODUCTS ERROR:", err);
+    res.status(500).json({ error: "Błąd pobierania produktów" });
+  }
 };
 
 exports.getProductById = async (req, res) => {
@@ -19,8 +25,9 @@ exports.getProductById = async (req, res) => {
 exports.getProductsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
+    const { sort } = req.query;
 
-    const products = await ProductModel.findByCategory(category);
+    const products = await ProductModel.findByCategorySorted(category, sort);
     if (!products || products.length === 0) {
       return res
         .status(404)
