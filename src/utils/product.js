@@ -39,10 +39,8 @@ export function getCategoryMeta(slug) {
  * priceNet, vatRate to stringi typu "22.50", "0.05"
  * Zwraca np. "23,62"
  */
-export function formatGrossPrice(priceNet, vatRate) {
-  const net = parseFloat(priceNet) || 0;
-  const vat = parseFloat(vatRate) || 0;
-  const brutto = net * (1 + vat);
+export function formatGrossPrice(priceBrut) {
+  const brutto = parseFloat(priceBrut) || 0;
   return brutto.toLocaleString("pl-PL", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,

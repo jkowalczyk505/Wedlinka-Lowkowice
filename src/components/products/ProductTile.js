@@ -9,8 +9,7 @@ import { useCart } from "../cart/CartContext";
 function ProductTile({ product }) {
   const {
     name,
-    price_net,
-    vat_rate,
+    price_brut,
     image,
     quantity,
     unit,
@@ -21,7 +20,7 @@ function ProductTile({ product }) {
 
   const { addItem } = useCart();
 
-  const grossPrice = formatGrossPrice(price_net, vat_rate);
+  const grossPrice = formatGrossPrice(price_brut);
 
   const imgUrl = `${process.env.REACT_APP_API_URL}/uploads/products/${image}`;
 
