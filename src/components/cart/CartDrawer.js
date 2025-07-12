@@ -3,12 +3,13 @@ import React, { useEffect } from "react";
 import { useCart } from "./CartContext";
 import { Link } from "react-router-dom";
 import Button from "../common/Button";
+import LoadError from "../common/LoadError"; // ⬅️ import
 import Spinner from "../common/Spinner";
 import { ReactComponent as DefaultIcon } from "../../assets/szynka-ikona.svg";
 import { categoryToSlug, formatQuantity } from "../../utils/product";
 
 const CartDrawer = ({ isOpen, onClose }) => {
-  const { items, removeItem, reloadCart, loading } = useCart();
+  const { items, removeItem, reloadCart, loading, error } = useCart();
 
   /* ----------- suma i filtrowanie ----------- */
   const total = items.reduce((sum, i) => {
@@ -57,7 +58,11 @@ const CartDrawer = ({ isOpen, onClose }) => {
         </div>
 
         <ul className="cart-items">
-          {loading ? (
+          {error ? (
+            <li className="error-message">
+              <LoadError message={error} onRetry={reloadCart} />
+            </li>
+          ) : loading ? (
             <li className="loading-message">
               <Spinner size="small" />
             </li>
@@ -65,15 +70,13 @@ const CartDrawer = ({ isOpen, onClose }) => {
             <li className="empty-message">Brak produktów w koszyku.</li>
           ) : (
             validItems.map(({ product, quantity }) => {
-              const catSlug = categoryToSlug(product.category); // np. "wędliny" → "wedliny"
-
+              const catSlug = categoryToSlug(product.category);
               return (
                 <li key={product.id}>
-                  {/* cały kafelek jest linkiem */}
                   <Link
                     to={`/sklep/${catSlug}/${product.slug}`}
                     className="item-left link-reset"
-                    onClick={onClose} /* zamknij szufladę */
+                    onClick={onClose}
                   >
                     <CartItemImage
                       src={`${process.env.REACT_APP_API_URL}/uploads/products/${product.image}`}
@@ -94,8 +97,6 @@ const CartDrawer = ({ isOpen, onClose }) => {
                       </div>
                     </div>
                   </Link>
-
-                  {/* przycisk usuń – blokujemy propagację kliknięcia */}
                   <button
                     className="remove-button"
                     onClick={(e) => {

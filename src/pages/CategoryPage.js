@@ -5,6 +5,7 @@ import axios from "axios";
 
 import ProductsGrid from "../components/products/ProductsGrid";
 import Spinner from "../components/common/Spinner";
+import LoadError from "../components/common/LoadError";
 import Button from "../components/common/Button";
 import Breadcrumbs from "../components/common/Breadcrumbs";
 import SortDropdown from "../components/common/SortDropdown";
@@ -17,27 +18,35 @@ export default function CategoryPage() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [sort, setSort] = useState("default"); // ← stan sortowania
+  const [sort, setSort] = useState("default");
+  const [error, setError] = useState(false);
+  const [reloadTrigger, setReloadTrigger] = useState(0);
 
   const meta = getCategoryMeta(slug);
   useEffect(() => {
     if (!meta) return;
     const { apiCategory } = meta;
     setLoading(true);
+    setError(false);
     setProducts([]);
+
     axios
       .get(
         `${
           process.env.REACT_APP_API_URL
-        }/api/products/category/${encodeURIComponent(apiCategory)}?sort=${sort}` // ← możesz podłączyć query sort
+        }/api/products/category/${encodeURIComponent(apiCategory)}?sort=${sort}`
       )
       .then((res) => setProducts(res.data))
       .catch((err) => {
-        if (err.response?.status === 404) setProducts([]);
-        else console.error("Błąd ładowania produktów:", err);
+        if (err.response?.status === 404) {
+          setProducts([]);
+        } else {
+          console.error("Błąd ładowania produktów:", err);
+          setError(true);
+        }
       })
       .finally(() => setLoading(false));
-  }, [meta, sort]); // ← reload na zmianę sort
+  }, [meta, sort, reloadTrigger]);
 
   if (!meta) return <Navigate to="/404" replace />;
 
@@ -74,6 +83,8 @@ export default function CategoryPage() {
       <section className="products-grid-section pattern-section">
         {loading ? (
           <Spinner fullscreen={false} />
+        ) : error ? (
+          <LoadError onRetry={() => setReloadTrigger((x) => x + 1)} />
         ) : products.length > 0 ? (
           <ProductsGrid products={products} />
         ) : (

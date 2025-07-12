@@ -1,4 +1,3 @@
-- nie udalo sie zaladowac tresci
 - animacje
 - w stopce odpowiednie linki do plikow, usuniecie/zmiana zbednych podstron + link do fb
 - walidacja contactform
@@ -17,7 +16,6 @@ PRODUKTY
 - sklep ogolny
 - sekcja intro - kategoria, breadcrumbs, sortowanie
 - srednia ocena wyswietlana
-- dodawanie do koszyka i alert
 
 ACCOUNT
 - dashboard

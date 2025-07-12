@@ -18,13 +18,13 @@ export function CartProvider({ children }) {
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const isLoggedIn = !!user;
 
-  /* -------------------------------- mapowanie -------------------------------- */
   const mapFromBackend = useCallback((data) => {
     return (data.items || [])
-      .filter((i) => i?.product_id) // cena może być NULL – nie odrzucamy
+      .filter((i) => i?.product_id)
       .map((i) => ({
         product: {
           id: i.product_id,
@@ -42,10 +42,10 @@ export function CartProvider({ children }) {
       }));
   }, []);
 
-  /* -------------------------- walidacja koszyka w localStorage -------------------------- */
   const validateLocalCart = useCallback(
     async (cart) => {
       let removed = 0;
+      let failed = 0;
       const validated = [];
 
       await Promise.all(
@@ -54,7 +54,7 @@ export function CartProvider({ children }) {
             const res = await fetch(
               `${API_URL}/api/products/${item.product.id}`
             );
-            if (!res.ok) throw new Error();
+            if (!res.ok) throw new Error("Invalid response");
             const product = await res.json();
             if (product.is_deleted || !product.is_available) {
               removed++;
@@ -62,17 +62,16 @@ export function CartProvider({ children }) {
             }
             validated.push({ product, quantity: item.quantity });
           } catch {
-            removed++;
+            failed++;
           }
         })
       );
 
-      return { validated, removed };
+      return { validated, removed, failed };
     },
     [API_URL]
   );
 
-  /* ---------------------------------- główne pobranie ---------------------------------- */
   const fetchCart = useCallback(
     async (path = `${API_URL}/api/cart`) => {
       const res = await fetch(path, { credentials: "include" });
@@ -83,9 +82,9 @@ export function CartProvider({ children }) {
     [API_URL]
   );
 
-  /* ---------------------------------- odświeżanie ---------------------------------- */
   const reloadCart = useCallback(async () => {
     setLoading(true);
+    setError(null);
 
     if (isLoggedIn) {
       try {
@@ -99,33 +98,49 @@ export function CartProvider({ children }) {
           );
         }
         setItems(mapFromBackend(data));
+        setError(null);
       } catch {
         setItems([]);
+        setError("Nie udało się pobrać koszyka.");
       }
     } else {
-      const local = JSON.parse(localStorage.getItem("cart") || "[]");
-      const { validated, removed } = await validateLocalCart(local);
+      try {
+        const local = JSON.parse(localStorage.getItem("cart") || "[]");
+        const { validated, removed, failed } = await validateLocalCart(local);
 
-      if (removed) {
-        showAlert(
-          `Usunięto ${removed} niedostępny${removed === 1 ? "" : "e"} produkt${
-            removed > 1 ? "y" : ""
-          } z koszyka.`,
-          "info"
-        );
+        if (failed > 0) {
+          setError("Nie udało się połączyć z serwerem.");
+          setItems([]);
+          return;
+        }
+
+        if (removed > 0) {
+          showAlert(
+            `Usunięto ${removed} niedostępny${
+              removed === 1 ? "" : "e"
+            } produkt${removed > 1 ? "y" : ""} z koszyka.`,
+            "info"
+          );
+        }
+
+        setItems(validated);
+        if (validated.length > 0) {
+          localStorage.setItem("cart", JSON.stringify(validated));
+        }
+        setError(null);
+      } catch {
+        setItems([]);
+        setError("Nie udało się pobrać koszyka.");
       }
-
-      setItems(validated);
-      localStorage.setItem("cart", JSON.stringify(validated));
     }
 
     setLoading(false);
   }, [isLoggedIn, fetchCart, mapFromBackend, validateLocalCart, showAlert]);
 
-  /* ------------------------------- pierwszy load ------------------------------- */
   useEffect(() => {
     const load = async () => {
       setLoading(true);
+      setError(null);
 
       if (isLoggedIn) {
         try {
@@ -139,13 +154,31 @@ export function CartProvider({ children }) {
             );
           }
           setItems(mapFromBackend(data));
+          setError(null);
         } catch {
           setItems([]);
+          setError("Nie udało się pobrać koszyka.");
         }
       } else {
-        const local = JSON.parse(localStorage.getItem("cart") || "[]");
-        const { validated } = await validateLocalCart(local);
-        setItems(validated);
+        try {
+          const local = JSON.parse(localStorage.getItem("cart") || "[]");
+          const { validated, failed } = await validateLocalCart(local);
+
+          if (failed > 0) {
+            setError("Nie udało się połączyć z serwerem.");
+            setItems([]);
+            return;
+          }
+
+          setItems(validated);
+          if (validated.length > 0) {
+            localStorage.setItem("cart", JSON.stringify(validated));
+          }
+          setError(null);
+        } catch {
+          setItems([]);
+          setError("Nie udało się pobrać koszyka.");
+        }
       }
 
       setLoading(false);
@@ -154,7 +187,6 @@ export function CartProvider({ children }) {
     load();
   }, [isLoggedIn, fetchCart, mapFromBackend, validateLocalCart, showAlert]);
 
-  /* --------------------- scalanie koszyka po zalogowaniu --------------------- */
   useEffect(() => {
     const mergeCart = async () => {
       if (!user || !isLoggedIn) return;
@@ -162,10 +194,9 @@ export function CartProvider({ children }) {
       const localCart = localStorage.getItem("cart");
       if (!localCart) return;
 
-      const { validated } = await validateLocalCart(JSON.parse(localCart));
-
-      for (const localItem of validated) {
-        try {
+      try {
+        const { validated } = await validateLocalCart(JSON.parse(localCart));
+        for (const localItem of validated) {
           await fetch(`${API_URL}/api/cart`, {
             method: "POST",
             credentials: "include",
@@ -175,19 +206,18 @@ export function CartProvider({ children }) {
               quantity: localItem.quantity,
             }),
           });
-        } catch (e) {
-          // możesz dodać alert jeśli chcesz
         }
-      }
 
-      localStorage.removeItem("cart");
-      await reloadCart(); // pobierz po scaleniu
+        localStorage.removeItem("cart");
+        await reloadCart();
+      } catch {
+        showAlert("Nie udało się połączyć koszyka gościa z kontem.", "error");
+      }
     };
 
     mergeCart();
   }, [user, isLoggedIn, API_URL, validateLocalCart, reloadCart]);
 
-  /* ------------------------ flush do localStorage u gościa ------------------------ */
   useEffect(() => {
     if (!isLoggedIn && !loading) {
       const serializable = items.filter(
@@ -197,7 +227,6 @@ export function CartProvider({ children }) {
     }
   }, [items, loading, isLoggedIn]);
 
-  /* --------------------------------- mutacje --------------------------------- */
   const addItem = async (product, quantity = 1) => {
     if (product.is_deleted || product.is_available === false) {
       return showAlert("Tego produktu nie można dodać do koszyka.", "error");
@@ -213,12 +242,11 @@ export function CartProvider({ children }) {
         updated = [...prev, { product, quantity }];
       }
       if (!isLoggedIn) {
-        localStorage.setItem("cart", JSON.stringify(updated)); // ← zapis od razu
+        localStorage.setItem("cart", JSON.stringify(updated));
       }
       return updated;
     });
 
-    /* ---------- zapis na serwerze (jeżeli zalogowany) ---------- */
     if (isLoggedIn) {
       try {
         await fetch(`${API_URL}/api/cart`, {
@@ -232,7 +260,6 @@ export function CartProvider({ children }) {
       }
     }
 
-    /* ---------- komunikat dla użytkownika ---------- */
     const totalAmount = quantity * (parseFloat(product.quantity) || 1);
     const unitLabel = product.unit || "szt.";
 
@@ -266,6 +293,7 @@ export function CartProvider({ children }) {
       if (!isLoggedIn) localStorage.removeItem("cart");
       return [];
     });
+    setError(null);
 
     if (isLoggedIn) {
       await fetch(`${API_URL}/api/cart`, {
@@ -275,10 +303,23 @@ export function CartProvider({ children }) {
     }
   };
 
-  /* -------------------------------- provider -------------------------------- */
+  const retry = () => {
+    setError(null);
+    reloadCart();
+  };
+
   return (
     <CartContext.Provider
-      value={{ items, addItem, removeItem, clearCart, reloadCart, loading }}
+      value={{
+        items,
+        addItem,
+        removeItem,
+        clearCart,
+        reloadCart,
+        retry,
+        loading,
+        error,
+      }}
     >
       {children}
     </CartContext.Provider>
