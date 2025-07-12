@@ -60,6 +60,7 @@ const customStyles = {
     background: '#ffffff',
     borderRadius: 4,
     overflow: 'hidden',
+    zIndex: 4,
   }),
   menuList: (provided) => ({
     ...provided,
