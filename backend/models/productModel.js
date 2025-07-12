@@ -11,7 +11,7 @@ const ProductModel = {
       allergens,
       unit,
       quantity,
-      price_net,
+      price_brut,
       vat_rate,
       image,
     } = product;
@@ -22,7 +22,7 @@ const ProductModel = {
 
     const [result] = await db.query(
       `INSERT INTO products 
-        (name, category, slug, description, ingredients, allergens, unit, quantity, price_net, vat_rate, image)
+        (name, category, slug, description, ingredients, allergens, unit, quantity, price_brut, vat_rate, image)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         name,
@@ -33,7 +33,7 @@ const ProductModel = {
         allergens,
         unit,
         quantity,
-        price_net,
+        price_brut,
         vat_rate,
         image,
       ]

@@ -3,19 +3,21 @@ import React, { useEffect } from "react";
 import { useCart } from "./CartContext";
 import { Link } from "react-router-dom";
 import Button from "../common/Button";
-import LoadError from "../common/LoadError"; // ⬅️ import
+import LoadError from "../common/LoadError";
 import Spinner from "../common/Spinner";
 import { ReactComponent as DefaultIcon } from "../../assets/szynka-ikona.svg";
-import { categoryToSlug, formatQuantity } from "../../utils/product";
+import {
+  categoryToSlug,
+  formatQuantity,
+  formatGrossPrice,
+} from "../../utils/product";
 
 const CartDrawer = ({ isOpen, onClose }) => {
   const { items, removeItem, reloadCart, loading, error } = useCart();
 
-  /* ----------- suma i filtrowanie ----------- */
   const total = items.reduce((sum, i) => {
-    if (!i?.product) return sum;
-    const price = i.product.price_net * (1 + i.product.vat_rate / 100);
-    return sum + price * i.quantity;
+    if (!i?.product || i.product.price == null) return sum;
+    return sum + i.product.price * i.quantity;
   }, 0);
 
   const validItems = items.filter(
@@ -26,7 +28,6 @@ const CartDrawer = ({ isOpen, onClose }) => {
   );
   const isEmpty = validItems.length === 0;
 
-  /* ----------- domyślne zdjęcie ----------- */
   const CartItemImage = ({ src, alt }) => {
     const [hasError, setHasError] = React.useState(false);
     if (!src || hasError)
@@ -41,7 +42,6 @@ const CartDrawer = ({ isOpen, onClose }) => {
     );
   };
 
-  /* ----------- odśwież przy otwarciu ----------- */
   useEffect(() => {
     if (isOpen) reloadCart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -89,11 +89,9 @@ const CartDrawer = ({ isOpen, onClose }) => {
                       </div>
                       <div className="product-qty">
                         {quantity} ×{" "}
-                        {(
-                          product.price_net *
-                          (1 + product.vat_rate / 100)
-                        ).toFixed(2)}{" "}
-                        zł
+                        {product.price != null
+                          ? `${formatGrossPrice(product.price)} zł`
+                          : "- zł"}
                       </div>
                     </div>
                   </Link>
@@ -112,12 +110,12 @@ const CartDrawer = ({ isOpen, onClose }) => {
           )}
         </ul>
 
-        {!isEmpty && !loading && (
+        {!isEmpty && !loading && !error && (
           <div className="cart-footer">
             <div className="total">
               <em>
                 <span>Łączna kwota: </span>
-                <span>{total.toFixed(2)} zł</span>
+                <span>{formatGrossPrice(total)} zł</span>
               </em>
               <span>z VAT</span>
             </div>
