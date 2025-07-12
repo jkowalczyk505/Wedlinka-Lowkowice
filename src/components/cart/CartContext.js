@@ -29,8 +29,7 @@ export function CartProvider({ children }) {
         product: {
           id: i.product_id,
           name: i.name,
-          price_net: parseFloat(i.price_net ?? 0),
-          vat_rate: i.vat_rate ?? 8,
+          price: parseFloat(i.price_brut ?? 0),
           unit: i.unit,
           image: i.image,
           slug: i.slug,
@@ -60,7 +59,21 @@ export function CartProvider({ children }) {
               removed++;
               return;
             }
-            validated.push({ product, quantity: item.quantity });
+            validated.push({
+              product: {
+                id: product.id,
+                name: product.name,
+                price: parseFloat(product.price_brut ?? 0),
+                unit: product.unit,
+                image: product.image,
+                slug: product.slug,
+                category: product.category,
+                is_available: product.is_available,
+                is_deleted: product.is_deleted,
+                quantity: parseFloat(product.quantity ?? 1), // ⬅️ TO DODAJ
+              },
+              quantity: item.quantity,
+            });
           } catch {
             failed++;
           }
