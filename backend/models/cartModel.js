@@ -10,7 +10,7 @@ const CartModel = {
     const [rows] = await db.query(
       `SELECT  ci.*,
                p.name,
-               p.price_net,
+               p.price_brut,
                p.unit,
                p.image,
                p.slug,
