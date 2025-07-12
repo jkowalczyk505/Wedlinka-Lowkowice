@@ -85,31 +85,9 @@ const AccountDashboard = () => {
       {/* ▷ Zamówienia */}
       <section className="order-summary">
         <h2>Twoje zamówienia</h2>
-        <div className="summary-cards">
-          <div className="card">
-            <ListOrdered size={28} />
-            <div>
-              <h3>{stats.total}</h3>
-              <p>Wszystkie</p>
-            </div>
-          </div>
-          <div className="card">
-            <Clock size={28} />
-            <div>
-              <h3>{stats.pending}</h3>
-              <p>Oczekujące</p>
-            </div>
-          </div>
-          <div className="card">
-            <AlertCircle size={28} />
-            <div>
-              <h3>{stats.unpaid}</h3>
-              <p>Niezapłacone</p>
-            </div>
-          </div>
-        </div>
-        <Link to="/konto/zamowienia" className="btn btn-primary">
-          Przeglądaj zamówienia
+        <p>....</p>
+        <Link to="/konto/zamowienia">
+          <Button variant="beige">Przeglądaj zamówienia</Button>
         </Link>
       </section>
 
@@ -178,20 +156,12 @@ const AccountDashboard = () => {
       {/* ▷ Faktury */}
       <section className="invoices-preview">
         <h2>Faktury</h2>
-        <ul className="invoice-list">
-          {invoices.map((inv) => (
-            <li key={inv.id}>
-              <FileText size={20} />
-              <span>
-                {inv.number} z {new Date(inv.issue_date).toLocaleDateString()}
-              </span>
-            </li>
-          ))}
-        </ul>
-        <Link to="/konto/zamowienia" className="btn-icon">
-          <MoreHorizontal size={24} aria-label="Więcej faktur" />
-        </Link>
+        <p>............</p>
+        <Button as={Link} to="/konto/zamowienia" variant="beige">
+          Więcej faktur
+        </Button>
       </section>
+
       {/* ▷ Usuwanie konta */}
       <section className="account-delete">
         <h2>Usuń konto</h2>
