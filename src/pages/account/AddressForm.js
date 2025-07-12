@@ -253,7 +253,7 @@ function AddressForm() {
                 className="submit-button"
                 style={{ display: "flex", gap: "1rem" }}
               >
-                <Button type="submit" variant="red" disabled={saving}>
+                <Button type="submit" variant="beige" disabled={saving}>
                   {saving ? (
                     <>
                       <Spinner size="small" /> &nbsp;Zapisywanie...
@@ -262,7 +262,7 @@ function AddressForm() {
                     "Zapisz zmiany"
                   )}
                 </Button>
-                <Button type="button" variant="beige" onClick={handleCancel}>
+                <Button type="button" variant="red" onClick={handleCancel}>
                   Anuluj
                 </Button>
               </div>

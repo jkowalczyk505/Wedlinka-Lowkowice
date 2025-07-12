@@ -10,7 +10,6 @@ BACKEND
 - generowanie slugu
 - srednia ocena produktu
 - zabezpieczenie multera - przy bledzie niezapisywanie i nienadpisywanie zdjec, brak usuwania starych
-- sortowanie
 
 PRODUKTY
 - sklep ogolny
