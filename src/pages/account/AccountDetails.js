@@ -204,7 +204,7 @@ function AccountDetails() {
                 className="submit-button"
                 style={{ display: "flex", gap: "1rem" }}
               >
-                <Button type="submit" variant="red" disabled={saving}>
+                <Button type="submit" variant="beige" disabled={saving}>
                   {saving ? (
                     <>
                       <Spinner size="small" /> &nbsp;Zapisywanie...
@@ -213,7 +213,7 @@ function AccountDetails() {
                     "Zapisz zmiany"
                   )}
                 </Button>
-                <Button type="button" variant="beige" onClick={handleCancel}>
+                <Button type="button" variant="red" onClick={handleCancel}>
                   Anuluj
                 </Button>
               </div>
@@ -246,7 +246,11 @@ function AccountDetails() {
             />
 
             <div className="submit-button">
-              <Button type="submit" variant="red" disabled={emailChangeLoading}>
+              <Button
+                type="submit"
+                variant="beige"
+                disabled={emailChangeLoading}
+              >
                 {emailChangeLoading ? (
                   <>
                     <Spinner size="small" /> &nbsp;Zapisywanie...

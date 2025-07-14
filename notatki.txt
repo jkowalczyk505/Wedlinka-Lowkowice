@@ -10,7 +10,6 @@ BACKEND
 - generowanie slugu
 - srednia ocena produktu
 - zabezpieczenie multera - przy bledzie niezapisywanie i nienadpisywanie zdjec, brak usuwania starych
-- sortowanie
 
 PRODUKTY
 - sklep ogolny
@@ -32,7 +31,7 @@ NA KONIEC
 - env production
 - htaccess - react router SPA + http->https + przekierowanie www
 - anonimazacja danych users zgodnie z RODO (zmienic markAsDeleted? + pola bazy users możliwe na NULL?)
-- ustaiwneie uzytkownika na usunietego uniemozliwia zalozenie kolejnego na ten sam email
+- ustaiwneie uzytkownika na usunietego uniemozliwia zalozenie kolejnego na ten sam email - poprawic??
 - archiwizacja i/lub usuwanie kont, danych z zamowien itp - czyszczenie tabel? cron?
 
 

@@ -6,16 +6,17 @@ import {
   ListOrdered,
   Clock,
   AlertCircle,
-  ShoppingCart,
   MoreHorizontal,
   User,
   MapPin,
-  Key,
   FileText,
+  Mail,
+  AtSign,
 } from "lucide-react";
 import Button from "../../components/common/Button";
 import InfoTip from "../../components/common/InfoTip";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
+import CartItemTile from "../../components/cart/CartItemTile";
 import { useAlert } from "../../components/common/alert/AlertContext";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -25,6 +26,7 @@ const AccountDashboard = () => {
 
   const [stats, setStats] = useState({ total: 0, pending: 0, unpaid: 0 });
   const [cartItems, setCartItems] = useState([]);
+  const cartPreview = cartItems.slice(0, 3);
   const [invoices, setInvoices] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const { showAlert } = useAlert();
@@ -43,9 +45,27 @@ const AccountDashboard = () => {
       .catch(() => {});
 
     // pobierz 2 produkty z koszyka
-    fetch("/api/cart", { credentials: "include" })
+    fetch(`${API_URL}/api/cart`, { credentials: "include" })
       .then((r) => r.json())
-      .then((d) => setCartItems(d.items.slice(0, 2)))
+      .then((d) =>
+        setCartItems(
+          d.items.map((item) => ({
+            product: {
+              id: item.product_id,
+              name: item.name,
+              price: parseFloat(item.price_brut),
+              unit: item.unit,
+              image: item.image,
+              slug: item.slug,
+              category: item.category,
+              is_available: !!item.is_available,
+              is_deleted: !!item.is_deleted,
+            },
+            quantity: item.quantity,
+          }))
+        )
+      )
+
       .catch(() => {});
 
     // pobierz 2 ostatnie faktury
@@ -65,31 +85,9 @@ const AccountDashboard = () => {
       {/* ▷ Zamówienia */}
       <section className="order-summary">
         <h2>Twoje zamówienia</h2>
-        <div className="summary-cards">
-          <div className="card">
-            <ListOrdered size={28} />
-            <div>
-              <h3>{stats.total}</h3>
-              <p>Wszystkie</p>
-            </div>
-          </div>
-          <div className="card">
-            <Clock size={28} />
-            <div>
-              <h3>{stats.pending}</h3>
-              <p>Oczekujące</p>
-            </div>
-          </div>
-          <div className="card">
-            <AlertCircle size={28} />
-            <div>
-              <h3>{stats.unpaid}</h3>
-              <p>Niezapłacone</p>
-            </div>
-          </div>
-        </div>
-        <Link to="/konto/zamowienia" className="btn btn-primary">
-          Przeglądaj zamówienia
+        <p>....</p>
+        <Link to="/konto/zamowienia">
+          <Button variant="beige">Przeglądaj zamówienia</Button>
         </Link>
       </section>
 
@@ -97,66 +95,78 @@ const AccountDashboard = () => {
       <section className="cart-preview">
         <h2>Twój koszyk</h2>
         <ul className="cart-items">
-          {cartItems.map((item) => (
-            <li key={item.product.id}>
-              <ShoppingCart size={20} />
-              <span>
-                {item.product.name} × {item.quantity}
-              </span>
-            </li>
-          ))}
+          {cartPreview.length === 0 ? (
+            <li className="empty-message">Koszyk jest pusty.</li>
+          ) : (
+            cartPreview.map((item) => (
+              <CartItemTile
+                key={item.product.id}
+                product={item.product}
+                quantity={item.quantity}
+                onRemove={null}
+                onClick={null}
+              />
+            ))
+          )}
         </ul>
-        <Link to="/koszyk" className="btn-icon">
-          <MoreHorizontal size={24} aria-label="Przejdź do koszyka" />
-        </Link>
+        {cartItems.length > 3 && (
+          <Link to="/koszyk">
+            <Button variant="beige">Pokaż więcej</Button>
+          </Link>
+        )}
       </section>
 
       {/* ▷ Dane i adres */}
       <section className="profile-info">
         <h2>Moje dane i adres</h2>
-        <ul>
-          <li>
-            <User size={16} /> {user?.name} {user?.surname}
-          </li>
-          <li>
-            <Key size={16} /> {user?.email}
-          </li>
-          <li>
-            <MapPin size={16} /> {user?.phone}
-          </li>
-        </ul>
-        <div className="profile-actions">
-          <Link to="/konto/dane" className="btn btn-secondary">
-            Edytuj dane
-          </Link>
-          <Link to="/konto/adres" className="btn btn-secondary">
-            Edytuj adres
-          </Link>
+        <div className="profile-columns">
+          {/* Kolumna: dane osobowe */}
+          <div className="profile-left">
+            <ul>
+              <li>
+                <User size={25} /> {user?.name} {user?.surname}
+              </li>
+              <li>
+                <AtSign size={25} /> {user?.email}
+              </li>
+            </ul>
+            <Button as={Link} to="/konto/dane" variant="beige">
+              Edytuj dane
+            </Button>
+          </div>
+
+          {/* Kolumna: adres */}
+          <div className="profile-right">
+            <ul>
+              <li>
+                <MapPin size={25} /> {user?.street}{" "}
+                {user?.apartmentNumber || ""}
+              </li>
+              <li>
+                <Mail size={25} /> {user?.postalCode} {user?.city}
+              </li>
+            </ul>
+            <Button as={Link} to="/konto/adres" variant="beige">
+              Edytuj adres
+            </Button>
+          </div>
         </div>
       </section>
 
       {/* ▷ Faktury */}
       <section className="invoices-preview">
         <h2>Faktury</h2>
-        <ul className="invoice-list">
-          {invoices.map((inv) => (
-            <li key={inv.id}>
-              <FileText size={20} />
-              <span>
-                {inv.number} z {new Date(inv.issue_date).toLocaleDateString()}
-              </span>
-            </li>
-          ))}
-        </ul>
-        <Link to="/konto/zamowienia" className="btn-icon">
-          <MoreHorizontal size={24} aria-label="Więcej faktur" />
-        </Link>
+        <p>............</p>
+        <Button as={Link} to="/konto/zamowienia" variant="beige">
+          Więcej faktur
+        </Button>
       </section>
+
       {/* ▷ Usuwanie konta */}
       <section className="account-delete">
         <h2>Usuń konto</h2>
         <InfoTip>Usunięcie konta jest nieodwracalne!</InfoTip>
-        <Button variant="red" onClick={() => setShowConfirm(true)}>
+        <Button variant="beige" onClick={() => setShowConfirm(true)}>
           Usuń konto
         </Button>
       </section>
