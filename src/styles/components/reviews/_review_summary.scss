@@ -1,0 +1,78 @@
+.review-summary {
+  margin: 2rem 0 3rem;
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  text-align: center;
+  position: relative;
+
+  .box { 
+    display:flex; 
+    flex-direction:column; 
+    align-items:center; }
+
+  .avg-box .avg-value {
+    font-size: 2.2rem; 
+    font-weight:700; 
+    margin-top:0.3rem;
+    .slash { 
+      margin-left: 0.3rem;
+      font-size:1.3rem; 
+      font-weight:400; 
+    }
+  }
+
+    .info-tip-wrapper {
+    position: relative;
+    margin-top: 0.4rem;
+
+    .info-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      color: $accent-color-darken;
+      transition: color 0.2s;
+
+      &:hover {
+        color: darken($accent-color-darken, 10%);
+      }
+
+      svg {
+        display: block;
+      }
+    }
+
+    .floating-tip {
+      position: absolute;
+      top: 2.2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      width: max-content;
+      min-width: 250px;
+      max-width: 400px;
+    }
+  }
+
+  .count-box .count-circle {
+    width: 5rem;
+    height:5rem; 
+    border-radius:50%;
+    border:4px solid #d3d3d3; 
+    display:flex;
+    align-items:center; 
+    justify-content:center;
+    font-size:2rem; 
+    font-weight:700;
+  }
+
+  .count-label { 
+    margin-top:0.5rem; 
+    font-weight:500; 
+  }
+
+  .divider {
+    width:1px; background: #ccc;
+  }
+}

@@ -3,6 +3,7 @@
 - walidacja contactform
 - w stopce i na kontakt prawdziwe adresy/telefony itp
 - spinnery, loaderror sprawdzic czy wszedzie sa i czy 77vh nigdzie nie przeszkadza
+- usuwanie usera anonimizuje go i jego opinie
 
 - responsywnosc + duże ekrany
 - polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy, okres przechowywania danych invoices + shipping_details (5lat? jak porzucone nieoplacone to krocej)
@@ -10,9 +11,6 @@
 BACKEND
 - generowanie slugu
 - zabezpieczenie multera - przy bledzie niezapisywanie i nienadpisywanie zdjec, brak usuwania starych
-
-PRODUKTY
-- opinie
 
 ACCOUNT
 - dashboard

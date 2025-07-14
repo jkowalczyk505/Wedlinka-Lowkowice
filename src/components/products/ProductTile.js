@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ReactComponent as DefaultIcon } from "../../assets/szynka-ikona.svg";
-import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 import AddToCartButton from "../common/AddToCart";
 import { formatGrossPrice, formatQuantity, categoryToSlug } from "../../utils/product";
 import { useCart } from "../cart/CartContext";
-import RatingStars from "../products/RatingStars";
+import RatingStars from "../reviews/RatingStars";
 
 function ProductTile({ product }) {
   const {
