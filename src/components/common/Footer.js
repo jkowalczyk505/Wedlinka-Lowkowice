@@ -45,10 +45,11 @@ function Footer() {
         <div className="footer__col">
           <h4 className="footer__heading">Nasze produkty</h4>
           <ul>
-            <li><NavLink to="/kielbasy">Kiełbasy</NavLink></li>
-            <li><NavLink to="/wedliny">Wędliny</NavLink></li>
-            <li><NavLink to="/wyroby-podrobowe">Wyroby podrobowe</NavLink></li>
-            <li><NavLink to="/nasze-paczki">Paczki</NavLink></li>
+            <li><NavLink to="/sklep">Wszystkie produkty</NavLink></li>
+            <li><NavLink to="/sklep/kielbasy">Kiełbasy</NavLink></li>
+            <li><NavLink to="/sklep/wedliny">Wędliny</NavLink></li>
+            <li><NavLink to="/sklep/wyroby-podrobowe">Wyroby podrobowe</NavLink></li>
+            <li><NavLink to="/sklep/nasze-paczki">Paczki</NavLink></li>
           </ul>
         </div>
       </div>

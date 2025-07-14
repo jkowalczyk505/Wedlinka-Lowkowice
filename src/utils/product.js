@@ -64,3 +64,10 @@ export function formatQuantity(quantity) {
     maximumFractionDigits: 2,
   });
 }
+
+export function formatSlugTitle(slug) {
+  if (!slug) return "";
+  return slug
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (l) => l.toUpperCase());
+}
