@@ -8,9 +8,12 @@ import Button from "../components/common/Button";
 import { useCart } from "../components/cart/CartContext";
 import Breadcrumbs from "../components/common/Breadcrumbs";
 import QuantityStepper from "../components/common/QuantityStepper";
-import RatingStars from "../components/products/RatingStars";
+import RatingStars from "../components/reviews/RatingStars";
 import LoadError from "../components/common/LoadError";
 import Spinner from "../components/common/Spinner";
+import ReviewSummary from "../components/reviews/ReviewSummary";
+import ReviewsList from "../components/reviews/ReviewsList";
+
 
 import {
   getCategoryMeta,
@@ -186,6 +189,12 @@ export default function ProductPage() {
 
         <div className="product-reviews">
           <h2>Opinie o produkcie</h2>
+          <ReviewSummary
+              avg={product.averageRating}
+              total={product.reviewsCount}
+          />
+
+          <ReviewsList productId={product.id} />
         </div>
       </section>
 

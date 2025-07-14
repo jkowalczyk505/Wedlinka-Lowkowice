@@ -1,0 +1,20 @@
+.reviews-wrapper {
+  .reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.no-reviews { 
+    font-size: 1.2rem;
+    font-style: italic; 
+    justify-self: center;
+}
+
+.reviews-loadmore {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+  }
+}

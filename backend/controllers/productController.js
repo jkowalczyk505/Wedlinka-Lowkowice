@@ -13,10 +13,11 @@ exports.getAllProducts = async (req, res) => {
     // dokładamy averageRating do każdego produktu
     const withRating = await Promise.all(
       products.map(async (p) => {
-        const avg = await ReviewModel.getAverageRatingByProductId(p.id);
+        const { avg, total } = await ReviewModel.getStatsByProductId(p.id);
         return {
           ...p,
-          averageRating: avg,  // dokładny float, np. 4.87
+          averageRating: avg,     // np. 4.87
+          reviewsCount: total,    // np. 35
         };
       })
     );
@@ -42,9 +43,9 @@ exports.getProductBySlug = async (req, res) => {
     if (!product) {
       return res.status(404).json({ error: "Nie znaleziono produktu" });
     }
-    // dorzuć średnią ocenę
-    const avg = await ReviewModel.getAverageRatingByProductId(product.id);
-    product.averageRating = avg,
+    const { avg, total } = await ReviewModel.getStatsByProductId(product.id);
+    product.averageRating = avg;
+    product.reviewsCount  = total;
     res.json(product);
   } catch (err) {
     console.error("GET PRODUCT BY SLUG ERROR:", err);
@@ -66,10 +67,11 @@ exports.getProductsByCategory = async (req, res) => {
 
     const withRating = await Promise.all(
       products.map(async (p) => {
-        const avg = await ReviewModel.getAverageRatingByProductId(p.id);
+        const { avg, total } = await ReviewModel.getStatsByProductId(p.id);
         return {
           ...p,
           averageRating: avg,
+          reviewsCount:  total,
         };
       })
     );
