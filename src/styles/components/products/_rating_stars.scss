@@ -1,0 +1,12 @@
+.rating-stars {
+  display: inline-flex;
+  .star {
+    font-size: 1.1rem;
+    margin: 0 0.05rem;
+    color: $primary-color-darken;
+    &.filled,
+    &.half {
+      color: $accent-color;
+    }
+  }
+}

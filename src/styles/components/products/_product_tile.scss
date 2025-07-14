@@ -123,20 +123,6 @@
 
         .product-rating {
             margin-top: 0.5rem;
-
-            .star {
-                color: $primary-color-darken;
-                font-size: 1.1rem;
-                margin: 0 0.05rem;
-
-                &.filled {
-                    color: $accent-color;
-                }
-
-                &.half {
-                    color: $accent-color;
-                }
-            }
         }
 
         .product-price {

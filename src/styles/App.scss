@@ -71,6 +71,7 @@
 @import "./pages/cart_page";
 @import "./components/common/checkout_steps";
 @import "./components/cart/cart_row";
+@import "./components/products/rating_stars";
 
 @import "slick-carousel/slick/slick.css";
 @import "slick-carousel/slick/slick-theme.css";
@@ -183,6 +184,8 @@ h3 {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    background-attachment: fixed;
+
 
     color: $dark-color;
 

@@ -1,6 +1,7 @@
 const ProductModel = require("../models/productModel");
 const fs = require("fs");
 const path = require("path");
+const ReviewModel = require("../models/reviewModel");
 
 const uploadDir = path.join(__dirname, "..", "uploads", "products");
 
@@ -8,7 +9,19 @@ exports.getAllProducts = async (req, res) => {
   try {
     const { sort } = req.query;
     const products = await ProductModel.findAllSorted(sort);
-    res.json(products);
+
+    // dokładamy averageRating do każdego produktu
+    const withRating = await Promise.all(
+      products.map(async (p) => {
+        const avg = await ReviewModel.getAverageRatingByProductId(p.id);
+        return {
+          ...p,
+          averageRating: Math.round(avg * 2) / 2,  // zaokrąglenie do 0.5
+        };
+      })
+    );
+
+    res.json(withRating);
   } catch (err) {
     console.error("GET ALL PRODUCTS ERROR:", err);
     res.status(500).json({ error: "Błąd pobierania produktów" });
@@ -29,6 +42,9 @@ exports.getProductBySlug = async (req, res) => {
     if (!product) {
       return res.status(404).json({ error: "Nie znaleziono produktu" });
     }
+    // dorzuć średnią ocenę
+    const avg = await ReviewModel.getAverageRatingByProductId(product.id);
+    product.averageRating = Math.round(avg * 2) / 2; // zaokrąglij do 0.5
     res.json(product);
   } catch (err) {
     console.error("GET PRODUCT BY SLUG ERROR:", err);
@@ -48,7 +64,17 @@ exports.getProductsByCategory = async (req, res) => {
         .json({ error: `Brak produktów w kategorii: ${category}` });
     }
 
-    res.json(products);
+    const withRating = await Promise.all(
+      products.map(async (p) => {
+        const avg = await ReviewModel.getAverageRatingByProductId(p.id);
+        return {
+          ...p,
+          averageRating: Math.round(avg * 2) / 2,
+        };
+      })
+    );
+
+    res.json(withRating);
   } catch (err) {
     console.error("GET PRODUCTS BY CATEGORY ERROR:", err);
     res.status(500).json({ error: "Błąd pobierania produktów z kategorii" });
