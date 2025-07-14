@@ -75,6 +75,14 @@ const ProductModel = {
     return rows;
   },
 
+  async findBySlug(slug) {
+    const [rows] = await db.query(
+      `SELECT * FROM products WHERE slug = ? AND is_deleted = 0`,
+      [slug]
+    );
+    return rows[0] || null;
+  },
+
   async findByCategory(category) {
     const [rows] = await db.query(
       "SELECT * FROM products WHERE category = ? AND is_deleted = 0",

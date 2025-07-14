@@ -22,6 +22,20 @@ exports.getProductById = async (req, res) => {
   res.json(product);
 };
 
+exports.getProductBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const product = await ProductModel.findBySlug(slug);
+    if (!product) {
+      return res.status(404).json({ error: "Nie znaleziono produktu" });
+    }
+    res.json(product);
+  } catch (err) {
+    console.error("GET PRODUCT BY SLUG ERROR:", err);
+    res.status(500).json({ error: "Błąd pobierania produktu po slugu" });
+  }
+};
+
 exports.getProductsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
