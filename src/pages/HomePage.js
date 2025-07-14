@@ -33,7 +33,7 @@ function HomePage() {
         title="Wędliny i kiełbasy z tradycją"
         subtitle="Wędliny, kiełbasy i wyroby podrobowe przygotowywane według tradycyjnych receptur, z najlepszych składników i bez zbędnych dodatków. Kupuj bezpośrednio od producenta."
       />
-      <section className="categories-section white-section">
+      <section className="categories-section pattern-section">
         <div className="categories-info">
           <h2>Co znajdziesz w naszej ofercie?</h2>
           <p>Sprawdź, co oferujemy - wybierz interesującą Cię grupę.</p>
@@ -122,7 +122,7 @@ function HomePage() {
         </div>
       </section>
       <FeaturesSection items={contactFeatures} className="red-section" />
-      <section className="gallery-section white-section">
+      <section className="gallery-section pattern-section">
         <GallerySlider />
       </section>
     </main>
