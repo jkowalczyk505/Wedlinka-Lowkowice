@@ -1,34 +1,83 @@
-// _cart_row.scss
-
 .cart-row {
     display: grid;
-    grid-template-columns: 80px 1fr 120px 100px 40px;
+    grid-template-columns:
+        100px
+        /* obrazek */
+        2fr
+        /* nazwa+jednostka */
+        100px
+        /* cena */
+        120px
+        /* ilość */
+        100px
+        /* kwota */
+        20px
+        /* usuń */
+    ;
     align-items: center;
     background-color: $primary-color;
     border-radius: 5px;
     border: 1px solid $primary-color-darken;
     padding: 1rem;
+    gap: 0.5rem;
+
+    &--header {
+        background: transparent;
+        border-color: transparent;
+
+        .cart-row__img,
+        .cart-row__price,
+        .cart-row__qty,
+        .cart-row__total {
+            color: $dark-color-lighten;
+            font-weight: normal;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .cart-row__details {
+            /* pusta */
+        }
+
+        .cart-row__remove {
+            /* puste */
+        }
+    }
 
     &__img img {
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
         object-fit: cover;
-        border-radius: 4px;
     }
 
     &__details {
-        padding: 0 1rem;
+        padding-left: 0.5rem;
 
-        & .cart-row__name {
-            font-weight: 600;
-            color: #333;
+        .cart-row__name {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: $dark-color;
             margin-bottom: 0.25rem;
         }
 
-        & .cart-row__price {
+        .cart-row__unit {
             font-size: 0.9rem;
-            color: #777;
+            color: $dark-color-lighten;
         }
+    }
+
+    &__price,
+    &__total {
+        font-weight: 700;
+        text-align: center;
+        color: $dark-color;
+    }
+
+    &__total {
+        color: $secondary-color;
+        font-size: 1.4rem;
+        font-family: $font-heading;
     }
 
     &__qty {
@@ -36,21 +85,20 @@
         justify-content: center;
     }
 
-    &__total {
-        font-weight: 700;
-        color: #c00;
-        text-align: right;
-    }
-
     &__remove {
-        background: none;
-        border: none;
-        color: #999;
-        cursor: pointer;
-        transition: color .2s;
+        display: flex;
+        justify-content: center;
 
-        &:hover {
-            color: #c00;
+        button {
+            background: none;
+            border: none;
+            color: $dark-color-lighten;
+            cursor: pointer;
+            transition: color 0.2s;
+
+            &:hover {
+                color: $secondary-color;
+            }
         }
     }
 }

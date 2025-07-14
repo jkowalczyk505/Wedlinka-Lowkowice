@@ -1,64 +1,77 @@
-// src/components/cart/CartRow.jsx
 import React from "react";
 import PropTypes from "prop-types";
-import { X } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import QuantityStepper from "../common/QuantityStepper";
-import { formatGrossPrice } from "../../utils/product";
+import { formatGrossPrice, formatQuantity } from "../../utils/product";
 
 export default function CartRow({
   product,
   quantity,
   onQuantityChange,
   onRemove,
+  isHeader,
 }) {
   return (
-    <div className="cart-row">
-      {/* obrazek */}
+    <div className={`cart-row ${isHeader ? "cart-row--header" : ""}`}>
       <div className="cart-row__img">
-        <img
-          src={`${process.env.REACT_APP_API_URL}/uploads/products/${product.image}`}
-          alt={product.name}
-        />
+        {isHeader ? (
+          "PRODUKT"
+        ) : (
+          <img
+            src={`${process.env.REACT_APP_API_URL}/uploads/products/${product.image}`}
+            alt={product.name}
+          />
+        )}
       </div>
 
-      {/* nazwa + jednostkowa cena */}
       <div className="cart-row__details">
-        <div className="cart-row__name">{product.name}</div>
-        <div className="cart-row__price">
-          {formatGrossPrice(product.price)} zł
-        </div>
+        {isHeader ? null : (
+          <>
+            <div className="cart-row__name">{product.name}</div>
+            <div className="cart-row__unit">
+              {formatQuantity(product.quantityPerUnit)} {product.unit}
+            </div>
+          </>
+        )}
       </div>
 
-      {/* licznik */}
+      <div className="cart-row__price">
+        {isHeader ? "CENA" : `${formatGrossPrice(product.price)} zł`}
+      </div>
+
       <div className="cart-row__qty">
-        <QuantityStepper value={quantity} onChange={onQuantityChange} min={1} />
+        {isHeader ? (
+          "ILOŚĆ"
+        ) : (
+          <QuantityStepper
+            value={quantity}
+            onChange={onQuantityChange}
+            min={1}
+          />
+        )}
       </div>
 
-      {/* suma pozycji */}
       <div className="cart-row__total">
-        {formatGrossPrice(product.price * quantity)} zł
+        {isHeader
+          ? "KWOTA"
+          : `${formatGrossPrice(product.price * quantity)} zł`}
       </div>
 
-      {/* usuń */}
-      <button
-        className="cart-row__remove"
-        onClick={() => onRemove(product.id)}
-        aria-label="Usuń produkt"
-      >
-        <X size={16} />
-      </button>
+      <div className="cart-row__remove">
+        {!isHeader && (
+          <button onClick={() => onRemove(product.id)} aria-label="Usuń">
+            <Trash2 size={13} />
+          </button>
+        )}
+      </div>
     </div>
   );
 }
 
 CartRow.propTypes = {
-  product: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    image: PropTypes.string,
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-  }).isRequired,
-  quantity: PropTypes.number.isRequired,
-  onQuantityChange: PropTypes.func.isRequired,
-  onRemove: PropTypes.func.isRequired,
+  product: PropTypes.object,
+  quantity: PropTypes.number,
+  onQuantityChange: PropTypes.func,
+  onRemove: PropTypes.func,
+  isHeader: PropTypes.bool,
 };

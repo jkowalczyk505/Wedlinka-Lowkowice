@@ -1,22 +1,19 @@
-// src/styles/pages/_cart_page.scss
-
 .cart-page {
     padding: 2rem 4rem;
+    padding-bottom: 3rem;
 
-    // Podpowiedź logowania
     .login-prompt {
         text-align: center;
         margin-bottom: 2rem;
-        padding: 0.5rem 1rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        padding: 0.5rem 1rem;
         border: 1px solid $primary-color-darken;
         background-color: $primary-color;
         border-radius: 5px;
 
         span {
-            display: block;
             font-size: 1.1rem;
             font-weight: 500;
         }
@@ -26,60 +23,96 @@
         }
     }
 
-    // Layout główny: lista produktów + podsumowanie
     .cart-layout {
         display: flex;
-        flex-wrap: wrap;
-        gap: 2rem;
+        gap: 3rem;
+        align-items: flex-start;
     }
 
-    // Lista produktów
     .cart-items {
         flex: 2;
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
 
-        // Przycisk "Wyczyść koszyk"
-        >button {
-            align-self: flex-start;
-            margin-top: 1rem;
+        .cart-clear {
+            font-weight: 600;
+            margin-top: 2rem;
+            color: $secondary-color;
+            cursor: pointer;
+
+            &:hover {
+                font-weight: 700;
+            }
         }
     }
 
-    // Podsumowanie po prawej
     .cart-summary {
+        position: sticky;
+        top: 2rem; // odsunięcie od góry ekranu, dostosuj wartości wedle potrzeb
+        align-self: flex-start; // żeby sticky działało poprawnie we flex containerze
+
         flex: 1;
-        border: 1px solid $accent-color;
-        border-radius: 6px;
         padding: 1.5rem;
-        background: #fafafa;
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
+        background-color: $primary-color;
+        border-radius: 5px;
+        border: 1px solid $primary-color-darken;
 
         .free-shipping {
             text-align: center;
-            padding: 0.75rem;
-            border-radius: 4px;
-            font-weight: 600;
+            padding: 1rem;
+            margin-bottom: 1rem;
+
+            em {
+                font-weight: 600;
+                font-style: normal;
+                font-size: 1.3rem;
+            }
 
             &.free {
-                background: $secondary-color-darken;
-                color: #fff;
+                background: $accent-color;
+                color: $dark-color;
             }
 
             &:not(.free) {
-                background: $secondary-color;
-                color: #fff;
+                background: $dark-color;
+                color: $primary-color;
             }
         }
 
         .summary-total {
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.3rem;
-            font-weight: 700;
+            .summary-brutto {
+                display: flex;
+                justify-content: space-between;
+                color: $dark-color-lighten;
+                text-transform: uppercase;
+                padding: 1rem 0;
+                border-top: 1px solid $primary-color-darken;
+                border-bottom: 1px solid $primary-color-darken;
+
+                strong {
+                    font-size: 1.4rem;
+                    font-family: $font-heading;
+                    color: $secondary-color;
+                }
+            }
+
+            .summary-vat {
+                display: flex;
+                justify-content: space-between;
+                color: $dark-color-lighten;
+                font-size: 0.9rem;
+                padding: 1rem 0;
+                border-bottom: 1px solid $primary-color-darken;
+
+                strong {
+                    font-family: $font-heading;
+                    color: $dark-color;
+                }
+            }
         }
 
         button {
@@ -88,24 +121,21 @@
         }
     }
 
-    // Alert cofnięcia usunięcia
-    .undo-alert {
-        position: fixed;
-        bottom: 1rem;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(255, 255, 255, 0.95);
-        border: 1px solid $accent-color;
-        padding: 0.75rem 1.25rem;
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 
-        button {
-            font-size: 0.9rem;
-            padding: 0.3rem 0.8rem;
+    .inline-alert {
+        margin: 1rem 0;
+        padding: 0.5rem 1rem;
+        border: 1px solid $accent-color;
+        background: $primary-color;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.1rem;
+        font-weight: 500;
+
+        .custom-button {
+            padding: 0.5rem 0.7rem;
         }
     }
 }
