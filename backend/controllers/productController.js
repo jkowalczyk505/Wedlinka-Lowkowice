@@ -16,7 +16,7 @@ exports.getAllProducts = async (req, res) => {
         const avg = await ReviewModel.getAverageRatingByProductId(p.id);
         return {
           ...p,
-          averageRating: Math.round(avg * 2) / 2,  // zaokrąglenie do 0.5
+          averageRating: avg,  // dokładny float, np. 4.87
         };
       })
     );
@@ -44,7 +44,7 @@ exports.getProductBySlug = async (req, res) => {
     }
     // dorzuć średnią ocenę
     const avg = await ReviewModel.getAverageRatingByProductId(product.id);
-    product.averageRating = Math.round(avg * 2) / 2; // zaokrąglij do 0.5
+    product.averageRating = avg,
     res.json(product);
   } catch (err) {
     console.error("GET PRODUCT BY SLUG ERROR:", err);
@@ -69,7 +69,7 @@ exports.getProductsByCategory = async (req, res) => {
         const avg = await ReviewModel.getAverageRatingByProductId(p.id);
         return {
           ...p,
-          averageRating: Math.round(avg * 2) / 2,
+          averageRating: avg,
         };
       })
     );

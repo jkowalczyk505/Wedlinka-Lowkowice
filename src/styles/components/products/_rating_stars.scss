@@ -1,11 +1,35 @@
 .rating-stars {
   display: inline-flex;
-  .star {
-    font-size: 1.1rem;
+  align-items: center;
+
+  .star-wrapper {
+    position: relative;
+    width: 1.1rem;    // szerokość i wysokość gwiazdki
+    height: 1.1rem;
     margin: 0 0.05rem;
-    color: $primary-color-darken;
-    &.filled,
-    &.half {
+
+    .star-empty,
+    .star-filled {
+      position: absolute;
+      top: 0;
+      left: 0;
+      font-size: 1.1rem;
+      line-height: 1.1rem;
+    }
+
+    .star-empty {
+      color: $primary-color-darken;
+    }
+
+    .star-filled-clip {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      overflow: hidden;      // tu przycinamy
+    }
+
+    .star-filled {
       color: $accent-color;
     }
   }

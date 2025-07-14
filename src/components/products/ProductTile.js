@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ReactComponent as DefaultIcon } from "../../assets/szynka-ikona.svg";
 import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 import AddToCartButton from "../common/AddToCart";
-import { formatGrossPrice, formatQuantity } from "../../utils/product";
+import { formatGrossPrice, formatQuantity, categoryToSlug } from "../../utils/product";
 import { useCart } from "../cart/CartContext";
 import RatingStars from "../products/RatingStars";
 
@@ -17,7 +17,10 @@ function ProductTile({ product }) {
     is_available,
     averageRating,
     slug,
+    category,
   } = product;
+
+  const categorySlug = categoryToSlug(category);
 
   const { addItem } = useCart();
 
@@ -27,15 +30,11 @@ function ProductTile({ product }) {
 
   const [imgError, setImgError] = useState(false);
 
-  const fullStars = Math.floor(averageRating);
-  const hasHalf = averageRating - fullStars >= 0.5;
-  const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
-
   return (
     <div className={`product-tile ${!is_available ? "unavailable" : ""}`}>
       <div className={`image-wrapper ${!is_available ? "unavailable" : ""}`}>
         {/* całość obrazka w linku */}
-        <Link to={slug} className="image-link">
+        <Link to={`/sklep/${categorySlug}/${slug}`} className="image-link">
           {!imgError && image ? (
             <img
               src={imgUrl}
@@ -53,9 +52,7 @@ function ProductTile({ product }) {
       </div>
       <div className="product-content">
         <h3 className="product-name">
-          <Link to={slug} className="product-link">
-            {name}
-          </Link>
+          <Link to={`/sklep/${categorySlug}/${slug}`} className="product-link">{name}</Link>
         </h3>
         <p className="product-quantity">
           Ilość: {formatQuantity(quantity)} {unit}

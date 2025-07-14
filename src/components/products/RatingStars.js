@@ -1,26 +1,27 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
+// src/components/products/RatingStars.jsx
+import React from "react";
+import PropTypes from "prop-types";
+import { FaStar, FaRegStar } from "react-icons/fa";
 
-/**
- * Wyświetla gwiazdki na podstawie oceny averageRating (np. 4.5).
- */
-export default function RatingStars({ rating, className = '' }) {
-  const fullStars = Math.floor(rating);
-  const hasHalf = rating - fullStars >= 0.5;
-  const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
+export default function RatingStars({ rating, className = "" }) {
+  // rating w [0..5], może być 4.87, 3.3 itd.
+  const stars = [0,1,2,3,4].map(i => {
+    // fill od 0 do 1
+    const fill = Math.min(Math.max(rating - i, 0), 1);
+    return (
+      <div key={i} className="star-wrapper">
+        <FaRegStar className="star-empty" />
+        <div
+          className="star-filled-clip"
+          style={{ width: `${fill * 100}%` }}
+        >
+          <FaStar className="star-filled" />
+        </div>
+      </div>
+    );
+  });
 
-  return (
-    <div className={`rating-stars ${className}`}>
-      {Array.from({ length: fullStars }).map((_, i) => (
-        <FaStar key={`full-${i}`} className="star filled" />
-      ))}
-      {hasHalf && <FaStarHalfAlt key="half" className="star half" />}
-      {Array.from({ length: emptyStars }).map((_, i) => (
-        <FaRegStar key={`empty-${i}`} className="star" />
-      ))}
-    </div>
-  );
+  return <div className={`rating-stars ${className}`}>{stars}</div>;
 }
 
 RatingStars.propTypes = {

@@ -1,6 +1,6 @@
 // src/pages/ProductPage.js
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
+import { useParams, Navigate } from "react-router-dom";
 import axios from "axios";
 
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
@@ -9,6 +9,8 @@ import { useCart } from "../components/cart/CartContext";
 import Breadcrumbs from "../components/common/Breadcrumbs";
 import QuantityStepper from "../components/common/QuantityStepper";
 import RatingStars from "../components/products/RatingStars";
+import LoadError from "../components/common/LoadError";
+import Spinner from "../components/common/Spinner";
 
 import {
   getCategoryMeta,
@@ -21,20 +23,70 @@ export default function ProductPage() {
   const { categorySlug, productSlug } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [notFound, setNotFound] = useState(false);
 
   const { addItem } = useCart();
   const [qty, setQty] = useState(1);
 
-  useEffect(() => {
+  const fetchProduct = useCallback(() => {
     setLoading(true);
+    setError(false);
+    setNotFound(false);
+
     axios
-      .get(
-        `${process.env.REACT_APP_API_URL}/api/products/slug/${productSlug}`
-      )
-      .then((res) => setProduct(res.data))
-      .catch((err) => console.error("Błąd ładowania produktu:", err))
+      .get(`${process.env.REACT_APP_API_URL}/api/products/slug/${productSlug}`)
+      .then((res) => {
+        if (!res.data) {
+          setNotFound(true);
+        } else {
+          setProduct(res.data);
+        }
+      })
+      .catch((err) => {
+        if (err.response && err.response.status === 404) {
+          setNotFound(true);
+        } else {
+          console.error("Błąd ładowania produktu:", err);
+          setError(true);
+        }
+      })
       .finally(() => setLoading(false));
   }, [productSlug]);
+
+  useEffect(() => {
+    fetchProduct();
+  }, [fetchProduct]);
+
+  // spinner podczas ładowania
+  if (loading) {
+    return (
+      <main className="page">
+        <section className="product-overview-section pattern-section">
+          <Spinner fullscreen={false} />
+        </section>
+      </main>
+    );
+  }
+
+  // błąd sieci / serwera
+  if (error) {
+    return (
+      <main className="page">
+        <section className="product-overview-section pattern-section">
+          <LoadError 
+            message="Nie udało się pobrać produktu."
+            onRetry={fetchProduct}
+          />
+        </section>
+      </main>
+    );
+  }
+
+  // produkt nie istnieje → 404
+  if (notFound) {
+    return <Navigate to="/404" replace />;
+  }
 
   const meta = getCategoryMeta(categorySlug);
   const categoryTitle = meta?.title || formatSlugTitle(categorySlug);
@@ -48,26 +100,6 @@ export default function ProductPage() {
     { label: categoryTitle, to: `/sklep/${categorySlug}` },
     { label: productTitle },
   ];
-
-  if (loading) {
-    return (
-      <main className="page">
-        <section className="product-overview-section dark-section">
-          <p>Ładowanie…</p>
-        </section>
-      </main>
-    );
-  }
-  if (!product) {
-    return (
-      <main className="page">
-        <section className="product-overview-section dark-section">
-          <Breadcrumbs crumbs={breadcrumbs} />
-          <p>Nie znaleziono produktu.</p>
-        </section>
-      </main>
-    );
-  }
 
   return (
     <main className="page">
