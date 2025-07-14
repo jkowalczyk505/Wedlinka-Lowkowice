@@ -17,9 +17,11 @@ import CategoryPage from "./pages/CategoryPage";
 import AllProductsPage from "./pages/AllProductsPage";
 import ProductPage from "./pages/ProductPage";
 import CartPage from "./pages/CartPage";
+import ReturnComplaintsPage from "./pages/ReturnComplaintsPage";
 
 export default [
   { path: "/", element: <HomePage /> },
+  { path: "/reklamacje", element: <ReturnComplaintsPage />},
   { path: "/logowanie", element: <AuthPage /> },
   { path: "/kontakt", element: <ContactPage /> },
   {

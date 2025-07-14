@@ -1,5 +1,5 @@
 - animacje
-- w stopce odpowiednie linki do plikow, usuniecie/zmiana zbednych podstron + link do fb
+- w stopce, na home i w innych miejscach odpowiednie linki do plikow + link do fb
 - walidacja contactform
 - w stopce i na kontakt prawdziwe adresy/telefony itp
 - spinnery, loaderror sprawdzic czy wszedzie sa i czy 77vh nigdzie nie przeszkadza
@@ -7,6 +7,7 @@
 
 - responsywnosc + duże ekrany
 - polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy, okres przechowywania danych invoices + shipping_details (5lat? jak porzucone nieoplacone to krocej)
+- podstrona dot. dostawy
 
 BACKEND
 - generowanie slugu
