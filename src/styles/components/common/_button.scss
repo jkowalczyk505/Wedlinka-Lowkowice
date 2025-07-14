@@ -33,4 +33,14 @@
             background-color: $accent-color-darken;
         }
     }
+
+    &:disabled {
+        background-color: $primary-color-darken;
+        color: $dark-color;
+        cursor: not-allowed;         // zakazany kursor
+        opacity: 0.6;                // delikatne przygaszenie
+        &:hover {
+            background-color: $primary-color-darken;
+        }
+    }
 }
