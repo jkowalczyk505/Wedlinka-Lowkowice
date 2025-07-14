@@ -1,3 +1,4 @@
+// src/components/cart/CartContext.jsx
 import {
   createContext,
   useContext,
@@ -22,6 +23,7 @@ export function CartProvider({ children }) {
 
   const isLoggedIn = !!user;
 
+  // Mapowanie odpowiedzi backendu na nasz kształt
   const mapFromBackend = useCallback((data) => {
     return (data.items || [])
       .filter((i) => i?.product_id)
@@ -43,10 +45,11 @@ export function CartProvider({ children }) {
       }));
   }, []);
 
+  // Sprawdzenie produktów z localStorage z backendem
   const validateLocalCart = useCallback(
     async (cart) => {
-      let removed = 0;
-      let failed = 0;
+      let removed = 0,
+        failed = 0;
       const validated = [];
 
       await Promise.all(
@@ -56,24 +59,24 @@ export function CartProvider({ children }) {
               `${API_URL}/api/products/${item.product.id}`
             );
             if (!res.ok) throw new Error("Invalid response");
-            const product = await res.json();
-            if (product.is_deleted || !product.is_available) {
+            const p = await res.json();
+            if (p.is_deleted || !p.is_available) {
               removed++;
               return;
             }
             validated.push({
               product: {
-                id: product.id,
-                name: product.name,
-                price: parseFloat(product.price_brut ?? 0),
-                vatRate: parseFloat(product.vat_rate ?? 0),
-                quantityPerUnit: parseFloat(product.quantity ?? 1),
-                unit: product.unit,
-                image: product.image,
-                slug: product.slug,
-                category: product.category,
-                is_available: product.is_available,
-                is_deleted: product.is_deleted,
+                id: p.id,
+                name: p.name,
+                price: parseFloat(p.price_brut ?? 0),
+                vatRate: parseFloat(p.vat_rate ?? 0),
+                quantityPerUnit: parseFloat(p.quantity ?? 1),
+                unit: p.unit,
+                image: p.image,
+                slug: p.slug,
+                category: p.category,
+                is_available: p.is_available,
+                is_deleted: p.is_deleted,
               },
               quantity: item.quantity,
             });
@@ -88,6 +91,7 @@ export function CartProvider({ children }) {
     [API_URL]
   );
 
+  // Pobranie koszyka z backendu
   const fetchCart = useCallback(
     async (path = `${API_URL}/api/cart`) => {
       const res = await fetch(path, { credentials: "include" });
@@ -98,6 +102,7 @@ export function CartProvider({ children }) {
     [API_URL]
   );
 
+  // Ładowanie/odświeżanie koszyka (zalogowani i goście)
   const reloadCart = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -114,53 +119,19 @@ export function CartProvider({ children }) {
           );
         }
         setItems(mapFromBackend(data));
-        setError(null);
       } catch {
         setItems([]);
         setError("Nie udało się pobrać koszyka.");
+      } finally {
+        setLoading(false);
       }
     } else {
+      const local = JSON.parse(localStorage.getItem("cart") || "[]");
+      let finalItems = local;
       try {
-        const local = JSON.parse(localStorage.getItem("cart") || "[]");
         const { validated, removed, failed } = await validateLocalCart(local);
-
-        if (failed > 0) {
-          setError("Nie udało się połączyć z serwerem.");
-          setItems([]);
-          return;
-        }
-
-        if (removed > 0) {
-          showAlert(
-            `Usunięto ${removed} niedostępny${
-              removed === 1 ? "" : "e"
-            } produkt${removed > 1 ? "y" : ""} z koszyka.`,
-            "info"
-          );
-        }
-
-        setItems(validated);
-        if (validated.length > 0) {
-          localStorage.setItem("cart", JSON.stringify(validated));
-        }
-        setError(null);
-      } catch {
-        setItems([]);
-        setError("Nie udało się pobrać koszyka.");
-      }
-    }
-
-    setLoading(false);
-  }, [isLoggedIn, fetchCart, mapFromBackend, validateLocalCart, showAlert]);
-
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      setError(null);
-
-      if (isLoggedIn) {
-        try {
-          const { data, removed } = await fetchCart();
+        if (failed === 0) {
+          finalItems = validated;
           if (removed) {
             showAlert(
               `Usunięto ${removed} niedostępny${
@@ -169,100 +140,83 @@ export function CartProvider({ children }) {
               "info"
             );
           }
-          setItems(mapFromBackend(data));
-          setError(null);
-        } catch {
-          setItems([]);
-          setError("Nie udało się pobrać koszyka.");
-        }
-      } else {
-        try {
-          const local = JSON.parse(localStorage.getItem("cart") || "[]");
-          const { validated, failed } = await validateLocalCart(local);
-
-          if (failed > 0) {
-            setError("Nie udało się połączyć z serwerem.");
-            setItems([]);
-            return;
-          }
-
-          setItems(validated);
-          if (validated.length > 0) {
+          if (validated.length) {
             localStorage.setItem("cart", JSON.stringify(validated));
+          } else {
+            localStorage.removeItem("cart");
           }
-          setError(null);
-        } catch {
-          setItems([]);
-          setError("Nie udało się pobrać koszyka.");
+        } else {
+          setError("Nie udało się połączyć z serwerem.");
         }
+      } catch {
+        setError("Nie udało się połączyć z serwerem.");
+      } finally {
+        setItems(finalItems);
+        setLoading(false);
       }
-
-      setLoading(false);
-    };
-
-    load();
+    }
   }, [isLoggedIn, fetchCart, mapFromBackend, validateLocalCart, showAlert]);
 
+  // Inicjalne załadowanie koszyka
   useEffect(() => {
+    reloadCart();
+  }, [reloadCart]);
+
+  // Synchronizacja localStorage przy zmianach (dla gościa)
+  useEffect(() => {
+    if (!isLoggedIn) {
+      if (items.length) {
+        localStorage.setItem("cart", JSON.stringify(items));
+      } else {
+        localStorage.removeItem("cart");
+      }
+    }
+  }, [items, isLoggedIn]);
+
+  // Merge koszyka gościa do konta zalogowanego
+  useEffect(() => {
+    if (!user || !isLoggedIn) return;
     const mergeCart = async () => {
-      if (!user || !isLoggedIn) return;
-
-      const localCart = localStorage.getItem("cart");
-      if (!localCart) return;
-
+      const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
+      if (!localCart.length) return;
       try {
-        const { validated } = await validateLocalCart(JSON.parse(localCart));
-        for (const localItem of validated) {
+        const { validated } = await validateLocalCart(localCart);
+        for (const item of validated) {
           await fetch(`${API_URL}/api/cart`, {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              productId: localItem.product.id,
-              quantity: localItem.quantity,
+              productId: item.product.id,
+              quantity: item.quantity,
             }),
           });
         }
-
         localStorage.removeItem("cart");
         await reloadCart();
       } catch {
         showAlert("Nie udało się połączyć koszyka gościa z kontem.", "error");
       }
     };
-
     mergeCart();
-  }, [user, isLoggedIn, API_URL, validateLocalCart, reloadCart]);
+  }, [user, isLoggedIn, API_URL, validateLocalCart, reloadCart, showAlert]);
 
-  useEffect(() => {
-    if (!isLoggedIn && !loading) {
-      const serializable = items.filter(
-        (i) => i.product.is_available !== false && i.product.is_deleted !== true
-      );
-      localStorage.setItem("cart", JSON.stringify(serializable));
-    }
-  }, [items, loading, isLoggedIn]);
-
+  // Dodawanie pozycji
   const addItem = async (product, quantity = 1) => {
-    if (product.is_deleted || product.is_available === false) {
+    if (product.is_deleted || !product.is_available) {
       return showAlert("Tego produktu nie można dodać do koszyka.", "error");
     }
-
     setItems((prev) => {
-      let updated;
       const idx = prev.findIndex((i) => i.product.id === product.id);
-      if (idx > -1) {
-        updated = [...prev];
-        updated[idx].quantity += quantity;
-      } else {
-        updated = [...prev, { product, quantity }];
-      }
-      if (!isLoggedIn) {
-        localStorage.setItem("cart", JSON.stringify(updated));
-      }
+      const updated =
+        idx > -1
+          ? prev.map((i, j) =>
+              j === idx ? { ...i, quantity: i.quantity + quantity } : i
+            )
+          : [...prev, { product, quantity }];
+      if (!isLoggedIn) localStorage.setItem("cart", JSON.stringify(updated));
       return updated;
     });
-
     if (isLoggedIn) {
       try {
         await fetch(`${API_URL}/api/cart`, {
@@ -275,27 +229,22 @@ export function CartProvider({ children }) {
         showAlert("Nie udało się zsynchronizować koszyka z serwerem.", "error");
       }
     }
-
     const totalAmount = quantity * (parseFloat(product.quantity) || 1);
-    const unitLabel = product.unit || "szt.";
-
     showAlert(
-      `Dodano “${product.name}” (${formatQuantity(
-        totalAmount
-      )} ${unitLabel}) do koszyka.`,
+      `Dodano “${product.name}” (${formatQuantity(totalAmount)} ${
+        product.unit
+      }) do koszyka.`,
       "success"
     );
   };
 
+  // Usuwanie pojedynczej pozycji
   const removeItem = async (productId) => {
     setItems((prev) => {
       const updated = prev.filter((i) => i.product.id !== productId);
-      if (!isLoggedIn) {
-        localStorage.setItem("cart", JSON.stringify(updated));
-      }
+      if (!isLoggedIn) localStorage.setItem("cart", JSON.stringify(updated));
       return updated;
     });
-
     if (isLoggedIn) {
       await fetch(`${API_URL}/api/cart/${productId}`, {
         method: "DELETE",
@@ -304,31 +253,25 @@ export function CartProvider({ children }) {
     }
   };
 
+  // Czyszczenie całego koszyka
   const clearCart = async () => {
-    setItems(() => {
-      if (!isLoggedIn) localStorage.removeItem("cart");
-      return [];
-    });
-    setError(null);
-
-    if (isLoggedIn) {
+    setItems([]);
+    if (!isLoggedIn) {
+      localStorage.removeItem("cart");
+    } else {
       await fetch(`${API_URL}/api/cart`, {
         method: "DELETE",
         credentials: "include",
       });
     }
+    setError(null);
   };
 
-  /**
-   * Aktualizuje ilość danego produktu w koszyku.
-   * Jeśli użytkownik jest zalogowany, wysyła PUT /api/cart
-   */
+  // Aktualizacja ilości
   const updateQuantity = async (product, quantity) => {
-    // najpierw od razu zaktualizuj lokalny stan
     setItems((prev) =>
       prev.map((i) => (i.product.id === product.id ? { ...i, quantity } : i))
     );
-
     if (isLoggedIn) {
       try {
         await fetch(`${API_URL}/api/cart`, {
@@ -337,17 +280,19 @@ export function CartProvider({ children }) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ productId: product.id, quantity }),
         });
-        // odśwież z serwera, żeby mieć pewność, że wszystko się zsynchronizowało
         await reloadCart();
       } catch {
-        showAlert("Nie udało się zaktualizować ilości na serwerze.", "error");
+        showAlert(
+          "Nie udało się zaktualizować ilości produktów na serwerze.",
+          "error"
+        );
       }
     } else {
-      // gość: zapisz w localStorage
       localStorage.setItem("cart", JSON.stringify(items));
     }
   };
 
+  // Retry po błędzie
   const retry = () => {
     setError(null);
     reloadCart();

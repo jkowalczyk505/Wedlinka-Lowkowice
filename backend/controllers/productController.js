@@ -16,8 +16,8 @@ exports.getAllProducts = async (req, res) => {
         const { avg, total } = await ReviewModel.getStatsByProductId(p.id);
         return {
           ...p,
-          averageRating: avg,     // np. 4.87
-          reviewsCount: total,    // np. 35
+          averageRating: avg, // np. 4.87
+          reviewsCount: total, // np. 35
         };
       })
     );
@@ -45,7 +45,7 @@ exports.getProductBySlug = async (req, res) => {
     }
     const { avg, total } = await ReviewModel.getStatsByProductId(product.id);
     product.averageRating = avg;
-    product.reviewsCount  = total;
+    product.reviewsCount = total;
     res.json(product);
   } catch (err) {
     console.error("GET PRODUCT BY SLUG ERROR:", err);
@@ -58,24 +58,22 @@ exports.getProductsByCategory = async (req, res) => {
     const { category } = req.params;
     const { sort } = req.query;
 
+    // pobieramy wszystkie produkty (może być pusta tablica)
     const products = await ProductModel.findByCategorySorted(category, sort);
-    if (!products || products.length === 0) {
-      return res
-        .status(404)
-        .json({ error: `Brak produktów w kategorii: ${category}` });
-    }
 
+    // dokładamy oceny – nawet jeśli lista jest pusta, Promise.all([]) zwróci []
     const withRating = await Promise.all(
       products.map(async (p) => {
         const { avg, total } = await ReviewModel.getStatsByProductId(p.id);
         return {
           ...p,
           averageRating: avg,
-          reviewsCount:  total,
+          reviewsCount: total,
         };
       })
     );
 
+    // zawsze 200 i lista produktów (nawet jeśli [])
     res.json(withRating);
   } catch (err) {
     console.error("GET PRODUCTS BY CATEGORY ERROR:", err);
