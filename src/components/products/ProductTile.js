@@ -5,6 +5,7 @@ import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 import AddToCartButton from "../common/AddToCart";
 import { formatGrossPrice, formatQuantity } from "../../utils/product";
 import { useCart } from "../cart/CartContext";
+import RatingStars from "../products/RatingStars";
 
 function ProductTile({ product }) {
   const {
@@ -14,7 +15,7 @@ function ProductTile({ product }) {
     quantity,
     unit,
     is_available,
-    averageRating = 2.5,
+    averageRating,
     slug,
   } = product;
 
@@ -61,16 +62,7 @@ function ProductTile({ product }) {
         </p>
 
         <div className="product-rating">
-          {/* pełne gwiazdki */}
-          {Array.from({ length: fullStars }).map((_, i) => (
-            <FaStar key={"full" + i} className="star filled" />
-          ))}
-          {/* połowa */}
-          {hasHalf && <FaStarHalfAlt className="star half" />}
-          {/* puste */}
-          {Array.from({ length: emptyStars }).map((_, i) => (
-            <FaRegStar key={"empty" + i} className="star" />
-          ))}
+          <RatingStars rating={averageRating} />
         </div>
 
         <p className="product-price">{grossPrice} zł</p>

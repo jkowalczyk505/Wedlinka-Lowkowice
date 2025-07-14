@@ -8,6 +8,7 @@ import Button from "../components/common/Button";
 import { useCart } from "../components/cart/CartContext";
 import Breadcrumbs from "../components/common/Breadcrumbs";
 import QuantityStepper from "../components/common/QuantityStepper";
+import RatingStars from "../components/products/RatingStars";
 
 import {
   getCategoryMeta,
@@ -104,7 +105,10 @@ export default function ProductPage() {
             </p>
 
             <div className="ratings-summary">
-              <p>Opinie</p>
+              <RatingStars rating={product.averageRating} />
+              <span className="rating-label">
+                {product.averageRating.toFixed(1)}
+              </span>
             </div>
 
             <p className="price">
@@ -121,6 +125,7 @@ export default function ProductPage() {
                 <QuantityStepper
                     value={qty}
                     min={1}
+                    max={1000}
                     onChange={setQty}
                     disabled={!product.is_available}
                 />
@@ -133,21 +138,25 @@ export default function ProductPage() {
         </div>
       </section>
 
-      <section className="product-description-section pattern-section">
-        <h2>Opis</h2>
-        <p>{product.description}</p>
+      <section className="product-bottom-section pattern-section">
+        <div className="product-details">
+          <div className="product-description">
+            <h2 className>Opis</h2>
+            <p>{product.description}</p>
+          </div>
+          <div className="product-ingredients">
+            <h2>Składniki</h2>
+            <p>{product.ingredients}</p>
+            <h3>Alergeny</h3>
+            <p>{product.allergens}</p>
+          </div>
+        </div>
 
-        <h2>Składniki</h2>
-        <p>{product.ingredients}</p>
-
-        <h3>Alergeny</h3>
-        <p>{product.allergens}</p>
+        <div className="product-reviews">
+          <h2>Opinie o produkcie</h2>
+        </div>
       </section>
 
-      <section className="product-reviews-section">
-        <h2>Opinie</h2>
-        {/* TODO: komponent z opiniami */}
-      </section>
     </main>
   );
 }
