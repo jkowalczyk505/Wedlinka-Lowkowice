@@ -67,7 +67,28 @@ export function formatQuantity(quantity) {
 
 export function formatSlugTitle(slug) {
   if (!slug) return "";
-  return slug
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (l) => l.toUpperCase());
+  return slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+}
+
+/**
+ * Oblicza kwotę VAT od ceny brutto.
+ * @param {number} brutto – cena brutto (z VAT)
+ * @param {number} vatRate – stawka VAT, np. 0.05
+ * @returns {number} – wartość VAT
+ */
+export function calculateVatAmount(brutto, vatRate) {
+  const net = brutto / (1 + vatRate);
+  return brutto - net;
+}
+
+/**
+ * Oblicza sumaryczną kwotę VAT dla tablicy pozycji koszyka.
+ * @param {Array<{ product: { price: number, vatRate: number }, quantity: number }>} items
+ * @returns {number}
+ */
+export function calculateCartVat(items) {
+  return items.reduce((sum, { product, quantity }) => {
+    const lineBrutto = product.price * quantity;
+    return sum + calculateVatAmount(lineBrutto, product.vatRate);
+  }, 0);
 }

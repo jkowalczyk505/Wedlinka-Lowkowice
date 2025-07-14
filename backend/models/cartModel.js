@@ -11,6 +11,7 @@ const CartModel = {
       `SELECT  ci.*,
                p.name,
                p.price_brut,
+               p.vat_rate,
                p.unit,
                p.image,
                p.slug,

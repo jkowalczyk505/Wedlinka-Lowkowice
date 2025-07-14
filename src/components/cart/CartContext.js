@@ -30,6 +30,7 @@ export function CartProvider({ children }) {
           id: i.product_id,
           name: i.name,
           price: parseFloat(i.price_brut ?? 0),
+          vatRate: parseFloat(i.vat_rate ?? 0),
           unit: i.unit,
           image: i.image,
           slug: i.slug,
@@ -64,6 +65,7 @@ export function CartProvider({ children }) {
                 id: product.id,
                 name: product.name,
                 price: parseFloat(product.price_brut ?? 0),
+                vatRate: parseFloat(product.vat_rate ?? 0),
                 unit: product.unit,
                 image: product.image,
                 slug: product.slug,
@@ -316,6 +318,35 @@ export function CartProvider({ children }) {
     }
   };
 
+  /**
+   * Aktualizuje ilość danego produktu w koszyku.
+   * Jeśli użytkownik jest zalogowany, wysyła PUT /api/cart
+   */
+  const updateQuantity = async (product, quantity) => {
+    // najpierw od razu zaktualizuj lokalny stan
+    setItems((prev) =>
+      prev.map((i) => (i.product.id === product.id ? { ...i, quantity } : i))
+    );
+
+    if (isLoggedIn) {
+      try {
+        await fetch(`${API_URL}/api/cart`, {
+          method: "PUT",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId: product.id, quantity }),
+        });
+        // odśwież z serwera, żeby mieć pewność, że wszystko się zsynchronizowało
+        await reloadCart();
+      } catch {
+        showAlert("Nie udało się zaktualizować ilości na serwerze.", "error");
+      }
+    } else {
+      // gość: zapisz w localStorage
+      localStorage.setItem("cart", JSON.stringify(items));
+    }
+  };
+
   const retry = () => {
     setError(null);
     reloadCart();
@@ -329,6 +360,7 @@ export function CartProvider({ children }) {
         removeItem,
         clearCart,
         reloadCart,
+        updateQuantity,
         retry,
         loading,
         error,
