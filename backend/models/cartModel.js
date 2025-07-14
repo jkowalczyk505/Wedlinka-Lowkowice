@@ -6,21 +6,25 @@ const CartModel = {
    *  - zwracamy również flagi is_available / is_deleted,               *
    *    aby front-end mógł je wyświetlić lub odfiltrować                *
    * ------------------------------------------------------------------ */
+  // src/models/cartModel.js
   async getItems(userId) {
     const [rows] = await db.query(
-      `SELECT  ci.*,
-               p.name,
-               p.price_brut,
-               p.vat_rate,
-               p.unit,
-               p.image,
-               p.slug,
-               p.category,
-               p.is_available,
-               p.is_deleted
-         FROM  cart_items ci
-   LEFT JOIN  products p ON p.id = ci.product_id
-        WHERE  ci.user_id = ?`,
+      `SELECT
+       ci.product_id        AS product_id,
+       ci.quantity           AS cartQuantity,
+       p.quantity            AS quantityPerUnit,
+       p.name,
+       p.price_brut,
+       p.vat_rate,
+       p.unit,
+       p.image,
+       p.slug,
+       p.category,
+       p.is_available,
+       p.is_deleted
+     FROM cart_items ci
+     LEFT JOIN products p ON p.id = ci.product_id
+     WHERE ci.user_id = ?`,
       [userId]
     );
     return rows;

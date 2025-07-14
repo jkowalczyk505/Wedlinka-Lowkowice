@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Trash2 } from "lucide-react";
 import QuantityStepper from "../common/QuantityStepper";
-import { formatGrossPrice } from "../../utils/product";
+import { formatGrossPrice, formatQuantity } from "../../utils/product";
 
 export default function CartRow({
   product,
@@ -29,7 +29,7 @@ export default function CartRow({
           <>
             <div className="cart-row__name">{product.name}</div>
             <div className="cart-row__unit">
-              Ilość: {quantity} {product.unit}
+              {formatQuantity(product.quantityPerUnit)} {product.unit}
             </div>
           </>
         )}
