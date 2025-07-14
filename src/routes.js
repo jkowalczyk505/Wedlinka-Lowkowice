@@ -16,6 +16,7 @@ import ContactPage from "./pages/ContactPage";
 import CategoryPage from "./pages/CategoryPage";
 import AllProductsPage from "./pages/AllProductsPage";
 import ProductPage from "./pages/ProductPage";
+import CartPage from "./pages/CartPage";
 
 export default [
   { path: "/", element: <HomePage /> },
@@ -31,7 +32,11 @@ export default [
   },
   {
     path: "/sklep",
-    element: <AllProductsPage />
+    element: <AllProductsPage />,
+  },
+  {
+    path: "/koszyk",
+    element: <CartPage />,
   },
 
   {
@@ -56,5 +61,4 @@ export default [
   // ewentualnie catch-all 404
   { path: "/404", element: <NotFoundPage /> },
   { path: "*", element: <Navigate to="/404" replace /> },
-
 ];

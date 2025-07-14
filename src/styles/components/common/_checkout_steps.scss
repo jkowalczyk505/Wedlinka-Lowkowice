@@ -1,0 +1,52 @@
+// Pasek kroków
+.cart-steps {
+    display: flex;
+    justify-content: center;
+    gap: 5rem;
+    margin-bottom: 3rem;
+    padding-top: 1rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid $dark-color-more-lighten;
+
+    .step {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: default;
+
+        // okrąg z numerem
+        &::before {
+            content: attr(data-step);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 3.5rem;
+            height: 3.5rem;
+            border: 2px solid $dark-color-lighten;
+            border-radius: 50%;
+            font-weight: 700;
+            color: $dark-color-lighten;
+            background: transparent;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        span {
+            font-size: 1.5rem;
+            color: $dark-color-lighten;
+            transition: color 0.2s;
+            font-family: $font-heading;
+            font-weight: 500;
+        }
+
+        &.active {
+            &::before {
+                border-color: $secondary-color;
+                color: $secondary-color;
+            }
+
+            span {
+                color: $secondary-color;
+            }
+        }
+    }
+}

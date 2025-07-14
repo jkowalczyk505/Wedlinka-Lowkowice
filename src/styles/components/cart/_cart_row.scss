@@ -1,0 +1,56 @@
+// _cart_row.scss
+
+.cart-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 120px 100px 40px;
+    align-items: center;
+    background-color: $primary-color;
+    border-radius: 5px;
+    border: 1px solid $primary-color-darken;
+    padding: 1rem;
+
+    &__img img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    &__details {
+        padding: 0 1rem;
+
+        & .cart-row__name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        & .cart-row__price {
+            font-size: 0.9rem;
+            color: #777;
+        }
+    }
+
+    &__qty {
+        display: flex;
+        justify-content: center;
+    }
+
+    &__total {
+        font-weight: 700;
+        color: #c00;
+        text-align: right;
+    }
+
+    &__remove {
+        background: none;
+        border: none;
+        color: #999;
+        cursor: pointer;
+        transition: color .2s;
+
+        &:hover {
+            color: #c00;
+        }
+    }
+}
