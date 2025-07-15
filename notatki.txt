@@ -3,10 +3,14 @@
 - walidacja contactform
 - w stopce i na kontakt prawdziwe adresy/telefony itp
 - spinnery, loaderror sprawdzic czy wszedzie sa i czy 77vh nigdzie nie przeszkadza
-
 - responsywnosc + duże ekrany
 - polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy, okres przechowywania danych invoices + shipping_details (5lat? jak porzucone nieoplacone to krocej)
 - podstrona dot. dostawy
+
+RECENZJE 
+- wystawianie przez zalogowanych ktorzy kupili 1 raz na 1 produkt
+- edycja
+- usuwanie
 
 BACKEND
 - generowanie slugu
@@ -15,6 +19,9 @@ BACKEND
 ACCOUNT
 - dashboard
 - moje zamowienia - zamowienia, faktury
+
+PANEL ADMINA
+
 
 NA KONIEC
 - MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza
