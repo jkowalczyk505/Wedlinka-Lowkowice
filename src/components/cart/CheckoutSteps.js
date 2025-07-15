@@ -1,4 +1,3 @@
-// src/components/common/CheckoutSteps.js
 import React from "react";
 
 export default function CheckoutSteps({ currentStep }) {

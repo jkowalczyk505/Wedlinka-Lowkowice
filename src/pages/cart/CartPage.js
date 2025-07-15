@@ -1,16 +1,16 @@
 // src/pages/CartPage.jsx
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useCart } from "../components/cart/CartContext";
-import { useAuth } from "../components/auth/AuthContext";
-import CartRow from "../components/cart/CartRow";
-import Button from "../components/common/Button";
-import LoadError from "../components/common/LoadError";
-import Spinner from "../components/common/Spinner";
-import { formatGrossPrice, calculateCartVat } from "../utils/product";
-import { useAlert } from "../components/common/alert/AlertContext";
+import { useCart } from "../../components/cart/CartContext";
+import { useAuth } from "../../components/auth/AuthContext";
+import CartRow from "../../components/cart/CartRow";
+import Button from "../../components/common/Button";
+import LoadError from "../../components/common/LoadError";
+import Spinner from "../../components/common/Spinner";
+import { formatGrossPrice, calculateCartVat } from "../../utils/product";
+import { useAlert } from "../../components/common/alert/AlertContext";
 import { ShoppingBag, Trash2 } from "lucide-react";
-import CheckoutSteps from "../components/common/CheckoutSteps";
+import CheckoutSteps from "../../components/cart/CheckoutSteps";
 
 const CartPage = () => {
   const {
@@ -182,7 +182,7 @@ const CartPage = () => {
               </div>
             </div>
 
-            <Button onClick={() => navigate("/dostawa")}>Zamówienie</Button>
+            <Button onClick={() => navigate("/zamowienie")}>Zamówienie</Button>
           </div>
         </div>
       </div>
