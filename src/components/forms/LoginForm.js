@@ -42,10 +42,17 @@ function LoginForm() {
         return;
       }
 
+      // 1️⃣  zapisz użytkownika w kontekście
       setUser(data);
-      navigate(redirectPath, { replace: true });
+
+      // 2️⃣  wyznacz cel przekierowania
+      const destination = data.role === "admin" ? "/admin" : redirectPath;
+
+      // 3️⃣  przekieruj
+      navigate(destination, { replace: true });
     } catch (err) {
       showAlert("Błąd serwera", "error");
+    } finally {
       setIsSubmitting(false);
     }
   };

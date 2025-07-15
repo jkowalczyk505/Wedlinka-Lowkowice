@@ -20,6 +20,14 @@ import CartPage from "./pages/cart/CartPage";
 import DeliveryPage from "./pages/cart/DeliveryPage";
 import ReturnComplaintsPage from "./pages/ReturnComplaintsPage";
 
+import AdminLayout      from "./components/auth/AdminLayout";
+import AdminPage       from "./pages/admin/AdminPage";
+import AdminDashboard  from "./pages/admin/AdminDashboard";
+import AdminProducts   from "./pages/admin/AdminProducts";
+import AdminOrders     from "./pages/admin/AdminOrders";
+import AdminReviews    from "./pages/admin/AdminReviews";
+import AdminInvoices   from "./pages/admin/AdminInvoices";
+
 export default [
   { path: "/", element: <HomePage /> },
   { path: "/reklamacje", element: <ReturnComplaintsPage /> },
@@ -63,6 +71,25 @@ export default [
         ],
       },
     ],
+  },
+
+  // ↓ DODAJ PRZED sekcją 404
+  {
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+      {
+        element: <AdminPage/>,   // layout z sidebarem
+        children: [
+          { index: true,           element: <AdminDashboard/> },
+          { path: "produkty",      element: <AdminProducts/> },
+          { path: "zamowienia",    element: <AdminOrders/> },
+          { path: "opinie",        element: <AdminReviews/> },
+          { path: "faktury",       element: <AdminInvoices/> },
+          { path: "*",             element: <Navigate to="/admin" replace/> }
+        ]
+      }
+    ]
   },
 
   // ewentualnie catch-all 404
