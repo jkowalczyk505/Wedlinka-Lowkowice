@@ -1,0 +1,18 @@
+.admin-dashboard {
+  display: flex;
+  flex-direction: column;
+
+  h1 {
+    color: $secondary-color;
+    margin-bottom: 1.2rem;
+  }
+
+  .welcome-admin {
+    flex: 1;
+    display: flex;
+
+    p {
+      font-size: 1.3rem;
+    }
+  }
+}
