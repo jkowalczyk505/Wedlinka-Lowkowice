@@ -16,12 +16,13 @@ import ContactPage from "./pages/ContactPage";
 import CategoryPage from "./pages/CategoryPage";
 import AllProductsPage from "./pages/AllProductsPage";
 import ProductPage from "./pages/ProductPage";
-import CartPage from "./pages/CartPage";
+import CartPage from "./pages/cart/CartPage";
+import DeliveryPage from "./pages/cart/DeliveryPage";
 import ReturnComplaintsPage from "./pages/ReturnComplaintsPage";
 
 export default [
   { path: "/", element: <HomePage /> },
-  { path: "/reklamacje", element: <ReturnComplaintsPage />},
+  { path: "/reklamacje", element: <ReturnComplaintsPage /> },
   { path: "/logowanie", element: <AuthPage /> },
   { path: "/kontakt", element: <ContactPage /> },
   {
@@ -39,6 +40,10 @@ export default [
   {
     path: "/koszyk",
     element: <CartPage />,
+  },
+  {
+    path: "/zamowienie",
+    element: <DeliveryPage />,
   },
 
   {
