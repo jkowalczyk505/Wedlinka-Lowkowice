@@ -7,6 +7,7 @@ export default function ShippingMethods({
   setSelectedShipping,
   paymentMethod,
   setPaymentMethod,
+  missing,
 }) {
   const handleShippingChange = (option) => {
     setSelectedShipping(option);
@@ -50,18 +51,31 @@ export default function ShippingMethods({
               ];
             }
           })
-          .map((option) => (
-            <label className="radio" key={option.id}>
-              <input
-                type="radio"
-                name="shipping"
-                value={option.id}
-                checked={selectedShipping?.id === option.id}
-                onChange={() => handleShippingChange(option)}
-              />
-              {option.label} – {formatGrossPrice(option.priceTotal)} zł
-            </label>
-          ))}
+          .map((option) => {
+            // jeśli przekroczyłeś próg darmowej dostawy wyświetlamy 0 zł
+            const displayPrice = missing > 0 ? option.priceTotal : 0;
+            return (
+              <label className="radio" key={option.id}>
+                <input
+                  type="radio"
+                  name="shipping"
+                  value={option.id}
+                  checked={selectedShipping?.id === option.id}
+                  onChange={() => handleShippingChange(option)}
+                />
+                {option.label} –{" "}
+                <span
+                  className={
+                    displayPrice === 0
+                      ? "shipping-price free"
+                      : "shipping-price"
+                  }
+                >
+                  {formatGrossPrice(displayPrice)} zł
+                </span>
+              </label>
+            );
+          })}
       </div>
     </div>
   );

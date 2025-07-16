@@ -241,6 +241,7 @@ export default function DeliveryPage() {
               setSelectedShipping={setSelectedShipping}
               paymentMethod={paymentMethod}
               setPaymentMethod={setPaymentMethod}
+              missing={missing}
             />
 
             <RecipientDetails
