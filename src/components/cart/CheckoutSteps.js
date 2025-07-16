@@ -2,9 +2,9 @@ import React from "react";
 
 export default function CheckoutSteps({ currentStep }) {
   const steps = [
-    { id: 1, label: "Koszyk", to: "/koszyk" },
-    { id: 2, label: "Dostawa i płatność", to: "/dostawa" },
-    { id: 3, label: "Podsumowanie", to: "/podsumowanie" },
+    { id: 1, label: "Koszyk" },
+    { id: 2, label: "Dostawa i płatność" },
+    { id: 3, label: "Podsumowanie" },
   ];
 
   return (
@@ -12,14 +12,12 @@ export default function CheckoutSteps({ currentStep }) {
       {steps.map((step) => (
         <div
           key={step.id}
-          className={`step${step.id === currentStep ? " active" : ""}`}
-          data-step={step.id}
+          className={`step${step.id === currentStep ? " active" : ""}${
+            step.id < currentStep ? " done" : ""
+          }`}
+          data-content={step.id}
         >
-          {step.id < currentStep ? (
-            // jeśli już za tobą, zamiast numeru daj checkmark
-            <span className="step-icon">✓</span>
-          ) : null}
-          <span>{step.label}</span>
+          <span className="step-label">{step.label}</span>
         </div>
       ))}
     </div>

@@ -1,0 +1,132 @@
+.cart-summary {
+    .summary-total {
+        border-top: 1px solid $primary-color-darken;
+
+        .brutto {
+            display: flex;
+            justify-content: space-between;
+            color: $dark-color-lighten;
+            padding: 0.3rem 0;
+
+
+            strong {
+                color: $dark-color;
+            }
+        }
+    }
+
+    .terms-and-submit {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+
+        .accept-terms-label {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+
+            input[type="checkbox"] {
+                accent-color: $secondary-color;
+            }
+
+            .required {
+                color: $secondary-color;
+                margin-left: 0.25rem;
+            }
+        }
+
+        button {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            width: 100%;
+        }
+    }
+}
+
+.cart-items.form-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        .form-group-heading {
+            margin: 0;
+            margin-bottom: 0.6rem;
+            letter-spacing: normal;
+        }
+
+        .form-section {
+            background: $primary-color;
+            border: 1px solid $primary-color-darken;
+            border-radius: 5px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+
+            .form-row {
+
+                input {
+                    border: 1px solid $dark-color-more-lighten;
+
+                    &:checked {
+                        border: 1px solid $secondary-color;
+                    }
+                }
+
+                textarea {
+                    min-height: 15vh;
+                }
+
+                .invoice_check {
+                    cursor: pointer;
+                }
+            }
+
+            .form-row.full-width {
+                grid-column: 1 / -1;
+                width: 100%;
+            }
+
+            .invoice-extra {
+                animation: fade-in 0.3s ease-in-out;
+            }
+
+            @keyframes fade-in {
+                from {
+                    opacity: 0;
+                    transform: translateY(-5px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            h3 {
+                font-size: 0.85rem;
+                color: $dark-color;
+                font-family: $font-main;
+                letter-spacing: normal;
+                font-weight: 500;
+                margin-bottom: 0.5rem;
+            }
+
+        }
+
+        .address {
+            display: grid;
+            grid-template-columns: 50% 50%;
+            align-items: center;
+            gap: 1rem;
+        }
+    }
+
+}

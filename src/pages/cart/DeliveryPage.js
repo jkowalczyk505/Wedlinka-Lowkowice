@@ -10,6 +10,12 @@ import Spinner from "../../components/common/Spinner";
 import LoadError from "../../components/common/LoadError";
 import { formatGrossPrice, calculateCartVat } from "../../utils/product";
 import axios from "axios";
+import PostalCodeInput from "../../components/common/PostalCodeInput";
+import {
+  isPostalCodeValid,
+  parsePostalCodeToDigits,
+  joinPostalCodeDigits,
+} from "../../utils/postalCode";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -34,8 +40,12 @@ export default function DeliveryPage() {
     country: "Polska",
     notes: "",
     wantsInvoice: false,
+    companyName: "",
+    nip: "",
     acceptTerms: false,
   });
+
+  const [postalDigits, setPostalDigits] = useState(["", "", "", "", ""]);
 
   const [paymentMethod, setPaymentMethod] = useState("przelewy24");
   const [submitting, setSubmitting] = useState(false);
@@ -44,6 +54,45 @@ export default function DeliveryPage() {
   const vat = calculateCartVat(items);
   const freeShippingThreshold = 230;
   const missing = freeShippingThreshold - total;
+
+  const handlePostalDigitChange = (e, index) => {
+    const val = e.target.value.replace(/\D/g, "");
+    if (val.length > 1) return;
+
+    const newDigits = [...postalDigits];
+    newDigits[index] = val;
+    setPostalDigits(newDigits);
+
+    if (val && index < 4) {
+      const next = document.getElementById(`postal-${index + 1}`);
+      if (next) next.focus();
+    }
+  };
+
+  const handlePostalDigitKeyDown = (e, index) => {
+    const key = e.key;
+
+    if (key === "Backspace") {
+      if (postalDigits[index]) {
+        const newDigits = [...postalDigits];
+        newDigits[index] = "";
+        setPostalDigits(newDigits);
+      } else if (index > 0) {
+        const prev = document.getElementById(`postal-${index - 1}`);
+        if (prev) prev.focus();
+      }
+    }
+
+    if (key === "ArrowRight" && index < 4) {
+      const next = document.getElementById(`postal-${index + 1}`);
+      if (next) next.focus();
+    }
+
+    if (key === "ArrowLeft" && index > 0) {
+      const prev = document.getElementById(`postal-${index - 1}`);
+      if (prev) prev.focus();
+    }
+  };
 
   useEffect(() => {
     axios
@@ -72,7 +121,27 @@ export default function DeliveryPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.acceptTerms) return showAlert("Zaakceptuj regulamin", "error");
+    if (!form.acceptTerms)
+      return showAlert("Zaakceptuj regulamin i politykę prywatności", "error");
+    const fullPostalCode = joinPostalCodeDigits(postalDigits);
+
+    if (!isPostalCodeValid(fullPostalCode)) {
+      showAlert("Kod pocztowy musi być w formacie 12-345.", "error");
+      return;
+    }
+
+    const invoiceType = form.wantsInvoice
+      ? form.companyName || form.nip
+        ? "company"
+        : "individual"
+      : "none";
+
+    if (paymentMethod === "bank_transfer") {
+      // pokaż dane do przelewu lub przekieruj na stronę z instrukcjami
+      // możesz też złożyć zamówienie jako "pending"
+      navigate("/podsumowanie");
+    }
+
     // TODO: wysyłka danych na backend
   };
 
@@ -91,123 +160,256 @@ export default function DeliveryPage() {
         )}
 
         <div className="cart-layout">
-          <form className="cart-items" onSubmit={handleSubmit}>
-            <h2>Sposób dostawy</h2>
-            {shippingMethods.map((method) => (
-              <label key={method.id}>
-                <input
-                  type="radio"
-                  name="shipping"
-                  value={method.id}
-                  checked={selectedShipping?.id === method.id}
-                  onChange={() => setSelectedShipping(method)}
+          <form className="form-wrapper cart-items" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <h2 className="form-group-heading">Sposób dostawy</h2>
+              <div className="form-section">
+                {shippingMethods
+                  .flatMap((method) => {
+                    if (method.cod) {
+                      return [
+                        {
+                          ...method,
+                          id: method.id + "_prepaid",
+                          label: method.label,
+                          codSelected: false,
+                          priceTotal: method.price,
+                        },
+                        {
+                          ...method,
+                          id: method.id + "_cod",
+                          label: method.label + " (za pobraniem)",
+                          codSelected: true,
+                          priceTotal: method.price + (method.codFee || 0),
+                        },
+                      ];
+                    } else {
+                      return [
+                        {
+                          ...method,
+                          id: method.id,
+                          label: method.label,
+                          codSelected: false,
+                          priceTotal: method.price,
+                        },
+                      ];
+                    }
+                  })
+                  .map((option) => (
+                    <label className="radio" key={option.id}>
+                      <input
+                        type="radio"
+                        name="shipping"
+                        value={option.id}
+                        checked={selectedShipping?.id === option.id}
+                        onChange={() => {
+                          setSelectedShipping(option);
+                          if (
+                            paymentMethod === "cod" &&
+                            !option.id.includes("pickup")
+                          ) {
+                            setPaymentMethod("przelewy24");
+                          }
+                        }}
+                      />
+                      {option.label} – {formatGrossPrice(option.priceTotal)} zł
+                    </label>
+                  ))}
+              </div>
+            </div>
+
+            <div className="form-group">
+              <h2 className="form-group-heading">Dane odbiorcy</h2>
+              <div className="form-section address">
+                <div className="form-row">
+                  <label htmlFor="firstName">
+                    Imię <span className="required">*</span>
+                  </label>
+                  <input
+                    id="firstName"
+                    name="firstName"
+                    required
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="form-row">
+                  <label htmlFor="lastName">
+                    Nazwisko <span className="required">*</span>
+                  </label>
+                  <input
+                    id="lastName"
+                    name="lastName"
+                    required
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="form-row">
+                  <label htmlFor="address">
+                    Ulica i numer domu <span className="required">*</span>
+                  </label>
+                  <input
+                    id="address"
+                    name="address"
+                    placeholder="Nazwa ulicy, numeru budynku, np. Akacjowa 42"
+                    required
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="form-row">
+                  <label htmlFor="address2">Numer mieszkania</label>
+                  <input
+                    id="address2"
+                    name="address2"
+                    placeholder="Numer mieszkania (opcjonalnie)"
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="form-row">
+                  <label>
+                    Kod pocztowy <span className="required">*</span>
+                  </label>
+                  <PostalCodeInput
+                    digits={postalDigits}
+                    onDigitChange={handlePostalDigitChange}
+                    onDigitKeyDown={handlePostalDigitKeyDown}
+                  />
+                </div>
+
+                <div className="form-row">
+                  <label htmlFor="city">
+                    Miasto <span className="required">*</span>
+                  </label>
+                  <input
+                    id="city"
+                    name="city"
+                    required
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="form-row">
+                  <label htmlFor="phone">
+                    Numer telefonu <span className="required">*</span>
+                  </label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    required
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="form-row">
+                  <label htmlFor="email">
+                    Adres e-mail <span className="required">*</span>
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="form-row full-width">
+                  <label className="invoice_check">
+                    <input
+                      type="checkbox"
+                      name="wantsInvoice"
+                      checked={form.wantsInvoice}
+                      onChange={handleChange}
+                    />{" "}
+                    Chcę otrzymać fakturę
+                  </label>
+                </div>
+
+                {form.wantsInvoice && (
+                  <div className="invoice-extra">
+                    <div className="form-row">
+                      <label htmlFor="companyName">
+                        Nazwa firmy (opcjonalnie)
+                      </label>
+                      <input
+                        id="companyName"
+                        name="companyName"
+                        value={form.companyName}
+                        onChange={handleChange}
+                        placeholder="Nazwa firmy"
+                      />
+                    </div>
+
+                    <div className="form-row">
+                      <label htmlFor="nip">NIP (opcjonalnie)</label>
+                      <input
+                        id="nip"
+                        name="nip"
+                        value={form.nip}
+                        onChange={handleChange}
+                        placeholder="Numer NIP"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="form-group">
+              <h2 className="form-group-heading">Informacje dodatkowe</h2>
+              <div className="form-section">
+                <h3>Uwagi do zamówienia (opcjonalne)</h3>
+                <textarea
+                  name="notes"
+                  onChange={handleChange}
+                  placeholder="Przekaż swoją wiadomość"
                 />
-                {method.name} – {formatGrossPrice(method.price)} zł
-              </label>
-            ))}
+              </div>
+            </div>
 
-            <h2>Dane odbiorcy</h2>
-            <input
-              name="firstName"
-              placeholder="Imię"
-              required
-              onChange={handleChange}
-            />
-            <input
-              name="lastName"
-              placeholder="Nazwisko"
-              required
-              onChange={handleChange}
-            />
-            <input
-              name="address"
-              placeholder="Adres"
-              required
-              onChange={handleChange}
-            />
-            <input
-              name="address2"
-              placeholder="Ciąg dalszy adresu (opcjonalnie)"
-              onChange={handleChange}
-            />
-            <input
-              name="zip"
-              placeholder="Kod pocztowy"
-              required
-              onChange={handleChange}
-            />
-            <input
-              name="city"
-              placeholder="Miasto"
-              required
-              onChange={handleChange}
-            />
-            <input
-              name="phone"
-              placeholder="Numer telefonu"
-              required
-              onChange={handleChange}
-            />
-            <input
-              name="email"
-              placeholder="Adres e-mail"
-              required
-              type="email"
-              onChange={handleChange}
-            />
-
-            <label>
-              <input
-                type="checkbox"
-                name="wantsInvoice"
-                onChange={handleChange}
-              />{" "}
-              Chcę otrzymać fakturę
-            </label>
-
-            <h2>Uwagi do zamówienia</h2>
-            <textarea
-              name="notes"
-              onChange={handleChange}
-              placeholder="Uwagi do zamówienia (opcjonalne)"
-            />
-
-            <h2>Metoda płatności</h2>
-            <label>
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="przelewy24"
-                checked={paymentMethod === "przelewy24"}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />{" "}
-              Przelewy24
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="cod"
-                checked={paymentMethod === "cod"}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />{" "}
-              Płatność przy odbiorze
-            </label>
-
-            <label>
-              <input
-                type="checkbox"
-                name="acceptTerms"
-                required
-                checked={form.acceptTerms}
-                onChange={handleChange}
-              />{" "}
-              Przeczytałem/am i akceptuję regulamin
-            </label>
-
-            <Button type="submit" disabled={submitting}>
-              Kupuję i płacę
-            </Button>
+            <div className="form-group">
+              <h2 className="form-group-heading">Metoda płatności</h2>
+              <div className="form-section">
+                <label className="radio">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="przelewy24"
+                    checked={paymentMethod === "przelewy24"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                  />{" "}
+                  Przelewy24
+                </label>
+                <label className="radio">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="bank_transfer"
+                    checked={paymentMethod === "bank_transfer"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                  />{" "}
+                  Przelew tradycyjny
+                </label>
+                <label
+                  className={`radio ${
+                    !selectedShipping?.id.includes("pickup") ? "disabled" : ""
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="cod"
+                    checked={paymentMethod === "cod"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    disabled={!selectedShipping?.id.includes("pickup")}
+                  />{" "}
+                  Płatność przy odbiorze
+                </label>
+              </div>
+            </div>
           </form>
 
           <div className="cart-summary">
@@ -231,27 +433,49 @@ export default function DeliveryPage() {
             </ul>
 
             <div className="summary-total">
-              <div className="summary-brutto">
+              <div className="brutto">
                 <span>Produkty:</span>
                 <strong>{formatGrossPrice(total)} zł</strong>
               </div>
-              <div className="summary-brutto">
+              <div className="brutto">
                 <span>Dostawa:</span>
                 <strong>
                   {selectedShipping
-                    ? formatGrossPrice(selectedShipping.price) + " zł"
+                    ? formatGrossPrice(selectedShipping.priceTotal) + " zł"
                     : "-"}
                 </strong>
               </div>
               <div className="summary-brutto">
                 <span>Razem:</span>
                 <strong>
-                  {formatGrossPrice(total + (selectedShipping?.price ?? 0))} zł
+                  {formatGrossPrice(
+                    total + (selectedShipping?.priceTotal ?? 0)
+                  )}{" "}
+                  zł
                 </strong>
               </div>
               <div className="summary-vat">
                 W tym VAT: <strong>{formatGrossPrice(vat)} zł</strong>
               </div>
+            </div>
+
+            <div className="terms-and-submit">
+              <label className="accept-terms-label">
+                <input
+                  type="checkbox"
+                  name="acceptTerms"
+                  required
+                  checked={form.acceptTerms}
+                  onChange={handleChange}
+                />{" "}
+                Oświadczam, że zapoznałem się i akceptuję Regulamin i Politykę
+                prywatności
+                <span className="required">*</span>
+              </label>
+
+              <Button type="submit" disabled={submitting}>
+                Kupuję i płacę
+              </Button>
             </div>
           </div>
         </div>
