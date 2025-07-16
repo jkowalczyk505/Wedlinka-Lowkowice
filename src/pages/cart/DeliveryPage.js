@@ -16,6 +16,7 @@ import {
   parsePostalCodeToDigits,
   joinPostalCodeDigits,
 } from "../../utils/postalCode";
+import InfoTip from "../../components/common/InfoTip";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -381,7 +382,15 @@ export default function DeliveryPage() {
                     checked={paymentMethod === "przelewy24"}
                     onChange={(e) => setPaymentMethod(e.target.value)}
                   />{" "}
+                  Płatność online (BLIK, szybki przelew, karta) – przez
                   Przelewy24
+                  {paymentMethod === "przelewy24" && (
+                    <InfoTip>
+                      Zostaniesz przekierowany do szybkiej płatności
+                      internetowej. Obsługiwane są m.in. BLIK, przelewy
+                      ekspresowe, karty płatnicze.
+                    </InfoTip>
+                  )}
                 </label>
                 <label className="radio">
                   <input
@@ -391,7 +400,14 @@ export default function DeliveryPage() {
                     checked={paymentMethod === "bank_transfer"}
                     onChange={(e) => setPaymentMethod(e.target.value)}
                   />{" "}
-                  Przelew tradycyjny
+                  Przelew tradycyjny (samodzielna wpłata na konto po złożeniu
+                  zamówienia)
+                  {paymentMethod === "bank_transfer" && (
+                    <InfoTip>
+                      Po złożeniu zamówienia otrzymasz dane do przelewu. Wyślemy
+                      je także na Twój adres e-mail.
+                    </InfoTip>
+                  )}
                 </label>
                 <label
                   className={`radio ${

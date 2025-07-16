@@ -29,7 +29,7 @@ ZAMAWIANIE 2 krok
 - WALIDACJE!! różne opcje zamawiania!!
 
 NA KONIEC
-- MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza
+- MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza kontaktowego, dane do przelewu tradycyjnego
 - BACKEND zabezpieczyc - rate limit, helmet, cors (www i bez www), ukrycie express
 - baza i backend przenieść
 - middleware (app.use) do przekierowania www na bez www
