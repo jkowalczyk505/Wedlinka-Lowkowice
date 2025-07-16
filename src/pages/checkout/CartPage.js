@@ -11,6 +11,7 @@ import { formatGrossPrice, calculateCartVat } from "../../utils/product";
 import { useAlert } from "../../components/common/alert/AlertContext";
 import { ShoppingBag, Trash2 } from "lucide-react";
 import CheckoutSteps from "../../components/checkout/CheckoutSteps";
+import CartSummary from "../../components/checkout/CartSummary";
 
 const CartPage = () => {
   const {
@@ -161,29 +162,14 @@ const CartPage = () => {
             </div>
           </div>
 
-          <div className="cart-summary">
-            {missingAmount > 0 ? (
-              <div className="free-shipping">
-                Do darmowej dostawy brakuje{" "}
-                <em>{formatGrossPrice(missingAmount)} zł</em>
-              </div>
-            ) : (
-              <div className="free-shipping free">Masz darmową dostawę!</div>
-            )}
-
-            <div className="summary-total">
-              <div className="summary-brutto">
-                <span>Łącznie:</span>
-                <strong>{formatGrossPrice(total)} zł</strong>
-              </div>
-
-              <div className="summary-vat">
-                W tym VAT: <strong>{formatGrossPrice(vatAmount)} zł</strong>
-              </div>
-            </div>
-
-            <Button onClick={() => navigate("/zamowienie")}>Zamówienie</Button>
-          </div>
+          <CartSummary
+            items={items}
+            total={total}
+            vat={vatAmount}
+            missing={missingAmount}
+            variant="preview"
+            onSubmit={() => navigate("/zamowienie")}
+          />
         </div>
       </div>
     </div>

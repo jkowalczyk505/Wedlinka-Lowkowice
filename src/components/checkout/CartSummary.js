@@ -12,7 +12,11 @@ export default function CartSummary({
   form,
   handleChange,
   submitting,
+  onSubmit,
+  variant = "checkout", // 'checkout' lub 'preview'
 }) {
+  const isCheckout = variant === "checkout";
+
   return (
     <div className="cart-summary">
       {missing > 0 ? (
@@ -23,33 +27,42 @@ export default function CartSummary({
         <div className="free-shipping free">Masz darmową dostawę!</div>
       )}
 
-      <ul>
-        {items.map(({ product, quantity }) => (
-          <CartItemTile
-            key={product.id}
-            product={product}
-            quantity={quantity}
-          />
-        ))}
-      </ul>
+      {isCheckout && (
+        <ul>
+          {items.map(({ product, quantity }) => (
+            <CartItemTile
+              key={product.id}
+              product={product}
+              quantity={quantity}
+            />
+          ))}
+        </ul>
+      )}
 
       <div className="summary-total">
-        <div className="brutto">
-          <span>Produkty:</span>
-          <strong>{formatGrossPrice(total)} zł</strong>
-        </div>
-        <div className="brutto">
-          <span>Dostawa:</span>
-          <strong>
-            {selectedShipping
-              ? formatGrossPrice(selectedShipping.priceTotal) + " zł"
-              : "-"}
-          </strong>
-        </div>
+        {isCheckout && (
+          <div className="brutto">
+            <span>Produkty:</span>
+            <strong>{formatGrossPrice(total)} zł</strong>
+          </div>
+        )}
+        {isCheckout && (
+          <div className="brutto">
+            <span>Dostawa:</span>
+            <strong>
+              {selectedShipping
+                ? formatGrossPrice(selectedShipping.priceTotal) + " zł"
+                : "-"}
+            </strong>
+          </div>
+        )}
         <div className="summary-brutto">
           <span>Razem:</span>
           <strong>
-            {formatGrossPrice(total + (selectedShipping?.priceTotal ?? 0))} zł
+            {formatGrossPrice(
+              isCheckout ? total + (selectedShipping?.priceTotal ?? 0) : total
+            )}{" "}
+            zł
           </strong>
         </div>
         <div className="summary-vat">
@@ -57,24 +70,28 @@ export default function CartSummary({
         </div>
       </div>
 
-      <div className="terms-and-submit">
-        <label className="accept-terms-label">
-          <input
-            type="checkbox"
-            name="acceptTerms"
-            required
-            checked={form.acceptTerms}
-            onChange={handleChange}
-          />{" "}
-          Oświadczam, że zapoznałem się i akceptuję Regulamin i Politykę
-          prywatności.
-          <span className="required">*</span>
-        </label>
+      {isCheckout ? (
+        <div className="terms-and-submit">
+          <label className="accept-terms-label">
+            <input
+              type="checkbox"
+              name="acceptTerms"
+              required
+              checked={form.acceptTerms}
+              onChange={handleChange}
+            />{" "}
+            Oświadczam, że zapoznałem się i akceptuję Regulamin i Politykę
+            prywatności.
+            <span className="required">*</span>
+          </label>
 
-        <Button type="submit" disabled={submitting}>
-          Kupuję i płacę
-        </Button>
-      </div>
+          <Button type="submit" disabled={submitting}>
+            Kupuję i płacę
+          </Button>
+        </div>
+      ) : (
+        <Button onClick={onSubmit}>Zamówienie</Button>
+      )}
     </div>
   );
 }
