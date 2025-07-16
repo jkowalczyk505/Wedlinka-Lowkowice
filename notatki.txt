@@ -13,7 +13,6 @@ RECENZJE
 - usuwanie
 
 BACKEND
-- generowanie slugu
 - zabezpieczenie multera - przy bledzie niezapisywanie i nienadpisywanie zdjec, brak usuwania starych
 
 ACCOUNT
@@ -21,7 +20,12 @@ ACCOUNT
 - moje zamowienia - zamowienia, faktury
 
 PANEL ADMINA
-
+*PRODUKTY
+- edycja, usuwanie, dodawanie dzialajace
+- jednostka - kolka do wyboru
+- czy dostepny - kółka do wyboru
+- zdjecie - ma sie zaladowywac juz to co jest, ma byc mozliwosc wywalenia, zapisania bez zdjecia, ma sie zapisywac w bazie pod losowa nazwa
+- kategoria znika po wejsciu drugi raz
 
 NA KONIEC
 - MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza

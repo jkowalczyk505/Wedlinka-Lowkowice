@@ -92,3 +92,25 @@ export function calculateCartVat(items) {
     return sum + calculateVatAmount(lineBrutto, product.vatRate);
   }, 0);
 }
+
+export function slugify(str) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")      // usuń znaki diakrytyczne
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")                // spacje → myślniki
+    .replace(/[^a-z0-9\-\.]/g, "")        // tylko a–z, 0–9, myślnik i kropka
+    .replace(/-+/g, "-");                // wielokrotne myślniki → jeden
+}
+
+/**
+ * Generuje slug z nazwy + ilości + jednostki, np. "kielbasa-slaska-0.2kg"
+ */
+export function generateProductSlug({ name, quantity, unit }) {
+  const base = slugify(name);
+  if (!quantity) return base;
+  // wymuś polską kropkę w systemie: liczba z kropką
+  const q = String(quantity).replace(",", ".");
+  return `${base}-${q}${unit}`;
+}
