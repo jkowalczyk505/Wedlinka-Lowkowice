@@ -9,25 +9,22 @@ import {
 
 export default function AdminPage() {
   return (
-    <div className="admin-page-container white-section">
+    <div className="admin-page-container">
       {/* ── Sidebar ─────────────────────────────────── */}
       <aside className="admin-sidebar">
         <h2>Panel&nbsp;Admina</h2>
         <nav>
-          <NavLink to="/admin" end className={({isActive})=>isActive?"nav-link active":"nav-link"}>
-            <Home size={24}/>  Dashboard
-          </NavLink>
           <NavLink to="/admin/produkty"    className={({isActive})=>isActive?"nav-link active":"nav-link"}>
-            <Package size={24}/> Produkty
+            <Package size={25}/> Produkty
           </NavLink>
           <NavLink to="/admin/zamowienia" className={({isActive})=>isActive?"nav-link active":"nav-link"}>
-            <FileText size={24}/> Zamówienia
+            <FileText size={25}/> Zamówienia
           </NavLink>
           <NavLink to="/admin/opinie"     className={({isActive})=>isActive?"nav-link active":"nav-link"}>
-            <Star size={24}/>  Opinie
+            <Star size={25}/>  Opinie
           </NavLink>
           <NavLink to="/admin/faktury"    className={({isActive})=>isActive?"nav-link active":"nav-link"}>
-            <Receipt size={24}/> Faktury
+            <Receipt size={25}/> Faktury
           </NavLink>
         </nav>
       </aside>

@@ -1,3 +1,7 @@
 export default function AdminReviews() {
-  return <h1>Zarządzanie opiniami</h1>;
+  return (
+    <div className="admin-reviews">
+      <h1 className="admin-page-title">Zarządzanie opiniami</h1>
+    </div>
+  );
 }

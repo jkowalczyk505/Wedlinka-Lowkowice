@@ -1,3 +1,10 @@
 export default function AdminDashboard() {
-  return <h1>Dashboard</h1>;
+  return( 
+    <div className="admin-dashboard">
+      <h1 className="admin-page-title">Witaj w panelu administracyjnym!</h1>
+      <div className="welcome-admin">
+        <p>Wybierz z menu po lewej, co chcesz teraz zrobić.</p>
+      </div>
+    </div>
+  )
 }

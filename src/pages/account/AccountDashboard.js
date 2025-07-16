@@ -3,13 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../components/auth/AuthContext";
 import { Link } from "react-router-dom";
 import {
-  ListOrdered,
-  Clock,
-  AlertCircle,
-  MoreHorizontal,
   User,
   MapPin,
-  FileText,
   Mail,
   AtSign,
 } from "lucide-react";

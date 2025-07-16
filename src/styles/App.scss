@@ -77,8 +77,13 @@
 @import "./components/reviews/review_item";
 @import "./components/reviews/review_list";
 @import "./pages/return_complaints_page";
+@import "./components/modals";
 
 @import "./pages/admin/admin_page";
+@import "./pages/admin/admin_dashboard";
+@import "./pages/admin/admin_products";
+@import "./components/admin/products/admin_product_tile";
+@import "./components/admin/products/admin_product_category";
 
 @import "slick-carousel/slick/slick.css";
 @import "slick-carousel/slick/slick-theme.css";
