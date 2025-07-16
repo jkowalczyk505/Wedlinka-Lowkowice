@@ -10,7 +10,7 @@ import Spinner from "../../components/common/Spinner";
 import { formatGrossPrice, calculateCartVat } from "../../utils/product";
 import { useAlert } from "../../components/common/alert/AlertContext";
 import { ShoppingBag, Trash2 } from "lucide-react";
-import CheckoutSteps from "../../components/cart/CheckoutSteps";
+import CheckoutSteps from "../../components/checkout/CheckoutSteps";
 
 const CartPage = () => {
   const {

@@ -1,0 +1,46 @@
+.cart-summary {
+    .summary-total {
+        border-top: 1px solid $primary-color-darken;
+
+        .brutto {
+            display: flex;
+            justify-content: space-between;
+            color: $dark-color-lighten;
+            padding: 0.3rem 0;
+
+
+            strong {
+                color: $dark-color;
+            }
+        }
+    }
+
+    .terms-and-submit {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+
+        .accept-terms-label {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+
+            input[type="checkbox"] {
+                accent-color: $secondary-color;
+            }
+
+            .required {
+                color: $secondary-color;
+                margin-left: 0.25rem;
+            }
+        }
+
+        button {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            width: 100%;
+        }
+    }
+}
