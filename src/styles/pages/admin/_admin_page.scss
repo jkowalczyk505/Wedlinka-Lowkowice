@@ -1,7 +1,7 @@
 .admin-page-container   { min-height: 77vh; display: flex; }
 
 .admin-sidebar {
-  width: 22vw;
+  width: 20vw;
   background-image: url('/assets/pattern.png');
   background-repeat: repeat;
   padding: 2rem;
@@ -14,7 +14,7 @@
 
     .nav-link {
       display: flex; align-items: center;
-      padding: 1rem 0; font-size: 1.05rem;
+      padding: 1rem 0; font-size: 1.1rem;
       color: $dark-color; text-decoration: none;
       border-bottom: 1px solid lighten($dark-color,50%);
       transition: color .2s;

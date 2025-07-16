@@ -1,0 +1,17 @@
+.admin-products-grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(4, 1fr);
+
+  @media (max-width: 1024px) { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 768px)  { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 480px)  { grid-template-columns: 1fr; }
+}
+
+.category-title {
+  font-size: 1.8rem;
+  margin: 3rem 0 1rem;
+  color: $secondary-color-darken;
+  text-transform: uppercase;
+  letter-spacing: .05rem;
+}

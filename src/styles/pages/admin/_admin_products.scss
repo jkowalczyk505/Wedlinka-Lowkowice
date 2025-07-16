@@ -1,0 +1,19 @@
+.admin-products {
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .custom-button.red {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem; // odległość ikony od tekstu
+      padding: 0.6rem 1rem;
+
+      .btn-icon {
+        font-size: 1.3rem;
+        line-height: 1;
+      }
+    }
+  }
+}
