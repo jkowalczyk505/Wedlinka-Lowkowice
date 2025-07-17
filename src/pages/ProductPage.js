@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import axios from "axios";
-
+import { ReactComponent as DefaultIcon } from "../assets/szynka-ikona.svg";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import Button from "../components/common/Button";
 import { useCart } from "../components/cart/CartContext";
@@ -28,6 +28,11 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [notFound, setNotFound] = useState(false);
+
+  const [imgError, setImgError] = useState(false);
+  const imgUrl = product?.image
+    ? `${process.env.REACT_APP_API_URL}/uploads/products/${product.image}`
+    : null;
 
   const { addItem } = useCart();
   const [qty, setQty] = useState(1);
@@ -111,11 +116,16 @@ export default function ProductPage() {
 
         <div className="product-overview">
           <div className="image-wrapper">
+          {imgUrl && !imgError ? (
             <img
-              src={`${process.env.REACT_APP_API_URL}/uploads/products/${product.image}`}
+              src={imgUrl}
               alt={product.name}
+              onError={() => setImgError(true)}
             />
-          </div>
+          ) : (
+            <DefaultIcon className="default-icon" />
+          )}
+        </div>
 
           <div className="product-overview-text">
             <div

@@ -1,21 +1,24 @@
 // src/pages/admin/AdminProducts.jsx
 import { useEffect, useState, useCallback } from "react";
-import { AuthFetch } from "../../components/auth/AuthFetch";
 import axios from "axios";
+import { AuthFetch } from "../../components/auth/AuthFetch";
 import Button from "../../components/common/Button";
 import AdminProductCategory from "../../components/admin/products/AdminProductCategory";
 import Spinner from "../../components/common/Spinner";
 import LoadError from "../../components/common/LoadError";
+import ConfirmAlert from "../../components/common/alert/ConfirmAlert";
 import { IoAddCircle } from "react-icons/io5";
 import AdminProductModal from "../../components/admin/products/AdminProductModal";
+import { useAlert } from "../../components/common/alert/AlertContext";
 
 export default function AdminProducts() {
+  const { showAlert } = useAlert();
   const [products, setProducts] = useState([]);
-  const [loading,  setLoading] = useState(true);
-  const [error,    setError]   = useState(false);
-
-  const [modalOpen,   setModalOpen]   = useState(false);
-  const [editedProd,  setEditedProd]  = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editedProd, setEditedProd] = useState(null);
+  const [toDelete, setToDelete] = useState(null);
 
   const fetchProducts = useCallback(() => {
     setLoading(true);
@@ -32,14 +35,23 @@ export default function AdminProducts() {
 
   useEffect(fetchProducts, [fetchProducts]);
 
-  /* -------------- akcje -------------- */
-  const handleAddNew = ()=>{ setEditedProd(null);  setModalOpen(true); };
-  const handleEdit   = p  =>{ setEditedProd(p);    setModalOpen(true); };
+  // otwarcie modalu
+  const handleAddNew = () => {
+    setEditedProd(null);
+    setModalOpen(true);
+  };
+  const handleEdit = prod => {
+    setEditedProd(prod);
+    setModalOpen(true);
+  };
 
-  const handleDelete = async (p)=> {
-    if (!window.confirm(`Usunąć produkt “${p.name}”?`)) return;
+  // potwierdzenie usunięcia
+  const confirmDelete = prod => setToDelete(prod);
+  const cancelDelete = () => setToDelete(null);
+  const doDelete = async () => {
+    if (!toDelete) return;
     try {
-      const url = `${process.env.REACT_APP_API_URL}/api/products/${p.id}`;
+      const url = `${process.env.REACT_APP_API_URL}/api/products/${toDelete.id}`;
       const res = await AuthFetch(url, { method: "DELETE" });
       if (!res.ok) {
         let msg = "Nie udało się usunąć produktu";
@@ -49,23 +61,26 @@ export default function AdminProducts() {
         } catch {}
         throw new Error(msg);
       }
-      // jeśli ok → odśwież listę
+      showAlert(`Produkt „${toDelete.name}” usunięty`, "info");
       fetchProducts();
-    } catch(err) {
+    } catch (err) {
       console.error("Błąd usuwania:", err);
-      alert(err.message || "Nie udało się usunąć produktu");
+      showAlert(err.message || "Nie udało się usunąć produktu", "error");
+    } finally {
+      setToDelete(null);
     }
   };
 
-  /* -------------- grupowanie wg kategorii -------------- */
-  const grouped = products.reduce((acc, p) => {
-    acc[p.category] = acc[p.category] ? [...acc[p.category], p] : [p];
+  // grupowanie
+  const grouped = products.reduce((acc, prod) => {
+    acc[prod.category] = acc[prod.category]
+      ? [...acc[prod.category], prod]
+      : [prod];
     return acc;
   }, {});
 
-  /* -------------- widok -------------- */
   if (loading) return <Spinner fullscreen={false} />;
-  if (error)   return <LoadError onRetry={fetchProducts} />;
+  if (error) return <LoadError onRetry={fetchProducts} />;
 
   return (
     <div className="admin-products">
@@ -77,21 +92,31 @@ export default function AdminProducts() {
         </Button>
       </div>
 
-      {Object.entries(grouped).map(([cat, list]) => (
+      {Object.entries(grouped).map(([category, list]) => (
         <AdminProductCategory
-          key={cat}
-          title={cat}
+          key={category}
+          title={category}
           products={list}
           onEdit={handleEdit}
-          onDelete={handleDelete}
+          onDelete={confirmDelete}
         />
       ))}
 
+      {toDelete && (
+        <ConfirmAlert
+          message={`Usunąć produkt „${toDelete.name}”?`}
+          onConfirm={doDelete}
+          cancelButtonText="Anuluj"
+          onClose={cancelDelete}
+          confirmButtonText="Usuń"
+        />
+      )}
+
       <AdminProductModal
-        key={editedProd?.id ?? "new"}    // <— to sprawi, że przy innej
-        open={modalOpen}                 //     wartości editedProd
-        initial={editedProd}             //     komponent zostanie ponownie zamontowany
-        onClose={()=>setModalOpen(false)}
+        key={editedProd?.id ?? "new"}
+        open={modalOpen}
+        initial={editedProd}
+        onClose={() => setModalOpen(false)}
         onSaved={fetchProducts}
       />
     </div>
