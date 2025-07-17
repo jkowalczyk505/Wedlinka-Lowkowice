@@ -1,5 +1,6 @@
 // src/pages/admin/AdminProducts.jsx
 import { useEffect, useState, useCallback } from "react";
+import { AuthFetch } from "../../components/auth/AuthFetch";
 import axios from "axios";
 import Button from "../../components/common/Button";
 import AdminProductCategory from "../../components/admin/products/AdminProductCategory";
@@ -35,14 +36,24 @@ export default function AdminProducts() {
   const handleAddNew = ()=>{ setEditedProd(null);  setModalOpen(true); };
   const handleEdit   = p  =>{ setEditedProd(p);    setModalOpen(true); };
 
-  const handleDelete = async (p)=>{
-    if(!window.confirm(`Usunąć produkt “${p.name}”?`)) return;
-    try{
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/products/${p.id}`);
+  const handleDelete = async (p)=> {
+    if (!window.confirm(`Usunąć produkt “${p.name}”?`)) return;
+    try {
+      const url = `${process.env.REACT_APP_API_URL}/api/products/${p.id}`;
+      const res = await AuthFetch(url, { method: "DELETE" });
+      if (!res.ok) {
+        let msg = "Nie udało się usunąć produktu";
+        try {
+          const body = await res.json();
+          if (body.error) msg = body.error;
+        } catch {}
+        throw new Error(msg);
+      }
+      // jeśli ok → odśwież listę
       fetchProducts();
-    }catch(err){
-      console.error("Błąd usuwania:",err);
-      alert("Nie udało się usunąć produktu");
+    } catch(err) {
+      console.error("Błąd usuwania:", err);
+      alert(err.message || "Nie udało się usunąć produktu");
     }
   };
 

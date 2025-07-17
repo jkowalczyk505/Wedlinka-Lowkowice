@@ -108,13 +108,13 @@
       height: 2rem;
       line-height: 22px;
       border-radius: 50%;
-      background: $secondary-color;
-      color: $primary-color;
+      background: $accent-color;
+      color: $dark-color;
       border: none;
       font-size: 1.4rem;
       cursor: pointer;
       transition: background .2s;
-      &:hover{ background: $dark-color; }
+      &:hover{ background: $accent-color-darken; }
     }
   }
 }

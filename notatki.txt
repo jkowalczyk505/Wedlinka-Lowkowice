@@ -22,6 +22,10 @@ ACCOUNT
 PANEL ADMINA
 *PRODUKTY
 - usuwanie i edycja - zależności
+- alerty, loadery, errory itp (przy usuwaniu szczegolnie)
+*RECENZJE
+*ZAMÓWIENIA
+*FAKTURY
 
 ZAMAWIANIE 2 krok
 - regulamin i polityka podpiac
