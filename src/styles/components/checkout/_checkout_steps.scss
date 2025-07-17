@@ -1,4 +1,3 @@
-// Pasek kroków
 .cart-steps {
     display: flex;
     justify-content: center;
@@ -13,10 +12,10 @@
         align-items: center;
         gap: 1rem;
         cursor: default;
+        position: relative;
 
-        // okrąg z numerem
         &::before {
-            content: attr(data-step);
+            content: attr(data-content);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -28,9 +27,21 @@
             color: $dark-color-lighten;
             background: transparent;
             transition: border-color 0.2s, color 0.2s;
+            font-size: 1.4rem;
         }
 
-        span {
+        &.done::before {
+            content: "✓";
+            border-color: $secondary-color;
+            color: $secondary-color;
+        }
+
+        &.active::before {
+            border-color: $secondary-color;
+            color: $secondary-color;
+        }
+
+        .step-label {
             font-size: 1.5rem;
             color: $dark-color-lighten;
             transition: color 0.2s;
@@ -38,15 +49,9 @@
             font-weight: 500;
         }
 
-        &.active {
-            &::before {
-                border-color: $secondary-color;
-                color: $secondary-color;
-            }
-
-            span {
-                color: $secondary-color;
-            }
+        &.active .step-label,
+        &.done .step-label {
+            color: $secondary-color;
         }
     }
 }

@@ -1,0 +1,116 @@
+.cart-summary {
+    position: sticky;
+    top: 2rem; // odsunięcie od góry ekranu, dostosuj wartości wedle potrzeb
+    align-self: flex-start; // żeby sticky działało poprawnie we flex containerze
+
+    flex: 1;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: $primary-color;
+    border-radius: 5px;
+    border: 1px solid $primary-color-darken;
+
+    .free-shipping {
+        text-align: center;
+        padding: 1rem;
+        margin-bottom: 1rem;
+
+        em {
+            font-weight: 600;
+            font-style: normal;
+            font-size: 1.3rem;
+        }
+
+        &.free {
+            background: $accent-color;
+            color: $dark-color;
+        }
+
+        &:not(.free) {
+            background: $dark-color;
+            color: $primary-color;
+        }
+    }
+
+    .summary-total {
+        border-top: 1px solid $primary-color-darken;
+
+        .summary-brutto {
+            display: flex;
+            justify-content: space-between;
+            color: $dark-color-lighten;
+            text-transform: uppercase;
+            padding: 1rem 0;
+            border-top: 1px solid $primary-color-darken;
+            border-bottom: 1px solid $primary-color-darken;
+
+            strong {
+                font-size: 1.4rem;
+                font-family: $font-heading;
+                color: $secondary-color;
+            }
+        }
+
+        .summary-vat {
+            display: flex;
+            justify-content: space-between;
+            color: $dark-color-lighten;
+            font-size: 0.9rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid $primary-color-darken;
+
+            strong {
+                font-family: $font-heading;
+                color: $dark-color;
+            }
+        }
+
+        .brutto {
+            display: flex;
+            justify-content: space-between;
+            color: $dark-color-lighten;
+            padding: 0.3rem 0;
+
+
+            strong {
+                color: $dark-color;
+            }
+        }
+
+        button {
+            margin-top: auto;
+            width: 100%;
+        }
+    }
+
+    .terms-and-submit {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+
+        .accept-terms-label {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+
+            input[type="checkbox"] {
+                accent-color: $secondary-color;
+            }
+
+            .required {
+                color: $secondary-color;
+                margin-left: 0.25rem;
+            }
+        }
+
+        button {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            width: 100%;
+        }
+    }
+}

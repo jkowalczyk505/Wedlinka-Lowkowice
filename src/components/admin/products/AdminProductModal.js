@@ -1,99 +1,19 @@
 // src/components/admin/products/AdminProductModal.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import PropTypes from "prop-types";
 import Modal from "../../common/Modal";
 import Button from "../../common/Button";
 import Spinner from "../../common/Spinner";
-import axios from "axios";
-import Select from "react-select";
-import { useAlert } from "../../common/alert/AlertContext";  // <-- importujemy context
+import { AuthFetch } from "../../auth/AuthFetch";
+import { useAlert } from "../../common/alert/AlertContext";
 import { generateProductSlug } from "../../../utils/product";
 
-
-// skopiuj customStyles z SortDropdown
-// poprawione customStyles
-const selectStyles = {
-  control: (provided, state) => ({
-    ...provided,
-    display: "flex",           // <-- dodajemy
-    alignContent: "center",      // <-- i wyrównanie pionowe
-    background: "transparent",
-    cursor: "pointer",
-    borderColor: state.isFocused ? "#98181b" : "#ccc",
-    boxShadow: state.isFocused
-      ? `0 0 0 1px #ffffff`
-      : `0 0 0 1px #ffffff`,
-    "&:hover": { borderColor: "#98181b" },
-    // tutaj ustalamy wysokość i marginesy
-    minHeight: "2rem",
-    height: "2rem",
-    marginTop: "0.5rem",
-    marginBottom: "1.5rem",
-    color: "#1a1613",
-  }),
-
-  valueContainer: (provided) => ({
-   ...provided,
-   padding:   "0 8px",     // 8 px z lewej/prawej, bez góry-dołu
-   height:    "2rem",
-   lineHeight:"2rem",    // wyrównanie tekstu w pionie
-   display:   "flex",
-   alignItems:"center",
- }),
-
- input: (provided) => ({
-   ...provided,
-   margin: 0,
-   padding: 0,
-   lineHeight: "2rem",
-   color:     "#1a1613",
-   width: 1,          // tyle wystarcza, by złapać focus
-    opacity: 0,        // i nie zasłaniać SingleValue
- }),
-
-  placeholder: (provided) => ({
-    ...provided,
-    color: "#ccc",          // placeholder w ciemniejszym kolorze
-  }),
-  singleValue: (p) => ({
-    ...p,
-    position: "relative",
-    zIndex: 1,         // na wszelki wypadek wyżej
-    color: "#1a1613",
-  }),
-  dropdownIndicator: (provided, state) => ({
-    ...provided,
-   color: state.isFocused ? "#98181b" : "#98181b",   // ► zawsze widoczna
-    "&:hover": { color: "#98181b" },
-  }),
-  indicatorSeparator: () => ({ display: "none" }),
-  menu: (provided) => ({
-    ...provided,
-    background: "#ffffff",
-    borderRadius: 4,
-    overflow: "hidden",
-    zIndex: 4,
-  }),
-    menuList: (provided) => ({
-    ...provided,
-    paddingTop: 0,
-    paddingBottom: 0,
-        margin: 0,
-    }),
-  option: (provided, state) => ({
-    ...provided,
-    backgroundColor: state.isFocused ? "#f5f1e0" : "transparent",
-    color: state.isFocused ? "#98181b" : "#333",
-    cursor: "pointer",
-    "&:active": { backgroundColor: "#98181b33" },
-  }),
-};
-
 export default function AdminProductModal({ open, initial, onClose, onSaved }) {
-  const { showAlert } = useAlert();                            // <-- hook
+    
+  const { showAlert } = useAlert();
 
   const categories = [
-    { value: "kielbasy", label: "Kiełbasy" },
+    { value: "kiełbasy", label: "Kiełbasy" },
     { value: "wędliny", label: "Wędliny" },
     { value: "wyroby podrobowe", label: "Wyroby podrobowe" },
     { value: "paczki", label: "Nasze paczki" },
@@ -106,7 +26,7 @@ export default function AdminProductModal({ open, initial, onClose, onSaved }) {
 
   const empty = {
     name: "",
-    category: "kielbasy",
+    category: "",
     slug: "",
     description: "",
     ingredients: "",
@@ -119,171 +39,290 @@ export default function AdminProductModal({ open, initial, onClose, onSaved }) {
     image: null,
   };
 
-  const [form, setForm]       = useState(empty);
+  const [form, setForm] = useState(() =>
+    initial ? { ...empty, ...initial } : empty
+  );
   const [submitting, setSubmitting] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [removeCurrent, setRemoveCurrent] = useState(false);
 
-  useEffect(() => {
-    setForm(initial ? { ...empty, ...initial } : empty);
-  }, [initial, open]);
+  /** bezpieczne ustawienie URL (używamy w dwóch miejscach) */
+    const setSafePreview = useCallback(src => {
+    // pusta wartość lub nie-prawidłowy URL = brak podglądu
+    setPreviewUrl(src && src.length ? src : null);
+    }, []);
 
-    useEffect(() => {
-        setForm(f => ({
-            ...f,
-            slug: generateProductSlug(f)
-        }));
-    }, [form.name, form.quantity, form.unit]);
+    const fileInputRef = useRef(null);
 
-
-  const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-    setForm(f => ({
-      ...f,
-      [name]:
-        type === "checkbox" ? (checked ? 1 : 0) :
-        type === "file"     ? files[0] :
-        value
-    }));
+  const onChooseFile = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
   };
 
-  const handleNumber = (e) => {
-    const { name, value } = e.target;
-    if (/^\d*([.,]\d{0,2})?$/.test(value)) {
+
+  useEffect(() => {
+  const data = initial ? { ...empty, ...initial } : empty;
+  setForm(data);
+  setRemoveCurrent(false);
+
+  setSafePreview(
+    initial?.image
+      ? `${process.env.REACT_APP_API_URL}/uploads/products/${initial.image}`
+      : null
+  );
+}, [initial, setSafePreview]);
+
+  useEffect(() => {
+    setForm(f => ({ ...f, slug: generateProductSlug(f) }));
+  }, [form.name, form.quantity, form.unit]);
+
+  const handleChange = e => {
+    const { name, value, type, checked, files } = e.target;
+    if (type === "file") {
+      const file = files[0];
+      setForm(f => ({ ...f, image: file }));
+      setRemoveCurrent(false);
+      setPreviewUrl(URL.createObjectURL(file));
+    } else if (type === "checkbox") {
+      setForm(f => ({ ...f, [name]: checked ? 1 : 0 }));
+    } else {
       setForm(f => ({ ...f, [name]: value }));
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleRemoveImage = () => {
+    setForm(f => ({ ...f, image: null }));
+    setRemoveCurrent(true);
+    setPreviewUrl(null);
+  };
+
+  const handleNumber = e => {
+    const { name, value } = e.target;
+    if (/^[0-9]+([.,][0-9]{0,2})?$/.test(value)) {
+      setForm(f => ({ ...f, [name]: value }));
+    }
+  };
+
+  const handleSubmit = async e => {
     e.preventDefault();
     setSubmitting(true);
 
-    const api = `${process.env.REACT_APP_API_URL}/api/products`;
-    const fd  = new FormData();
-
-    // only allowed fields + comma→dot for numerics
-    Object.entries(form).forEach(([k, v]) => {
+    const apiUrl = `${process.env.REACT_APP_API_URL}/api/products`;
+    const fd = new FormData();
+    const ALLOWED = [
+      "name","category","slug","description","ingredients","allergens",
+      "unit","quantity","price_brut","vat_rate","is_available"
+    ];
+    ALLOWED.forEach(k => {
+      const v = form[k];
       if (v == null || v === "") return;
-      const val = ["quantity", "price_brut", "vat_rate"].includes(k)
+      const val = ["quantity","price_brut","vat_rate"].includes(k)
         ? String(v).replace(",", ".")
         : v;
       fd.append(k, val);
     });
-    if (form.image instanceof File) fd.append("image", form.image);
+    // if user uploaded new file
+    if (form.image instanceof File) {
+      fd.append("image", form.image);
+    }
+    // if user removed existing image
+    if (removeCurrent && !form.image) {
+      fd.append("removeImage", "1");
+    }
 
     try {
-      if (initial) {
-        await axios.put(`${api}/${initial.id}`, fd);
-        showAlert("Produkt zaktualizowany pomyślnie", "info");
-      } else {
-        await axios.post(api, fd);
-        showAlert("Nowy produkt dodany pomyślnie", "info");
-      }
+      const url    = initial ? `${apiUrl}/${initial.id}` : apiUrl;
+      const method = initial ? "PUT"               : "POST";
+
+      const res = await AuthFetch(url, {
+        method,
+        body: fd
+      });
+      if (!res.ok) throw res;
+      showAlert(initial ? "Produkt zaktualizowany pomyślnie" : "Nowy produkt dodany pomyślnie", "info");
       onSaved();
       onClose();
     } catch (err) {
-      console.error(err.response?.data || err);
-      showAlert(
-        err.response?.data?.error || "Nie udało się zapisać produktu",
-        "error"
-      );
+      let msg = "Nie udało się zapisać produktu";
+      if (err.json) {
+        const body = await err.json();
+        if (body.error) msg = body.error;
+      }
+      console.error(err);
+      showAlert(msg, "error");
     } finally {
       setSubmitting(false);
     }
   };
 
+
   return (
     <Modal open={open} onClose={onClose} title={initial ? "Edytuj produkt" : "Nowy produkt"}>
-      <form className="admin-product-form" onSubmit={handleSubmit}>
+      <form className="admin-product-form form-wrapper" onSubmit={handleSubmit}>
+        {/* Nazwa */}
         <label>Nazwa <span className="required">*</span></label>
-        <input name="name" value={form.name} onChange={handleChange} required/>
+        <input name="name" value={form.name} onChange={handleChange} required />
 
-        <label>Kategoria <span className="required">*</span></label>
-        <Select
-          styles={selectStyles}
-          options={categories}
-          value={categories.find((o) => o.value === form.category)}
-          onChange={(opt) => setForm((f) => ({ ...f, category: opt.value }))}
-          isSearchable={false}
-          placeholder={"Wybierz kategorię"}
-          components={{ Input: () => null }}
-        />
-
-        <label>Slug <span className="required">*</span></label>
-        <input name="slug" value={form.slug} onChange={handleChange} required/>
-
-        <label>Ilość + jednostka <span className="required">*</span></label>
-        <div className="two">
-          <input
-            name="quantity"
-            type="text"
-            value={form.quantity}
-            onChange={handleNumber}
-            pattern="^\d+([.,]\d{0,2})?$"
-            required
-          />
-          <select name="unit" value={form.unit} onChange={handleChange}>
-            <option value="kg">kg</option>
-            <option value="szt">szt</option>
-          </select>
+        {/* Kategoria */}
+        <label className="mt-2">Kategoria <span className="required">*</span></label>
+        <div className="radio-group">
+          {categories.map(opt => (
+            <label key={opt.value} className="radio-option">
+              <input
+                type="radio"
+                name="category"
+                value={opt.value}
+                checked={form.category === opt.value}
+                onChange={handleChange}
+                required
+              />
+              {opt.label}
+            </label>
+          ))}
         </div>
 
-        <label>Cena brutto (zł) <span className="required">*</span></label>
+        {/* Slug */}
+        <label className="mt-2">Slug <span className="required">*</span></label>
+        <input name="slug" value={form.slug} onChange={handleChange} required />
+
+        {/* Ilość */}
+        <label className="mt-2">Ilość <span className="required">*</span></label>
+        <input
+          name="quantity"
+          type="text"
+          inputMode="decimal"
+          value={form.quantity}
+          onChange={handleNumber}
+          pattern="^[0-9]+([.,][0-9]{0,2})?$"
+          required
+        />
+
+        {/* Jednostka */}
+        <label className="mt-2">Jednostka <span className="required">*</span></label>
+        <div className="radio-group">
+          {["kg", "szt"].map(u => (
+            <label key={u} className="radio-option">
+              <input
+                type="radio"
+                name="unit"
+                value={u}
+                checked={form.unit === u}
+                onChange={handleChange}
+              />
+              {u}
+            </label>
+          ))}
+        </div>
+
+        {/* Cena */}
+        <label className="mt-2">Cena brutto (zł) <span className="required">*</span></label>
         <input
           name="price_brut"
           type="text"
+          inputMode="decimal"
           value={form.price_brut}
           onChange={handleNumber}
-          pattern="^\d+([.,]\d{0,2})?$"
+          pattern="^[0-9]+([.,][0-9]{0,2})?$"
           required
         />
 
-        <label>Stawka VAT <span className="required">*</span></label>
-        <Select
-          styles={selectStyles}
-          options={vatOptions}
-          value={vatOptions.find((o) => o.value === form.vat_rate)}
-          onChange={(opt) => setForm((f) => ({ ...f, vat_rate: opt.value }))}
-          isSearchable={false}
-        />
+        {/* VAT */}
+        <label className="mt-2">Stawka VAT <span className="required">*</span></label>
+        <div className="radio-group">
+          {vatOptions.map(opt => (
+            <label key={opt.value} className="radio-option">
+              <input
+                type="radio"
+                name="vat_rate"
+                value={opt.value}
+                checked={form.vat_rate === opt.value}
+                onChange={handleChange}
+              />
+              {opt.label}
+            </label>
+          ))}
+        </div>
 
-        <label>Opis <span className="required">*</span></label>
-        <textarea
-          name="description"
-          required
-          value={form.description}
+        {/* Opis */}
+        <label className="mt-2">Opis <span className="required">*</span></label>
+        <textarea name="description" required value={form.description} onChange={handleChange} />
+
+        {/* Składniki */}
+        <label className="mt-2">Składniki <span className="required">*</span></label>
+        <textarea name="ingredients" required value={form.ingredients} onChange={handleChange} />
+
+        {/* Alergeny */}
+        <label className="mt-2">Alergeny <span className="required">*</span></label>
+        <textarea name="allergens" required value={form.allergens} onChange={handleChange} />
+
+        {/* Dostępność */}
+        <label className="mt-2">Dostępność</label>
+        <div className="radio-group">
+          <label className="radio-option">
+            <input
+              type="radio"
+              name="is_available"
+              value="1"
+              checked={String(form.is_available) === "1"}
+              onChange={handleChange}
+            />
+            Dostępny
+          </label>
+          <label className="radio-option">
+            <input
+              type="radio"
+              name="is_available"
+              value="0"
+              checked={String(form.is_available) === "0"}
+              onChange={handleChange}
+            />
+            Niedostępny
+          </label>
+        </div>
+
+        {/* Zdjęcie */}
+        <label className="mt-2">Zdjęcie</label>
+        {/* miniaturka */}
+        {previewUrl && (
+            <div className="image-preview">
+                <img
+                src={previewUrl}
+                alt="Podgląd"
+                className="thumbnail"
+                onError={() => setSafePreview(null)}   // ← ukrywa gdy 404/500
+                />
+                <button
+                type="button"
+                className="remove-btn"
+                onClick={handleRemoveImage}
+                aria-label="Usuń zdjęcie"
+                >
+                ×
+                </button>
+            </div>
+        )}
+        {/* ukryty native input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          name="image"
+          accept="image/*"
           onChange={handleChange}
+          style={{ display: "none" }}
         />
+        <Button
+            variant="beige"
+            className="file-btn"
+            onClick={onChooseFile}
+            type="button"
+            >
+            Wybierz plik
+        </Button>
 
-        <label>Składniki</label>
-        <textarea
-          name="ingredients"
-          value={form.ingredients}
-          onChange={handleChange}
-        />
-
-        <label>Alergeny</label>
-        <textarea
-          name="allergens"
-          value={form.allergens}
-          onChange={handleChange}
-        />
-
-        <label>
-          <input
-            type="checkbox"
-            name="is_available"
-            checked={!!form.is_available}
-            onChange={handleChange}
-          />
-          &nbsp;Dostępny
-        </label>
-
-        <label>Zdjęcie {initial && "(pozostaw puste bez zmian)"}</label>
-        <input type="file" name="image" accept="image/*" onChange={handleChange}/>
-
+        {/* Akcje */}
         <div className="modal-actions">
           <Button variant="dark" onClick={onClose} type="button">Anuluj</Button>
           <Button variant="red" type="submit" disabled={submitting}>
-            {submitting ? <Spinner size="small"/> : "Zapisz"}
+            {submitting ? <Spinner size="small" /> : "Zapisz"}
           </Button>
         </div>
       </form>

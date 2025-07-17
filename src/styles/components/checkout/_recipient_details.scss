@@ -1,0 +1,33 @@
+.cart-items.form-wrapper {
+    .form-group {
+        .address {
+            display: grid;
+            grid-template-columns: 50% 50%;
+            align-items: center;
+            gap: 1rem;
+
+            .form-row {
+
+                .invoice_check {
+                    cursor: pointer;
+                }
+            }
+
+            .invoice-extra {
+                animation: fade-in 0.3s ease-in-out;
+            }
+
+            @keyframes fade-in {
+                from {
+                    opacity: 0;
+                    transform: translateY(-5px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        }
+    }
+}

@@ -1,4 +1,4 @@
-/* prosty, responsywny modal */
+//styles/components/modals.scss
 .modal-overlay{
   position:fixed; inset:0;
   background:rgba(0,0,0,.55);
@@ -40,6 +40,14 @@
   overflow-y:auto;
 }
 
+.custom-button.file-btn {
+  width: 8rem;            /* mniejsza szerokość */
+  padding: 0.4rem 0.8rem; /* mniejsze pady */
+  font-size: 0.8rem;      /* mniejsza czcionka */
+  font-weight: 500;
+  border-radius: 0;
+}
+
 /* przykładowe ujednolicenie pól formularza w modalu */
 .admin-product-form{
   label{ 
@@ -73,4 +81,41 @@
   .modal-actions{
     margin-top:1.4rem; display:flex; gap:.8rem; justify-content:flex-end;
   }
+
+  .radio-group {
+    display: flex;
+    gap: 2rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .image-preview{
+    position: relative;
+    display: inline-block;
+    margin: 0.5rem 0;
+
+    .thumbnail{
+      width: 100%;          // ↔
+      height: auto;         // ↕  kwadrat
+      object-fit: cover;
+    }
+
+    .remove-btn{
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 2rem;
+      height: 2rem;
+      line-height: 22px;
+      border-radius: 50%;
+      background: $secondary-color;
+      color: $primary-color;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: background .2s;
+      &:hover{ background: $dark-color; }
+    }
+  }
 }
+

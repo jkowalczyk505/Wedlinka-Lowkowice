@@ -77,8 +77,9 @@ export default function AdminProducts() {
       ))}
 
       <AdminProductModal
-        open={modalOpen}
-        initial={editedProd}
+        key={editedProd?.id ?? "new"}    // <— to sprawi, że przy innej
+        open={modalOpen}                 //     wartości editedProd
+        initial={editedProd}             //     komponent zostanie ponownie zamontowany
         onClose={()=>setModalOpen(false)}
         onSaved={fetchProducts}
       />

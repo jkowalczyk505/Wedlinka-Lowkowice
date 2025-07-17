@@ -69,7 +69,11 @@
 @import "./pages/product_page";
 @import "./components/common/quantity_stepper";
 @import "./pages/cart/cart_page";
-@import "./components/cart/checkout_steps";
+@import "./pages/cart/delivery_page";
+@import "./components/checkout/checkout_steps";
+@import "./components/checkout/cart_summary";
+@import "./components/checkout/recipient_details";
+@import "./components/checkout/peyment_methods";
 @import "./components/cart/cart_row";
 @import "./components/reviews/rating_stars";
 @import "./components/reviews/review_summary";

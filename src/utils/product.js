@@ -95,13 +95,15 @@ export function calculateCartVat(items) {
 
 export function slugify(str) {
   return str
+    .replace(/ł/g, "l")
+    .replace(/Ł/g, "l")          // małe i wielkie ł
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")      // usuń znaki diakrytyczne
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, "-")                // spacje → myślniki
-    .replace(/[^a-z0-9\-\.]/g, "")        // tylko a–z, 0–9, myślnik i kropka
-    .replace(/-+/g, "-");                // wielokrotne myślniki → jeden
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9\-\.]/g, "")
+    .replace(/-+/g, "-");
 }
 
 /**

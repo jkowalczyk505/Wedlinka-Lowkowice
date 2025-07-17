@@ -1,13 +1,20 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-function Button({ children, onClick, variant = "red", type = "button", disabled = false, }) {
+function Button({
+  children,
+  onClick,
+  variant = "red",
+  type = "button",
+  disabled = false,
+  className = ""    // <-- dodajemy props className
+}) {
   return (
     <button
       onClick={onClick}
-      className={`custom-button ${variant}`}
       type={type}
       disabled={disabled}
+      className={`custom-button ${variant} ${className}`.trim()}  // <-- łączymy klasy
     >
       {children}
     </button>
@@ -20,6 +27,7 @@ Button.propTypes = {
   variant: PropTypes.oneOf(["red", "beige", "dark"]),
   type: PropTypes.oneOf(["button", "submit", "reset"]),
   disabled: PropTypes.bool,
+  className: PropTypes.string,  // <-- deklarujemy prop
 };
 
 export default Button;

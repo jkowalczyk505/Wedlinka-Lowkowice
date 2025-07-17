@@ -6,6 +6,12 @@ import { AuthFetch } from "../../components/auth/AuthFetch";
 import { MapPin } from "lucide-react";
 import InfoTip from "../../components/common/InfoTip";
 import { useAlert } from "../../components/common/alert/AlertContext";
+import PostalCodeInput from "../../components/common/PostalCodeInput";
+import {
+  isPostalCodeValid,
+  parsePostalCodeToDigits,
+  joinPostalCodeDigits,
+} from "../../utils/postalCode";
 
 function AddressForm() {
   const [addressData, setAddressData] = useState({
@@ -41,10 +47,7 @@ function AddressForm() {
 
           const address = { street, apartmentNumber, city };
 
-          if (/^\d{2}-\d{3}$/.test(postalCode)) {
-            const digits = postalCode.replace("-", "").split("");
-            setPostalDigits(digits);
-          }
+          setPostalDigits(parsePostalCodeToDigits(postalCode));
 
           setAddressData(address);
           setInitialAddressData({ ...address, postalCode });
@@ -91,12 +94,6 @@ function AddressForm() {
 
     setEditing(true);
   };
-
-  const getPostalCode = () => {
-    return `${postalDigits[0]}${postalDigits[1]}-${postalDigits[2]}${postalDigits[3]}${postalDigits[4]}`;
-  };
-
-  const validatePostalCodeFormat = (code) => /^\d{2}-\d{3}$/.test(code);
 
   const handlePostalDigitChange = (e, index) => {
     const val = e.target.value.replace(/\D/g, "");
@@ -149,9 +146,9 @@ function AddressForm() {
     e.preventDefault();
     setSaving(true);
 
-    const fullPostalCode = getPostalCode();
+    const fullPostalCode = joinPostalCodeDigits(postalDigits);
 
-    if (!validatePostalCodeFormat(fullPostalCode)) {
+    if (!isPostalCodeValid(fullPostalCode)) {
       showAlert("Kod pocztowy musi być w formacie 12-345.", "error");
       setSaving(false);
       return;
@@ -220,24 +217,11 @@ function AddressForm() {
             />
 
             <label>Kod pocztowy</label>
-            <div className="postal-code-group">
-              {postalDigits.map((digit, i) => (
-                <span key={i}>
-                  <input
-                    id={`postal-${i}`}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength="1"
-                    className="postal-digit"
-                    value={digit}
-                    onChange={(e) => handlePostalDigitChange(e, i)}
-                    onKeyDown={(e) => handlePostalDigitKeyDown(e, i)}
-                    required
-                  />
-                  {i === 1 && <span className="dash">-</span>}
-                </span>
-              ))}
-            </div>
+            <PostalCodeInput
+              digits={postalDigits}
+              onDigitChange={handlePostalDigitChange}
+              onDigitKeyDown={handlePostalDigitKeyDown}
+            />
 
             <label>Miejscowość</label>
             <input

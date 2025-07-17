@@ -2,7 +2,7 @@ const ProductModel = require("../models/productModel");
 const fs = require("fs");
 const path = require("path");
 const ReviewModel = require("../models/reviewModel");
-const { generateProductSlug } = require("../utils/product"); // dopisz na górze
+const { generateProductSlug } = require("../../src/utils/product"); // dopisz na górze
 
 const uploadDir = path.join(__dirname, "..", "uploads", "products");
 
@@ -159,6 +159,15 @@ exports.updateProduct = async (req, res) => {
 
     let image = existing.image;
 
+    if (req.body.removeImage === "1" && !req.file) {
+      // użytkownik kliknął X i NIE wgrał nowego pliku
+      if (image) {
+        const oldPath = path.join(uploadDir, image);
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      }
+      image = null;                    // zapisz NULL w bazie
+    }
+
     if (req.file) {
       // usuń stare zdjęcie jeśli istnieje
       if (image) {
@@ -169,7 +178,7 @@ exports.updateProduct = async (req, res) => {
       }
 
       const ext = path.extname(req.file.originalname);
-      const newFileName = `${id}${ext}`;
+      const newFileName = `${id}-${Date.now()}${ext}`; // gwarancja unikalnej nazwy
       const tempPath = path.join(uploadDir, req.file.filename);
       const finalPath = path.join(uploadDir, newFileName);
 

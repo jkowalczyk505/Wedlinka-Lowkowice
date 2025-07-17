@@ -21,14 +21,16 @@ ACCOUNT
 
 PANEL ADMINA
 *PRODUKTY
-- edycja, usuwanie, dodawanie dzialajace
-- jednostka - kolka do wyboru
-- czy dostepny - kółka do wyboru
-- zdjecie - ma sie zaladowywac juz to co jest, ma byc mozliwosc wywalenia, zapisania bez zdjecia, ma sie zapisywac w bazie pod losowa nazwa
-- kategoria znika po wejsciu drugi raz
+- usuwanie i edycja - zależności
+
+ZAMAWIANIE 2 krok
+- spinner + loaderror
+- regulamin i polityka podpiac
+- zaciaganie danych uzytkownika
+- WALIDACJE!! różne opcje zamawiania!!
 
 NA KONIEC
-- MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza
+- MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza kontaktowego, dane do przelewu tradycyjnego
 - BACKEND zabezpieczyc - rate limit, helmet, cors (www i bez www), ukrycie express
 - baza i backend przenieść
 - middleware (app.use) do przekierowania www na bez www
