@@ -1,0 +1,18 @@
+.admin-review-item {
+  padding: .6rem 0 1.1rem;
+  border-bottom: 1px solid $primary-color-darken;
+
+  .review-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+
+    .review-date   { color: $dark-color-lighten; font-size: .9rem; }
+    .review-rating { margin-left: auto; }
+  }
+
+  .review-text { margin: .4rem 0 .8rem; line-height: 1.45; }
+
+  .custom-button.dark { padding: .35rem 1rem; }
+}

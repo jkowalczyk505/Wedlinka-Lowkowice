@@ -20,10 +20,6 @@ ACCOUNT
 - moje zamowienia - zamowienia, faktury
 
 PANEL ADMINA
-*PRODUKTY
-- usuwanie i edycja - zależności? usunac tez opinie?
-- alerty, loadery, errory itp (przy usuwaniu szczegolnie)
-*RECENZJE
 *ZAMÓWIENIA
 *FAKTURY
 

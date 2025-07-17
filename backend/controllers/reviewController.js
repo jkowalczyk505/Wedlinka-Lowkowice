@@ -12,6 +12,19 @@ exports.getReviewsForProduct = async (req, res) => {
   }
 };
 
+/**
+ * Pobiera wszystkie opinie (do panelu admina)
+ */
+exports.getAllReviews = async (req, res) => {
+  try {
+    const reviews = await ReviewModel.findAllWithProduct();
+    res.json(reviews);
+  } catch (err) {
+    console.error("GET ALL REVIEWS ERROR:", err);
+    res.status(500).json({ error: "Błąd pobierania wszystkich opinii" });
+  }
+};
+
 exports.createReview = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -56,21 +69,26 @@ exports.updateReview = async (req, res) => {
   }
 };
 
-exports.deleteReview = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const { id } = req.params;
+ exports.deleteReview = async (req, res) => {
+   try {
+     const userId = req.user.id;
+     const { id }   = req.params;
 
-    // tylko autor lub admin
-    const existing = await ReviewModel.findByUserAndProduct(userId, req.body.productId);
-    if (existing?.id !== +id && !req.user.isAdmin) {
-      return res.status(403).json({ error: "Brak dostępu do tej opinii" });
-    }
+     // 1) Pobierz opinię z bazy
+     const review = await ReviewModel.findById(id);
+     if (!review) {
+       return res.status(404).json({ error: "Nie znaleziono opinii" });
+     }
 
-    await ReviewModel.deleteById(id);
-    res.json({ message: "Opinia usunięta" });
-  } catch (err) {
-    console.error("DELETE REVIEW ERROR:", err);
-    res.status(500).json({ error: "Błąd usuwania opinii" });
-  }
-};
+      if (review.user_id !== userId && req.user.role !== "admin") {
+        return res.status(403).json({ error: "Brak dostępu do tej opinii" });
+      }
+
+     // 3) Usuń
+     await ReviewModel.deleteById(id);
+     res.json({ message: "Opinia usunięta" });
+   } catch (err) {
+     console.error("DELETE REVIEW ERROR:", err);
+     res.status(500).json({ error: "Błąd usuwania opinii" });
+   }
+ };

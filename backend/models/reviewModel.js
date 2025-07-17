@@ -31,6 +31,48 @@ const ReviewModel = {
     return rows;
   },
 
+  /**
+   * Zwraca wszystkie opinie z informacją o produkcie i użytkowniku
+   */
+  async findAllWithProduct() {
+  const [rows] = await db.query(
+    `SELECT
+       r.id,
+       r.user_id,
+       u.name      AS userName,
+       r.product_id,
+       p.name      AS productName,
+       p.quantity  AS productQuantity,
+       p.unit      AS productUnit,
+       r.rating,
+       r.comment,
+       r.created_at
+     FROM reviews r
+     JOIN users    u ON u.id = r.user_id
+     JOIN products p ON p.id = r.product_id
+     ORDER BY r.created_at DESC`     /* ← sortowanie od najnowszych */
+  );
+  return rows;
+},
+
+  /** Pobiera jedną opinię po id */
+  async findById(id) {
+    const [rows] = await db.query(
+      `SELECT * FROM reviews WHERE id = ?`,
+      [id]
+    );
+    return rows[0] || null;
+  },
+
+  // src/models/reviewModel.js
+  async hardDeleteByProductId(productId, conn = db) {
+    const [res] = await conn.query(
+      'DELETE FROM reviews WHERE product_id = ?',
+      [productId]
+    );
+    return res.affectedRows;        // zwraca ile wierszy skasowano
+  },
+
   /** Czy użytkownik już ocenił produkt? */
   async findByUserAndProduct(userId, productId) {
     const [rows] = await db.query(
