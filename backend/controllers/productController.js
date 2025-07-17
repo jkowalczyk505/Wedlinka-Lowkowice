@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const ReviewModel = require("../models/reviewModel");
 const { generateProductSlug } = require("../utils/product");
+const db           = require("../config/db");
 
 const uploadDir = path.join(__dirname, "..", "uploads", "products");
 
@@ -207,24 +208,32 @@ exports.updateProduct = async (req, res) => {
 };
 
 exports.deleteProduct = async (req, res) => {
+  const productId = req.params.id;
+
+  const product = await ProductModel.findById(productId);
+  if (!product)
+    return res.status(404).json({ error: 'Nie znaleziono produktu' });
+
+  // ----- TRANS‑AKC‑JA -------------------------------------------------
+  const conn = await db.getConnection();   // 🆕  własne połączenie
   try {
-    const product = await ProductModel.findById(req.params.id);
-    if (!product)
-      return res.status(404).json({ error: "Nie znaleziono produktu" });
+    await conn.beginTransaction();
 
-    // NIE USUWAMY ZDJĘCIA Z BACKENDU
-    // if (product.image) {
-    //   const imgPath = path.join(uploadDir, product.image);
-    //   if (fs.existsSync(imgPath)) {
-    //     fs.unlinkSync(imgPath);
-    //   }
-    // }
+    // 1) twardo kasujemy recenzje
+    const deleted = await ReviewModel.hardDeleteByProductId(productId, conn);
+    console.log(`Hard‑delete: ${deleted} opinii produktu ${productId}`);
 
-    await ProductModel.softDeleteById(req.params.id);
-    res.json({ message: "Produkt usunięty (logicznie)" });
+    // 2) miękko kasujemy produkt
+    await ProductModel.softDeleteById(productId, conn);
+
+    await conn.commit();
+    res.json({ message: 'Produkt usunięty (soft), recenzje skasowane' });
   } catch (err) {
-    console.error("DELETE PRODUCT ERROR:", err);
-    res.status(500).json({ error: "Błąd podczas usuwania produktu" });
+    await conn.rollback();
+    console.error('DELETE PRODUCT ERROR:', err);
+    res.status(500).json({ error: 'Błąd podczas usuwania produktu' });
+  } finally {
+    conn.release();
   }
 };
 

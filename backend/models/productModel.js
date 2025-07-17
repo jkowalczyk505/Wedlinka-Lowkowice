@@ -127,14 +127,16 @@ const ProductModel = {
     );
   },
 
-  async softDeleteById(id) {
-    await db.query(
-      `UPDATE products 
-       SET is_deleted = 1, is_available = 0, updated_at = NOW() 
-       WHERE id = ?`,
-      [id]
-    );
-  },
+  async softDeleteById(id, conn = db) {
+  await conn.query(
+    `UPDATE products
+        SET is_deleted = 1,
+            is_available = 0,
+            updated_at   = NOW()
+      WHERE id = ?`,
+    [id]
+  );
+},
 
   async updateAvailability(id, isAvailable) {
     await db.query(

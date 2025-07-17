@@ -60,16 +60,19 @@ export default function AdminProductModal({ open, initial, onClose, onSaved }) {
 
 
   useEffect(() => {
-  const data = initial ? { ...empty, ...initial } : empty;
-  setForm(data);
-  setRemoveCurrent(false);
+    if (!open) return;          // tylko przy otwarciu
+    const data = initial
+      ? { ...empty, ...initial }
+      : empty;
+    setForm(data);
+    setRemoveCurrent(false);
 
-  setSafePreview(
-    initial?.image
-      ? `${process.env.REACT_APP_API_URL}/uploads/products/${initial.image}`
-      : null
-  );
-}, [initial, setSafePreview]);
+    setSafePreview(
+      initial?.image
+        ? `${process.env.REACT_APP_API_URL}/uploads/products/${initial.image}`
+        : null
+    );
+  }, [initial, open, setSafePreview]);
 
   useEffect(() => {
     setForm(f => ({ ...f, slug: generateProductSlug(f) }));

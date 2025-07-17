@@ -23,10 +23,6 @@ KOSZYK
 - cart nie wywoluje refresha po wygasnieciu ciasteczka
 
 PANEL ADMINA
-*PRODUKTY
-- usuwanie i edycja - zależności
-- alerty, loadery, errory itp (przy usuwaniu szczegolnie)
-*RECENZJE
 *ZAMÓWIENIA
 *FAKTURY
 

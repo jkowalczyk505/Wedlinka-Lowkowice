@@ -2,6 +2,7 @@
 const express = require("express");
 const {
   getReviewsForProduct,
+  getAllReviews,
   createReview,
   updateReview,
   deleteReview,
@@ -9,6 +10,9 @@ const {
 const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
+
+// GET /api/reviews           → wszystkie opinie (dla admina)
+router.get("/", protect, getAllReviews);
 
 // pobierz wszystkie opinie dla danego produktu
 router.get("/product/:productId", getReviewsForProduct);

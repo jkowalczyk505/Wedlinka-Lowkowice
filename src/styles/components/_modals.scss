@@ -76,8 +76,6 @@
     font-family: $font-main;
   }
 
-  .two{ display:flex; gap:.6rem; >*{flex:1;} }
-
   .modal-actions{
     margin-top:1.4rem; display:flex; gap:.8rem; justify-content:flex-end;
   }
@@ -108,13 +106,13 @@
       height: 2rem;
       line-height: 22px;
       border-radius: 50%;
-      background: $accent-color;
-      color: $dark-color;
+      background: $secondary-color;
+      color: $primary-color;
       border: none;
       font-size: 1.4rem;
       cursor: pointer;
       transition: background .2s;
-      &:hover{ background: $accent-color-darken; }
+      &:hover{ background: $dark-color; }
     }
   }
 }

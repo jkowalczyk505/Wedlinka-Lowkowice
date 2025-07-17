@@ -1,0 +1,36 @@
+.expandable-section {
+  margin-bottom: 1.5rem;
+
+  .expand-toggle {
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    svg { font-size: 1.1rem; font-weight: 500;}
+  }
+
+  .expand-content {
+    margin-top: .4rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid $primary-color-darken;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  }
+
+  /* === paginacja === */
+  .pager {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-top: 1rem;
+
+    .pager-btn {
+      padding: .25rem .45rem;
+      svg { font-size: 1rem; }
+    }
+    .pager-info {
+      font-size: .9rem;
+      color: #555;
+    }
+  }
+}
