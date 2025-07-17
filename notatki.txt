@@ -24,9 +24,8 @@ PANEL ADMINA
 - usuwanie i edycja - zależności
 
 ZAMAWIANIE 2 krok
-- spinner + loaderror
 - regulamin i polityka podpiac
-- zaciaganie danych uzytkownika
+- przesylanie danych
 - WALIDACJE!! różne opcje zamawiania!!
 
 NA KONIEC

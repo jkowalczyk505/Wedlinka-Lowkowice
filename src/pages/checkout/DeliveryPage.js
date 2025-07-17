@@ -13,6 +13,7 @@ import Spinner from "../../components/common/Spinner";
 import LoadError from "../../components/common/LoadError";
 import { calculateCartVat } from "../../utils/product";
 import axios from "axios";
+import { AuthFetch } from "../../components/auth/AuthFetch";
 import {
   isPostalCodeValid,
   joinPostalCodeDigits,
@@ -21,40 +22,137 @@ import {
 const API_URL = process.env.REACT_APP_API_URL;
 
 export default function DeliveryPage() {
-  const { items, loading, error, retry } = useCart();
-  const { user } = useAuth();
+  /* -------------------- 1.  STANY -------------------- */
+  const { items, loading, error, retry, reloadCart } = useCart();
+  const { user, authChecked } = useAuth();
   const { showAlert } = useAlert();
   const navigate = useNavigate();
 
   const [shippingMethods, setShippingMethods] = useState([]);
   const [selectedShipping, setSelectedShipping] = useState(null);
 
-  const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    address: "",
-    address2: "",
-    zip: "",
-    city: "",
-    phone: "",
-    email: "",
-    country: "Polska",
-    notes: "",
-    wantsInvoice: false,
-    companyName: "",
-    nip: "",
-    acceptTerms: false,
-  });
+  // spróbuj załadować poprzednio zapisany formularz
+  const saved = localStorage.getItem("deliveryForm");
+  const [form, setForm] = useState(
+    saved
+      ? JSON.parse(saved)
+      : {
+          firstName: "",
+          lastName: "",
+          address: "",
+          address2: "",
+          zip: "",
+          city: "",
+          phone: "",
+          email: "",
+          country: "Polska",
+          notes: "",
+          wantsInvoice: false,
+          companyName: "",
+          nip: "",
+          acceptTerms: false,
+        }
+  );
 
   const [postalDigits, setPostalDigits] = useState(["", "", "", "", ""]);
+  const [dirty, setDirty] = useState(false);
 
   const [paymentMethod, setPaymentMethod] = useState("przelewy24");
   const [submitting, setSubmitting] = useState(false);
 
-  const total = items.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
+  /* -------------------- 2.  EFEKTY -------------------- */
+
+  // 2a. prefill z kontekstu (imię, email itd.) — zostaw jak masz
+  useEffect(() => {
+    if (!authChecked || !user || dirty) return;
+    const {
+      name = "",
+      surname = "",
+      phone = "",
+      email = "",
+      street = "",
+      apartmentNumber = "",
+      city = "",
+    } = user;
+    setForm((f) => ({
+      ...f,
+      firstName: f.firstName || name,
+      lastName: f.lastName || surname,
+      phone: f.phone || phone,
+      email: f.email || email,
+      address: f.address || street,
+      address2: f.address2 || apartmentNumber,
+      city: f.city || city,
+    }));
+    // kod pocztowy z context.user może być pusty — nie ruszamy tu
+  }, [authChecked, user, dirty]);
+
+  // 2b. fetchujemy pełne dane (w tym adres/pkod) bezpośrednio z serwera
+  useEffect(() => {
+    if (!authChecked) return;
+    (async () => {
+      try {
+        const res = await AuthFetch(`${API_URL}/api/users/me`);
+        if (!res.ok) return;
+        const data = await res.json();
+        // nadpisujemy tylko te pola, które są w payloadzie
+        setForm((f) => ({
+          ...f,
+          firstName: f.firstName || data.name,
+          lastName: f.lastName || data.surname,
+          phone: f.phone || data.phone,
+          email: f.email || data.email,
+          address: f.address || data.street,
+          address2: f.address2 || data.apartmentNumber,
+          city: f.city || data.city,
+        }));
+        if (data.postalCode) {
+          const digits = data.postalCode
+            .replace(/\D/g, "")
+            .slice(0, 5)
+            .split("");
+          setPostalDigits(digits);
+        }
+      } catch (err) {
+        // cichutko
+      }
+    })();
+  }, [authChecked, reloadCart]);
+
+  // 2c. pobranie metod dostawy…
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/api/shipping`)
+      .then((res) => {
+        const methods = res.data.methods || [];
+        setShippingMethods(methods);
+        if (methods.length) setSelectedShipping(methods[0]);
+      })
+      .catch(() => showAlert("Nie udało się pobrać metod dostawy", "error"));
+  }, []);
+
+  /* -------------------- 3.  OBLICZENIA POCHODNE -------------------- */
+  const total = items.reduce((s, i) => s + i.product.price * i.quantity, 0);
   const vat = calculateCartVat(items);
   const freeShippingThreshold = 230;
   const missing = freeShippingThreshold - total;
+
+  /* -------------------- 4.  WCZESNE RETURN-y -------------------- */
+  if (!authChecked) return <Spinner fullscreen />;
+  if (loading) return <Spinner />;
+  if (error) return <LoadError message={error} onRetry={retry} />;
+  if (items.length === 0) return navigate("/koszyk");
+
+  /* -------------------- 5.  HANDLERY I JSX -------------------- */
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => {
+      const next = { ...prev, [name]: type === "checkbox" ? checked : value };
+      localStorage.setItem("deliveryForm", JSON.stringify(next));
+      return next;
+    });
+    setDirty(true);
+  };
 
   const handlePostalDigitChange = (e, index) => {
     const val = e.target.value.replace(/\D/g, "");
@@ -93,31 +191,6 @@ export default function DeliveryPage() {
       const prev = document.getElementById(`postal-${index - 1}`);
       if (prev) prev.focus();
     }
-  };
-
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/api/shipping`)
-      .then((res) => {
-        const methods = res.data.methods || [];
-        setShippingMethods(methods);
-        if (methods.length > 0) setSelectedShipping(methods[0]);
-      })
-      .catch(() => {
-        showAlert("Nie udało się pobrać metod dostawy", "error");
-      });
-  }, []);
-
-  if (loading) return <Spinner />;
-  if (error) return <LoadError message={error} onRetry={retry} />;
-  if (items.length === 0) return navigate("/koszyk");
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
   };
 
   const handleSubmit = (e) => {
@@ -168,6 +241,7 @@ export default function DeliveryPage() {
               setSelectedShipping={setSelectedShipping}
               paymentMethod={paymentMethod}
               setPaymentMethod={setPaymentMethod}
+              missing={missing}
             />
 
             <RecipientDetails

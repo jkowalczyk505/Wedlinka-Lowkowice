@@ -46,21 +46,32 @@ export default function CartSummary({
             <strong>{formatGrossPrice(total)} zł</strong>
           </div>
         )}
-        {isCheckout && (
-          <div className="brutto">
-            <span>Dostawa:</span>
-            <strong>
-              {selectedShipping
-                ? formatGrossPrice(selectedShipping.priceTotal) + " zł"
-                : "-"}
-            </strong>
-          </div>
-        )}
+        {isCheckout &&
+          (() => {
+            // jeśli przekroczyliśmy próg darmowej dostawy (missing <= 0), to koszt = 0
+            const shippingCost =
+              missing > 0 ? selectedShipping?.priceTotal ?? 0 : 0;
+            return (
+              <div className="brutto">
+                <span>Dostawa:</span>
+                <strong>
+                  {missing > 0
+                    ? `${formatGrossPrice(
+                        selectedShipping?.priceTotal ?? 0
+                      )} zł`
+                    : "0 zł"}
+                </strong>
+              </div>
+            );
+          })()}
+
         <div className="summary-brutto">
           <span>Razem:</span>
           <strong>
             {formatGrossPrice(
-              isCheckout ? total + (selectedShipping?.priceTotal ?? 0) : total
+              isCheckout
+                ? total + (missing > 0 ? selectedShipping?.priceTotal ?? 0 : 0)
+                : total
             )}{" "}
             zł
           </strong>
