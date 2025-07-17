@@ -51,6 +51,7 @@ export default function DeliveryPage() {
           companyName: "",
           nip: "",
           acceptTerms: false,
+          lockerCode: "",
         }
   );
 
@@ -62,7 +63,7 @@ export default function DeliveryPage() {
 
   /* -------------------- 2.  EFEKTY -------------------- */
 
-  // 2a. prefill z kontekstu (imię, email itd.) — zostaw jak masz
+  // 2a. prefill z kontekstu (imię, email itd.)
   useEffect(() => {
     if (!authChecked || !user || dirty) return;
     const {
@@ -84,10 +85,9 @@ export default function DeliveryPage() {
       address2: f.address2 || apartmentNumber,
       city: f.city || city,
     }));
-    // kod pocztowy z context.user może być pusty — nie ruszamy tu
   }, [authChecked, user, dirty]);
 
-  // 2b. fetchujemy pełne dane (w tym adres/pkod) bezpośrednio z serwera
+  // 2b. fetchujemy z serwera
   useEffect(() => {
     if (!authChecked) return;
     (async () => {
@@ -95,7 +95,6 @@ export default function DeliveryPage() {
         const res = await AuthFetch(`${API_URL}/api/users/me`);
         if (!res.ok) return;
         const data = await res.json();
-        // nadpisujemy tylko te pola, które są w payloadzie
         setForm((f) => ({
           ...f,
           firstName: f.firstName || data.name,
@@ -113,13 +112,11 @@ export default function DeliveryPage() {
             .split("");
           setPostalDigits(digits);
         }
-      } catch (err) {
-        // cichutko
-      }
+      } catch {}
     })();
   }, [authChecked, reloadCart]);
 
-  // 2c. pobranie metod dostawy…
+  // 2c. pobranie metod dostawy
   useEffect(() => {
     axios
       .get(`${API_URL}/api/shipping`)
@@ -131,7 +128,7 @@ export default function DeliveryPage() {
       .catch(() => showAlert("Nie udało się pobrać metod dostawy", "error"));
   }, []);
 
-  /* -------------------- 3.  OBLICZENIA POCHODNE -------------------- */
+  /* -------------------- 3.  OBLICZENIA -------------------- */
   const total = items.reduce((s, i) => s + i.product.price * i.quantity, 0);
   const vat = calculateCartVat(items);
   const freeShippingThreshold = 230;
@@ -143,7 +140,7 @@ export default function DeliveryPage() {
   if (error) return <LoadError message={error} onRetry={retry} />;
   if (items.length === 0) return navigate("/koszyk");
 
-  /* -------------------- 5.  HANDLERY I JSX -------------------- */
+  /* -------------------- 5.  HANDLERY -------------------- */
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => {
@@ -157,11 +154,9 @@ export default function DeliveryPage() {
   const handlePostalDigitChange = (e, index) => {
     const val = e.target.value.replace(/\D/g, "");
     if (val.length > 1) return;
-
     const newDigits = [...postalDigits];
     newDigits[index] = val;
     setPostalDigits(newDigits);
-
     if (val && index < 4) {
       const next = document.getElementById(`postal-${index + 1}`);
       if (next) next.focus();
@@ -170,7 +165,6 @@ export default function DeliveryPage() {
 
   const handlePostalDigitKeyDown = (e, index) => {
     const key = e.key;
-
     if (key === "Backspace") {
       if (postalDigits[index]) {
         const newDigits = [...postalDigits];
@@ -181,42 +175,105 @@ export default function DeliveryPage() {
         if (prev) prev.focus();
       }
     }
-
     if (key === "ArrowRight" && index < 4) {
       const next = document.getElementById(`postal-${index + 1}`);
       if (next) next.focus();
     }
-
     if (key === "ArrowLeft" && index > 0) {
       const prev = document.getElementById(`postal-${index - 1}`);
       if (prev) prev.focus();
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.acceptTerms)
-      return showAlert("Zaakceptuj regulamin i politykę prywatności", "error");
-    const fullPostalCode = joinPostalCodeDigits(postalDigits);
 
+    // 1. Regulamin
+    if (!form.acceptTerms) {
+      showAlert("Zaakceptuj regulamin i politykę prywatności", "error");
+      return;
+    }
+
+    // 2. Kod pocztowy
+    const fullPostalCode = joinPostalCodeDigits(postalDigits);
     if (!isPostalCodeValid(fullPostalCode)) {
       showAlert("Kod pocztowy musi być w formacie 12-345.", "error");
       return;
     }
+    const formWithZip = { ...form, zip: fullPostalCode };
 
-    const invoiceType = form.wantsInvoice
-      ? form.companyName || form.nip
-        ? "company"
-        : "individual"
-      : "none";
-
-    if (paymentMethod === "bank_transfer") {
-      // pokaż dane do przelewu lub przekieruj na stronę z instrukcjami
-      // możesz też złożyć zamówienie jako "pending"
-      navigate("/podsumowanie");
+    // 3. Kod paczkomatu (jeśli paczkomat)
+    if (selectedShipping?.id === "inpost" && !form.lockerCode.trim()) {
+      showAlert("Podaj kod paczkomatu.", "error");
+      return;
     }
 
-    // TODO: wysyłka danych na backend
+    // 4. Faktura: none/person/company
+    let invoiceType = "none";
+    if (form.wantsInvoice) {
+      const hasCompany = !!form.companyName.trim();
+      const hasNip = !!form.nip.trim();
+      if (hasCompany || hasNip) {
+        if (!hasCompany || !hasNip) {
+          showAlert(
+            "Podaj zarówno nazwę firmy, jak i NIP, aby wystawić fakturę na firmę.",
+            "error"
+          );
+          return;
+        }
+        invoiceType = "company";
+      } else {
+        invoiceType = "person";
+      }
+    }
+
+    setSubmitting(true);
+
+    // 5. Payload
+    const orderPayload = {
+      items: items.map(({ product, quantity }) => ({
+        productId: product.id,
+        quantity,
+      })),
+      selectedShipping: {
+        ...selectedShipping,
+        priceTotal: missing > 0 ? selectedShipping.priceTotal : 0,
+        codSelected: !!selectedShipping.id.includes("_cod"),
+      },
+      lockerCode: form.lockerCode,
+      paymentMethod,
+      invoiceType,
+      form: formWithZip,
+    };
+
+    try {
+      const res = await AuthFetch(`${API_URL}/api/orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderPayload),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Błąd podczas składania zamówienia");
+      }
+
+      // 6. Sprzątanie
+      localStorage.removeItem("deliveryForm");
+      await AuthFetch(`${API_URL}/api/cart/clear`, { method: "DELETE" });
+      await reloadCart();
+      localStorage.removeItem("cart");
+
+      // 7. Przekierowanie
+      if (paymentMethod === "przelewy24" && data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+      } else {
+        navigate("/podsumowanie");
+      }
+    } catch (err) {
+      showAlert(err.message, "error");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -233,54 +290,58 @@ export default function DeliveryPage() {
           </div>
         )}
 
-        <div className="cart-layout">
-          <form className="form-wrapper cart-items" onSubmit={handleSubmit}>
-            <ShippingMethods
-              shippingMethods={shippingMethods}
-              selectedShipping={selectedShipping}
-              setSelectedShipping={setSelectedShipping}
-              paymentMethod={paymentMethod}
-              setPaymentMethod={setPaymentMethod}
-              missing={missing}
-            />
+        <div className="cart-layout" id="delivery">
+          <form className="cart-form" onSubmit={handleSubmit}>
+            <div className="form-wrapper cart-items">
+              <ShippingMethods
+                shippingMethods={shippingMethods}
+                selectedShipping={selectedShipping}
+                setSelectedShipping={setSelectedShipping}
+                paymentMethod={paymentMethod}
+                setPaymentMethod={setPaymentMethod}
+                missing={missing}
+                lockerCode={form.lockerCode}
+                onLockerCodeChange={handleChange}
+              />
 
-            <RecipientDetails
-              form={form}
-              handleChange={handleChange}
-              postalDigits={postalDigits}
-              handlePostalDigitChange={handlePostalDigitChange}
-              handlePostalDigitKeyDown={handlePostalDigitKeyDown}
-            />
+              <RecipientDetails
+                form={form}
+                handleChange={handleChange}
+                postalDigits={postalDigits}
+                handlePostalDigitChange={handlePostalDigitChange}
+                handlePostalDigitKeyDown={handlePostalDigitKeyDown}
+              />
 
-            <div className="form-group">
-              <h2 className="form-group-heading">Informacje dodatkowe</h2>
-              <div className="form-section">
-                <h3>Uwagi do zamówienia (opcjonalne)</h3>
-                <textarea
-                  name="notes"
-                  onChange={handleChange}
-                  placeholder="Przekaż swoją wiadomość"
-                />
+              <div className="form-group">
+                <h2 className="form-group-heading">Informacje dodatkowe</h2>
+                <div className="form-section">
+                  <h3>Uwagi do zamówienia (opcjonalne)</h3>
+                  <textarea
+                    name="notes"
+                    onChange={handleChange}
+                    placeholder="Przekaż swoją wiadomość"
+                  />
+                </div>
               </div>
+
+              <PaymentMethods
+                paymentMethod={paymentMethod}
+                setPaymentMethod={setPaymentMethod}
+                selectedShipping={selectedShipping}
+              />
             </div>
 
-            <PaymentMethods
-              paymentMethod={paymentMethod}
-              setPaymentMethod={setPaymentMethod}
+            <CartSummary
+              items={items}
               selectedShipping={selectedShipping}
+              total={total}
+              vat={vat}
+              missing={missing}
+              form={form}
+              handleChange={handleChange}
+              submitting={submitting}
             />
           </form>
-
-          <CartSummary
-            items={items}
-            selectedShipping={selectedShipping}
-            total={total}
-            vat={vat}
-            missing={missing}
-            form={form}
-            handleChange={handleChange}
-            submitting={submitting}
-          />
         </div>
       </div>
     </div>

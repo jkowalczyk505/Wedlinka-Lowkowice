@@ -97,7 +97,7 @@ export default function CartSummary({
           </label>
 
           <Button type="submit" disabled={submitting}>
-            Kupuję i płacę
+            Zamawiam
           </Button>
         </div>
       ) : (

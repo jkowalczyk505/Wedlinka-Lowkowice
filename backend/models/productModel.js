@@ -142,6 +142,16 @@ const ProductModel = {
       [isAvailable, id]
     );
   },
+
+  async getByIds(ids) {
+    if (!ids.length) return [];
+    const placeholders = ids.map(() => "?").join(", ");
+    const [rows] = await db.query(
+      `SELECT * FROM products WHERE id IN (${placeholders}) AND is_deleted = 0`,
+      ids
+    );
+    return rows;
+  },
 };
 
 module.exports = ProductModel;

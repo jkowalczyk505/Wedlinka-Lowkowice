@@ -8,6 +8,8 @@ export default function ShippingMethods({
   paymentMethod,
   setPaymentMethod,
   missing,
+  lockerCode,
+  onLockerCodeChange,
 }) {
   const handleShippingChange = (option) => {
     setSelectedShipping(option);
@@ -76,6 +78,21 @@ export default function ShippingMethods({
               </label>
             );
           })}
+        {selectedShipping?.id === "inpost" && (
+          <div className="form-row locker-code">
+            <label htmlFor="lockerCode">
+              Kod paczkomatu <span className="required">*</span>
+            </label>
+            <input
+              id="lockerCode"
+              name="lockerCode"
+              value={lockerCode}
+              onChange={onLockerCodeChange}
+              required
+              placeholder="np. WIR01ML"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

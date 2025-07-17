@@ -19,6 +19,9 @@ ACCOUNT
 - dashboard
 - moje zamowienia - zamowienia, faktury
 
+KOSZYK
+- cart nie wywoluje refresha po wygasnieciu ciasteczka
+
 PANEL ADMINA
 *PRODUKTY
 - usuwanie i edycja - zależności
@@ -29,11 +32,18 @@ PANEL ADMINA
 
 ZAMAWIANIE 2 krok
 - regulamin i polityka podpiac
-- przesylanie danych
-- WALIDACJE!! różne opcje zamawiania!!
+- status w shipping details i statusy w orders
+- zamawianie dla niezalogowanego + czyszczenie koszyka
+- przy wypelnieniu niezalogowanym formularza i potem zalogowaniu sie, dane sa tak jak dla niezalogowanego
+- ORDER CONFIRMATION i PAYMETS uzupelnic
+- faktury
+- bramka
+
+FAKTURY
+- wfirma
 
 NA KONIEC
-- MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza kontaktowego, dane do przelewu tradycyjnego
+- MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza kontaktowego, dane do przelewu tradycyjnego, potwierdzenie zamwowienia, faktura
 - BACKEND zabezpieczyc - rate limit, helmet, cors (www i bez www), ukrycie express
 - baza i backend przenieść
 - middleware (app.use) do przekierowania www na bez www

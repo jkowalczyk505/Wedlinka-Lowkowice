@@ -35,7 +35,7 @@ const CartItemTile = ({ product, quantity, onRemove, onClick }) => {
         <div className="item-info">
           <div className="product-name">{product.name}</div>
           <div className="product-unit">
-            Ilość: {formatQuantity(quantity)} {product.unit}
+            Ilość: {formatQuantity(product.quantityPerUnit)} {product.unit}
           </div>
 
           <div className="product-qty">

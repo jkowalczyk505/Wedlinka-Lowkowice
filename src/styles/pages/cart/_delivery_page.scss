@@ -1,3 +1,13 @@
+#delivery {
+    display: contents;
+
+    .cart-form {
+        display: flex;
+        gap: 3rem;
+        align-items: flex-start;
+    }
+}
+
 .cart-items.form-wrapper {
     display: flex;
     flex-direction: column;
@@ -28,7 +38,7 @@
                 input {
                     border: 1px solid $dark-color-more-lighten;
 
-                    &:checked {
+                    &:focus {
                         border: 1px solid $secondary-color;
                     }
                 }
@@ -52,6 +62,11 @@
                 letter-spacing: normal;
                 font-weight: 500;
                 margin-bottom: 0.5rem;
+            }
+
+            .info-tip {
+                font-size: 0.85rem;
+                margin: 1rem 0 0 0;
             }
 
         }

@@ -10,11 +10,18 @@
 
                 .invoice_check {
                     cursor: pointer;
+
+
                 }
             }
 
             .invoice-extra {
                 animation: fade-in 0.3s ease-in-out;
+
+                .info-tip {
+                    margin: 0;
+                    margin-bottom: 1rem;
+                }
             }
 
             @keyframes fade-in {

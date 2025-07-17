@@ -1,5 +1,6 @@
 import React from "react";
 import PostalCodeInput from "../common/PostalCodeInput";
+import InfoTip from "../common/InfoTip";
 
 export default function RecipientDetails({
   form,
@@ -92,11 +93,14 @@ export default function RecipientDetails({
             Numer telefonu <span className="required">*</span>
           </label>
           <input
+            type="tel"
             id="phone"
             name="phone"
             required
             onChange={handleChange}
             value={form.phone}
+            inputMode="numeric"
+            pattern="\d{9}"
           />
         </div>
 
@@ -128,25 +132,41 @@ export default function RecipientDetails({
 
         {form.wantsInvoice && (
           <div className="invoice-extra">
+            <InfoTip>
+              Faktura zostanie wystawiona na powyższy adres dostawy. Jeśli
+              potrzebujesz faktury na firmę, wpisz tu NIP i nazwę firmy – pojawi
+              się ona zamiast Twojego imienia i nazwiska.
+            </InfoTip>{" "}
             <div className="form-row">
-              <label htmlFor="companyName">Nazwa firmy (opcjonalnie)</label>
+              <label htmlFor="companyName">
+                Nazwa firmy{" "}
+                {form.nip && !form.companyName && (
+                  <span className="required">*</span>
+                )}
+              </label>
               <input
                 id="companyName"
                 name="companyName"
                 value={form.companyName}
                 onChange={handleChange}
                 placeholder="Nazwa firmy"
+                required={!!form.nip}
               />
             </div>
-
             <div className="form-row">
-              <label htmlFor="nip">NIP (opcjonalnie)</label>
+              <label htmlFor="nip">
+                NIP{" "}
+                {form.companyName && !form.nip && (
+                  <span className="required">*</span>
+                )}
+              </label>
               <input
                 id="nip"
                 name="nip"
                 value={form.nip}
                 onChange={handleChange}
                 placeholder="Numer NIP"
+                required={!!form.companyName}
               />
             </div>
           </div>
