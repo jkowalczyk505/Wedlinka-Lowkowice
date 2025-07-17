@@ -2,7 +2,7 @@ const ProductModel = require("../models/productModel");
 const fs = require("fs");
 const path = require("path");
 const ReviewModel = require("../models/reviewModel");
-const { generateProductSlug } = require("../../src/utils/product"); // dopisz na górze
+const { generateProductSlug } = require("../utils/product");
 
 const uploadDir = path.join(__dirname, "..", "uploads", "products");
 
@@ -126,36 +126,48 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    const id       = req.params.id;
+    const id = req.params.id;
     const existing = await ProductModel.findById(id);
-    if (!existing) return res.status(404).json({ error: "Nie znaleziono produktu" });
+    if (!existing)
+      return res.status(404).json({ error: "Nie znaleziono produktu" });
 
     // jeżeli użytkownik nie nadpisał slug i masz nowe name/qty/unit → przelicz
-    if (!req.body.slug && (req.body.name || req.body.quantity || req.body.unit)) {
-      const name     = req.body.name     ?? existing.name;
+    if (
+      !req.body.slug &&
+      (req.body.name || req.body.quantity || req.body.unit)
+    ) {
+      const name = req.body.name ?? existing.name;
       const quantity = req.body.quantity ?? existing.quantity;
-      const unit     = req.body.unit     ?? existing.unit;
+      const unit = req.body.unit ?? existing.unit;
       req.body.slug = generateProductSlug({ name, quantity, unit });
     }
 
     /* ------------------ filtrujemy BODY -------------------- */
-   const allowed = [
-     "name","category","slug","description","ingredients","allergens",
-     "unit","quantity","price_brut","vat_rate","is_available"
-   ];
-   const cleanBody = {};
-   allowed.forEach(k => {
-     if (req.body[k] !== undefined) cleanBody[k] = req.body[k];
-   });
+    const allowed = [
+      "name",
+      "category",
+      "slug",
+      "description",
+      "ingredients",
+      "allergens",
+      "unit",
+      "quantity",
+      "price_brut",
+      "vat_rate",
+      "is_available",
+    ];
+    const cleanBody = {};
+    allowed.forEach((k) => {
+      if (req.body[k] !== undefined) cleanBody[k] = req.body[k];
+    });
 
-   // convert numeryczne stringi -> liczby
-   ["quantity","price_brut","vat_rate"].forEach(k=>{
-     if (cleanBody[k] !== undefined) cleanBody[k] = parseFloat(cleanBody[k]);
-   });
-   if (cleanBody.is_available !== undefined)
-     cleanBody.is_available = Number(cleanBody.is_available) ? 1 : 0;
+    // convert numeryczne stringi -> liczby
+    ["quantity", "price_brut", "vat_rate"].forEach((k) => {
+      if (cleanBody[k] !== undefined) cleanBody[k] = parseFloat(cleanBody[k]);
+    });
+    if (cleanBody.is_available !== undefined)
+      cleanBody.is_available = Number(cleanBody.is_available) ? 1 : 0;
     /* -------------------------------------------------------- */
-
 
     let image = existing.image;
 
@@ -165,7 +177,7 @@ exports.updateProduct = async (req, res) => {
         const oldPath = path.join(uploadDir, image);
         if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
       }
-      image = null;                    // zapisz NULL w bazie
+      image = null; // zapisz NULL w bazie
     }
 
     if (req.file) {
