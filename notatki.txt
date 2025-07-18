@@ -28,7 +28,6 @@ PANEL ADMINA
 ZAMAWIANIE 2 krok
 - ZMIENIC WYSYLKE NA BACKEND PO PODSUMOWANIU, 3 KROK
 - regulamin i polityka podpiac
-- przy wypelnieniu niezalogowanym formularza i potem zalogowaniu sie, dane sa tak jak dla niezalogowanego
 - ORDER CONFIRMATION i PAYMETS uzupelnic
 - faktury
 - bramka
