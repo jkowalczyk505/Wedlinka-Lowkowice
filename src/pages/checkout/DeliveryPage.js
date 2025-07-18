@@ -247,9 +247,10 @@ export default function DeliveryPage() {
     };
 
     try {
-      const res = await AuthFetch(`${API_URL}/api/orders`, {
+      const res = await (user ? AuthFetch : fetch)(`${API_URL}/api/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(orderPayload),
       });
       const data = await res.json();
@@ -259,9 +260,16 @@ export default function DeliveryPage() {
 
       // 6. Sprzątanie
       localStorage.removeItem("deliveryForm");
-      await AuthFetch(`${API_URL}/api/cart/clear`, { method: "DELETE" });
-      await reloadCart();
-      localStorage.removeItem("cart");
+
+      if (user) {
+        // zalogowany – czyścimy koszyk w bazie
+        await AuthFetch(`${API_URL}/api/cart`, { method: "DELETE" });
+        await reloadCart(); // pobierze pusty koszyk z backendu
+      } else {
+        // gość – koszyk jest tylko w localStorage
+        localStorage.removeItem("cart");
+        setTimeout(reloadCart, 0); // zaktualizuj stan kontekstu
+      }
 
       // 7. Przekierowanie
       if (paymentMethod === "przelewy24" && data.redirectUrl) {

@@ -1,8 +1,8 @@
 const router = require("express").Router();
 const { createOrder } = require("../controllers/orderController");
-const { protect } = require("../middleware/authMiddleware");
+const { protect, optionalAuth } = require("../middleware/authMiddleware");
 
-// POST /api/orders — złożenie zamówienia (wymaga logowania)
-router.post("/", protect, createOrder);
+// POST /api/orders — złożenie zamówienia (logowanie opcjonalne)
+router.post("/", optionalAuth, createOrder);
 
 module.exports = router;

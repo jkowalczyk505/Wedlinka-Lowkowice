@@ -28,12 +28,16 @@ PANEL ADMINA
 ZAMAWIANIE 2 krok
 - ZMIENIC WYSYLKE NA BACKEND PO PODSUMOWANIU, 3 KROK
 - regulamin i polityka podpiac
-- status w shipping details i statusy w orders
-- zamawianie dla niezalogowanego + czyszczenie koszyka
 - przy wypelnieniu niezalogowanym formularza i potem zalogowaniu sie, dane sa tak jak dla niezalogowanego
 - ORDER CONFIRMATION i PAYMETS uzupelnic
 - faktury
 - bramka
+
+ZAMAWIANIE
+- zmiana statusow wysylek, zamowien, platnosci
+
+TOKENY/AUTORYZACJA
+- uzytkownik zalogowany, wygasa token, klika wyloguj i robi sie refresh bez wylogowania i potem dopiero za drugim razem dziala
 
 FAKTURY
 - wfirma

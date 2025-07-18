@@ -85,11 +85,15 @@ const OrderModel = {
     const last = form.lastName;
     const street = form.address + (form.address2 ? " " + form.address2 : "");
 
+    // Bezpieczne wyliczenie kosztu
+    const cost = selectedShipping.priceTotal ?? selectedShipping.price ?? 0;
+
     await db.query(
       `INSERT INTO shipping_details
-      (order_id,
-       recipient_first_name, recipient_last_name,
-       street, city, postal_code, method, cost, locker_code)
+       (order_id,
+        recipient_first_name, recipient_last_name,
+        street, city, postal_code,
+        method, cost, locker_code)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         orderId,
@@ -99,7 +103,7 @@ const OrderModel = {
         form.city,
         form.zip,
         selectedShipping.id,
-        selectedShipping.priceTotal,
+        cost, // ← nigdy NULL
         lockerCode || null,
       ]
     );
