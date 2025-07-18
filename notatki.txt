@@ -3,6 +3,8 @@
 - walidacja contactform
 - w stopce i na kontakt prawdziwe adresy/telefony itp
 - spinnery, loaderror sprawdzic czy wszedzie sa i czy 77vh nigdzie nie przeszkadza
+- czy wszedzie jest authfetch uzyte do refresh
+- obsluzyc status 498 z authfetch w komponentach zeby pokazaly komunikat o zalogowaniu sie ponownie
 - responsywnosc + duże ekrany
 - polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy, okres przechowywania danych invoices + shipping_details (5lat? jak porzucone nieoplacone to krocej)
 - podstrona dot. dostawy
@@ -18,9 +20,6 @@ BACKEND
 ACCOUNT
 - dashboard
 - moje zamowienia - zamowienia, faktury
-
-KOSZYK
-- cart nie wywoluje refresha po wygasnieciu ciasteczka
 
 PANEL ADMINA
 *ZAMÓWIENIA

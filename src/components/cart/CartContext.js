@@ -7,6 +7,7 @@ import {
   useCallback,
 } from "react";
 import { useAuth } from "../auth/AuthContext";
+import { AuthFetch } from "../auth/AuthFetch";
 import { useAlert } from "../common/alert/AlertContext";
 import { formatQuantity } from "../../utils/product";
 
@@ -94,7 +95,7 @@ export function CartProvider({ children }) {
   // Pobranie koszyka z backendu
   const fetchCart = useCallback(
     async (path = `${API_URL}/api/cart`) => {
-      const res = await fetch(path, { credentials: "include" });
+      const res = await AuthFetch(path);
       const removed = Number(res.headers.get("X-Cart-Removed") || 0);
       const data = await res.json();
       return { data, removed };
@@ -182,9 +183,8 @@ export function CartProvider({ children }) {
       try {
         const { validated } = await validateLocalCart(localCart);
         for (const item of validated) {
-          await fetch(`${API_URL}/api/cart`, {
+          await AuthFetch(`${API_URL}/api/cart`, {
             method: "POST",
-            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               productId: item.product.id,
@@ -219,9 +219,8 @@ export function CartProvider({ children }) {
     });
     if (isLoggedIn) {
       try {
-        await fetch(`${API_URL}/api/cart`, {
+        await AuthFetch(`${API_URL}/api/cart`, {
           method: "POST",
-          credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ productId: product.id, quantity }),
         });
@@ -246,9 +245,8 @@ export function CartProvider({ children }) {
       return updated;
     });
     if (isLoggedIn) {
-      await fetch(`${API_URL}/api/cart/${productId}`, {
+      await AuthFetch(`${API_URL}/api/cart/${productId}`, {
         method: "DELETE",
-        credentials: "include",
       });
     }
   };
@@ -259,9 +257,8 @@ export function CartProvider({ children }) {
     if (!isLoggedIn) {
       localStorage.removeItem("cart");
     } else {
-      await fetch(`${API_URL}/api/cart`, {
+      await AuthFetch(`${API_URL}/api/cart`, {
         method: "DELETE",
-        credentials: "include",
       });
     }
     setError(null);
@@ -274,9 +271,8 @@ export function CartProvider({ children }) {
     );
     if (isLoggedIn) {
       try {
-        await fetch(`${API_URL}/api/cart`, {
+        await AuthFetch(`${API_URL}/api/cart`, {
           method: "PUT",
-          credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ productId: product.id, quantity }),
         });
