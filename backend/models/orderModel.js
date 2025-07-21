@@ -3,54 +3,73 @@ const db = require("../config/db");
 const OrderModel = {
   // models/orderModel.js
   async create(order) {
-    const { user_id, form, invoice_type, total_net, total_vat, total_brut } =
-      order;
+    const conn = await db.getConnection(); // <-- bierz osobne połączenie
+    try {
+      await conn.beginTransaction();
 
-    // czy wstawiamy fakturę?
-    const isInvoice = invoice_type === "person" || invoice_type === "company";
+      /* 1. Pobieramy następny AUTO_INCREMENT i blokujemy do końca TX */
+      const [[{ nextId }]] = await conn.query(
+        `SELECT AUTO_INCREMENT AS nextId
+           FROM information_schema.TABLES
+          WHERE TABLE_SCHEMA = DATABASE()
+            AND TABLE_NAME   = 'orders'
+          FOR UPDATE`
+      );
 
-    // wybieramy albo companyName (gdy company), albo imię i nazwisko (gdy person)
-    const invoiceName = isInvoice
-      ? invoice_type === "company"
-        ? form.companyName
-        : `${form.firstName} ${form.lastName}`
-      : null;
+      /* 2. Składamy numer zamówienia, np. WLK-2025-000123 */
+      const orderNumber =
+        "WLK-" +
+        new Date().getFullYear() +
+        "-" +
+        String(nextId).padStart(6, "0");
 
-    const invoiceStreet = isInvoice
-      ? form.address + (form.address2 ? "/" + form.address2 : "")
-      : null;
-    const invoiceCity = isInvoice ? form.city : null;
-    const invoiceZip = isInvoice ? form.zip : null;
-    const invoiceCountry = isInvoice ? form.country || "Polska" : null;
-    const invoiceNip = invoice_type === "company" ? form.nip : null;
-    const invoiceEmail = isInvoice ? form.email : null;
+      /* 3. INSERT już z order_number (NOT NULL!) */
+      const { user_id, form, invoice_type, total_net, total_vat, total_brut } =
+        order;
 
-    const [result] = await db.query(
-      `INSERT INTO orders
-      (user_id,
-       total_net, total_vat, total_brut,
-       invoice_name, invoice_street, invoice_city, invoice_zip,
-       invoice_country, invoice_type, invoice_nip, invoice_email)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        user_id,
-        total_net,
-        total_vat,
-        total_brut,
+      const isInvoice = invoice_type === "person" || invoice_type === "company";
+      const invoiceName = isInvoice
+        ? invoice_type === "company"
+          ? form.companyName
+          : `${form.firstName} ${form.lastName}`
+        : null;
 
-        invoiceName,
-        invoiceStreet,
-        invoiceCity,
-        invoiceZip,
-        invoiceCountry,
+      const invoiceStreet = isInvoice
+        ? form.address + (form.address2 ? "/" + form.address2 : "")
+        : null;
 
-        invoice_type,
-        invoiceNip,
-        invoiceEmail,
-      ]
-    );
+      const [result] = await conn.query(
+        `INSERT INTO orders
+         (order_number, user_id,
+          total_net, total_vat, total_brut,
+          invoice_name, invoice_street, invoice_city, invoice_zip,
+          invoice_country, invoice_type, invoice_nip, invoice_email)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+        [
+          orderNumber,
+          user_id,
+          total_net,
+          total_vat,
+          total_brut,
+          invoiceName,
+          invoiceStreet,
+          isInvoice ? form.city : null,
+          isInvoice ? form.zip : null,
+          isInvoice ? form.country || "Polska" : null,
+          invoice_type,
+          invoice_type === "company" ? form.nip : null,
+          isInvoice ? form.email : null,
+        ]
+      );
 
-    return result.insertId;
+      await conn.commit();
+      return { id: result.insertId, orderNumber };
+    } catch (err) {
+      await conn.rollback();
+      throw err;
+    } finally {
+      conn.release();
+    }
   },
 
   async addOrderItems(orderId, items) {

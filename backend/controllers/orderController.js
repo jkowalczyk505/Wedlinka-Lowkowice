@@ -39,7 +39,7 @@ const createOrder = async (req, res) => {
     const totalVat = summary.totalVat;
     const totalNet = summary.totalNet;
 
-    const orderId = await OrderModel.create({
+    const { id: orderId, orderNumber } = await OrderModel.create({
       user_id,
       form,
       invoice_type: invoiceTypeToSave,
@@ -48,6 +48,7 @@ const createOrder = async (req, res) => {
       total_brut: totalBrut,
     });
 
+    /* przekazujemy TYLKO liczbę */
     await OrderModel.addOrderItems(orderId, enrichedItems);
     await OrderModel.addShippingDetails(
       orderId,
@@ -58,7 +59,7 @@ const createOrder = async (req, res) => {
 
     await Cart.clearCart(user_id);
 
-    res.status(201).json({ success: true, orderId });
+    res.status(201).json({ success: true, orderId, orderNumber });
   } catch (err) {
     console.error("Create order error:", err);
     res.status(500).json({ error: "Błąd tworzenia zamówienia" });

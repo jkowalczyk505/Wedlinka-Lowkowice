@@ -99,8 +99,9 @@ export default function RecipientDetails({
             required
             onChange={handleChange}
             value={form.phone}
-            inputMode="numeric"
-            pattern="\d{9}"
+            inputMode="numeric" /* na klawiaturach mobilnych pokaże tylko cyfry */
+            pattern="[0-9]{9}" /* dokładnie 9 cyfr (walidacja przy submit)   */
+            maxLength={9} /* nie pozwoli wpisać więcej znaków           */
           />
         </div>
 

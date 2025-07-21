@@ -143,8 +143,15 @@ export default function DeliveryPage() {
   /* -------------------- 5.  HANDLERY -------------------- */
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    let nextValue = value;
+    if (name === "phone") {
+      nextValue = value.replace(/\D/g, "").slice(0, 9);
+    }
     setForm((prev) => {
-      const next = { ...prev, [name]: type === "checkbox" ? checked : value };
+      const next = {
+        ...prev,
+        [name]: type === "checkbox" ? checked : nextValue,
+      };
       localStorage.setItem("deliveryForm", JSON.stringify(next));
       return next;
     });

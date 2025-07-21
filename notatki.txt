@@ -26,11 +26,11 @@ PANEL ADMINA
 *FAKTURY
 
 ZAMAWIANIE 2 krok
-- ZMIENIC WYSYLKE NA BACKEND PO PODSUMOWANIU, 3 KROK
 - regulamin i polityka podpiac
 - ORDER CONFIRMATION i PAYMETS uzupelnic
 - faktury
 - bramka
+- przekierowanie po platnosci na 3 krok - podsumowanie
 
 ZAMAWIANIE
 - zmiana statusow wysylek, zamowien, platnosci
