@@ -1,55 +1,46 @@
+// controllers/orderController.js
 const OrderModel = require("../models/orderModel");
 const ProductModel = require("../models/productModel");
 const Cart = require("../models/cartModel");
+const PaymentModel = require("../models/paymentModel");
 
 const { calculateCartSummary } = require("../helpers/orderHelpers");
+const { generateP24RedirectUrl } = require("../services/p24"); // mock P24
 
-const createOrder = async (req, res) => {
+const BANK_ACCOUNT =
+  process.env.BANK_ACCOUNT || "12 3456 0000 1111 2222 3333 4444";
+
+async function createOrder(req, res) {
   try {
-    const { items, form, paymentMethod, invoiceType, selectedShipping } =
-      req.body;
-    const user_id = req.user?.id || null;
+    /* ───── 1. Dane wejściowe ───── */
+    const { items, form, paymentMethod, selectedShipping } = req.body;
+    const userId = req.user?.id ?? null;
 
-    // Pobierz produkty z bazy
-    const productIds = items.map((item) => item.productId);
+    /* ───── 2. Produkty & podsumowanie ───── */
+    const productIds = items.map((i) => i.productId);
     const products = await ProductModel.getByIds(productIds);
+    const enriched = items.map((i) => ({
+      product: products.find((p) => p.id === i.productId),
+      quantity: i.quantity,
+    }));
+    const summary = calculateCartSummary(enriched); // { totalNet, totalVat, totalBrut }
 
-    // Złącz produkty z ilością
-    const enrichedItems = items.map((item) => {
-      const product = products.find((p) => p.id === item.productId);
-      return {
-        product,
-        quantity: item.quantity,
-      };
-    });
-
-    const summary = calculateCartSummary(enrichedItems);
-
-    // 1) Ustalamy typ faktury na podstawie form.wantsInvoice, companyName i nip
-    let invoiceTypeToSave = null;
-    if (form.wantsInvoice) {
-      if (form.companyName && form.nip) {
-        invoiceTypeToSave = "company";
-      } else {
-        invoiceTypeToSave = "person";
-      }
-    }
-
-    const totalBrut = summary.totalBrut;
-    const totalVat = summary.totalVat;
-    const totalNet = summary.totalNet;
-
+    /* ───── 3. Wstawienie zamówienia ───── */
     const { id: orderId, orderNumber } = await OrderModel.create({
-      user_id,
+      user_id: userId,
       form,
-      invoice_type: invoiceTypeToSave,
-      total_net: totalNet,
-      total_vat: totalVat,
-      total_brut: totalBrut,
+      invoice_type:
+        form.wantsInvoice && form.companyName && form.nip
+          ? "company"
+          : form.wantsInvoice
+          ? "person"
+          : null,
+      total_net: summary.totalNet,
+      total_vat: summary.totalVat,
+      total_brut: summary.totalBrut,
     });
 
-    /* przekazujemy TYLKO liczbę */
-    await OrderModel.addOrderItems(orderId, enrichedItems);
+    await OrderModel.addOrderItems(orderId, enriched);
     await OrderModel.addShippingDetails(
       orderId,
       form,
@@ -57,18 +48,17 @@ const createOrder = async (req, res) => {
       form.lockerCode
     );
 
-    await Cart.clearCart(user_id);
-
-    /* ────────── NOWE ────────── */
-    // stały rachunek – w praktyce przenieś do pliku .env / bazy
-    const BANK_ACCOUNT = "12 3456 0000 1111 2222 3333 4444";
+    /* ───── 4. Payment object + koszt dostawy ───── */
+    const shippingCost = Number(selectedShipping.priceTotal) || 0;
+    const totalWithShipping = summary.totalBrut + shippingCost;
 
     const payment = {
-      method: paymentMethod, // "bank_transfer" | "cod" | "przelewy24" | …
-      amount: totalBrut.toFixed(2),
+      method: paymentMethod, // 'bank_transfer' | 'przelewy24' | 'cod'
+      amount: totalWithShipping.toFixed(2), // STRING!
       bankAccount: null,
       title: null,
       redirectUrl: null,
+      deliveryMethod: selectedShipping.id,
     };
 
     if (paymentMethod === "bank_transfer") {
@@ -77,15 +67,26 @@ const createOrder = async (req, res) => {
     }
 
     if (paymentMethod === "przelewy24") {
-      // tu generujesz link do bramki P24
       payment.redirectUrl = await generateP24RedirectUrl(
         orderNumber,
-        totalBrut /* … */
+        totalWithShipping
       );
     }
 
-    /* zwracamy payment + orderNumber */
-    res.status(201).json({
+    /* ───── 5. Zapis do tabeli payments ───── */
+    await PaymentModel.create({
+      orderId, // <─ KAMEL-CASE zgodne z modelem
+      provider: payment.method,
+      amount: payment.amount,
+      currency: "PLN",
+      transactionId: payment.redirectUrl ?? null,
+      status: "pending",
+    });
+
+    /* ───── 6. Sprzątanie + odpowiedź ───── */
+    await Cart.clearCart(userId);
+
+    return res.status(201).json({
       success: true,
       orderId,
       orderNumber,
@@ -93,10 +94,8 @@ const createOrder = async (req, res) => {
     });
   } catch (err) {
     console.error("Create order error:", err);
-    res.status(500).json({ error: "Błąd tworzenia zamówienia" });
+    return res.status(500).json({ error: "Błąd tworzenia zamówienia" });
   }
-};
+}
 
-module.exports = {
-  createOrder,
-};
+module.exports = { createOrder };

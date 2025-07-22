@@ -128,6 +128,19 @@ export default function DeliveryPage() {
       .catch(() => showAlert("Nie udało się pobrać metod dostawy", "error"));
   }, []);
 
+  useEffect(() => {
+    if (!selectedShipping) return;
+
+    if (selectedShipping.codSelected) {
+      // „kurier (za pobraniem)”
+      setPaymentMethod("cod");
+    } else if (selectedShipping.id === "pickup") {
+      setPaymentMethod("cod");
+    } else {
+      setPaymentMethod("przelewy24");
+    }
+  }, [selectedShipping]);
+
   /* -------------------- 3.  OBLICZENIA -------------------- */
   const total = items.reduce((s, i) => s + i.product.price * i.quantity, 0);
   const vat = calculateCartVat(items);

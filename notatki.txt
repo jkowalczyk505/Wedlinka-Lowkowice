@@ -18,7 +18,6 @@ BACKEND
 ACCOUNT
 - dashboard
 - moje zamowienia - zamowienia, faktury
-- opinie
 
 PANEL ADMINA
 *ZAMÓWIENIA
@@ -26,22 +25,26 @@ PANEL ADMINA
 
 ZAMAWIANIE 2 krok
 - regulamin i polityka podpiac
-- ORDER CONFIRMATION i PAYMETS uzupelnic
-- faktury
 - bramka
-- przekierowanie po platnosci na 3 krok - podsumowanie - bledne ekrany w zaleznosci od wysylki
+
+ZAMAWIANIE 3 krok
+- ekrany: platnosc przelewem, platnosc przez bramke, platnosc przy odbiorze w sklepie, platnosc przy odbiorze u kuriera
+- dane do przelewu w env
+- na ekranach - dziekujemy, nr zamowienia, co bylo zamowonione, dane adresowe, czy faktura - tak/nie i dane do niej, uwagi do zamowienia, 
+metoda dostawy + koszt, metoda platnosci, suma, status platnosci, status zamowienia, dane kontaktowe do pomocy
 
 ZAMAWIANIE
 - zmiana statusow wysylek, zamowien, platnosci
 
 TOKENY/AUTORYZACJA
 - uzytkownik zalogowany, wygasa token, klika wyloguj i robi sie refresh bez wylogowania i potem dopiero za drugim razem dziala
+- uzytkownik zalogowany, usuwaja sie tokeny, potem dziwne rzeczy w koszyku sie dzieja, dalej pokazuje ze zalogowany
 
 FAKTURY
 - wfirma
 
 NA KONIEC
-- MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza kontaktowego, dane do przelewu tradycyjnego, potwierdzenie zamwowienia, faktura
+- MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza kontaktowego, dane do przelewu tradycyjnego, potwierdzenie zamwowienia, faktura (tabela order confirmations)
 - BACKEND zabezpieczyc - rate limit, helmet, cors (www i bez www), ukrycie express
 - baza i backend przenieść
 - middleware (app.use) do przekierowania www na bez www
