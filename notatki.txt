@@ -27,13 +27,6 @@ ZAMAWIANIE 2 krok
 
 ZAMAWIANIE 3 krok
 - ekrany - platnosc przez bramke
-- brak konta nie wyswietla podsumowania
-- konto wysiwtela podsumowanie bez danych
-- podział na komponenty - do wykorzystania w koncie
-- usunac mozliwosc wpisywania url - przekzaywanie tylko state czy jakos inaczej?
-- dane do przelewu wyswietlic
-- imie i nazwisko zamiast nazwa dla faktury person
-- dane do przelewu w env
 
 ZAMAWIANIE
 - zmiana statusow wysylek, zamowien, platnosci

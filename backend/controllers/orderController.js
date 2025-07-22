@@ -27,7 +27,11 @@ async function createOrder(req, res) {
     const summary = calculateCartSummary(enriched);
 
     // 3. Wstawienie zamówienia
-    const { id: orderId, orderNumber } = await OrderModel.create({
+    const {
+      id: orderId,
+      orderNumber,
+      accessToken,
+    } = await OrderModel.create({
       user_id: userId,
       form,
       invoice_type:
@@ -105,6 +109,7 @@ async function createOrder(req, res) {
       success: true,
       orderId,
       orderNumber,
+      accessToken,
       payment,
       items: clientItems,
       shipping: {
@@ -131,8 +136,12 @@ async function createOrder(req, res) {
 // GET /api/orders/summary/:orderNumber
 async function getOrderSummary(req, res) {
   const { orderNumber } = req.params;
+  const token = req.query.token;
   try {
-    const summary = await OrderModel.getFullSummary(orderNumber);
+    const summary = await OrderModel.getFullSummary(orderNumber, token);
+    if (!token) {
+      return res.status(403).json({ error: "Brak dostępu – brak tokenu" });
+    }
     if (!summary) {
       return res.status(404).json({ error: "Nie znaleziono zamówienia" });
     }

@@ -2,10 +2,12 @@
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import CartRow from "../../components/cart/CartRow";
+import OrderSummaryDetails from "../../components/checkout/OrderSummaryDetails";
 import { formatGrossPrice } from "../../utils/product";
 import Spinner from "../../components/common/Spinner";
 import CheckoutSteps from "../../components/checkout/CheckoutSteps";
 import Button from "../../components/common/Button";
+import { generatePaymentPDF } from "../../utils/paymentPdf";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -23,7 +25,11 @@ export default function CheckoutSummaryPage() {
 
   useEffect(() => {
     if (!initialData && orderNumberFromUrl) {
-      fetch(`${API_URL}/api/orders/summary/${orderNumberFromUrl}`)
+      fetch(
+        `${API_URL}/api/orders/summary/${orderNumberFromUrl}?token=${searchParams.get(
+          "token"
+        )}`
+      )
         .then((res) => {
           if (!res.ok) throw new Error("Nie udało się pobrać zamówienia");
           return res.json();
@@ -49,6 +55,16 @@ export default function CheckoutSummaryPage() {
     (sum, { product, quantity }) => sum + product.price * quantity,
     0
   );
+
+  /* ------------------ PDF ------------------ */
+  const handleDownloadPDF = async () => {
+    const url = await generatePaymentPDF({ orderNumber, payment });
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `dane-przelewu-${orderNumber}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="page">
@@ -96,92 +112,12 @@ export default function CheckoutSummaryPage() {
               </div>
             </section>
 
-            {/* Trzy kolumny z danymi */}
-            <div className="summary-details">
-              {/* Twoje dane */}
-              <div className="detail-column">
-                <h3>Twoje dane</h3>
-                <p>
-                  {form.firstName} {form.lastName}
-                </p>
-                <p>
-                  {form.address}
-                  {form.address2 ? ` / ${form.address2}` : ""}
-                </p>
-                <p>
-                  {form.zip} {form.city}
-                </p>
-                <p>{form.country}</p>
-                {form.phone && <p>{form.phone}</p>}
-                {form.email && <p>{form.email}</p>}
-              </div>
-
-              {/* Dostawa i płatność */}
-              <div className="detail-column">
-                <h3>Dostawa i płatność</h3>
-                <p>
-                  Forma dostawy: <strong>{shipping.name}</strong>
-                </p>
-                {shipping.id === "inpost" && shipping.lockerCode && (
-                  <p>
-                    Kod paczkomatu: <strong>{shipping.lockerCode}</strong>
-                  </p>
-                )}
-                <p>
-                  Forma płatności:{" "}
-                  <strong>
-                    {payment.method === "cod"
-                      ? "Przy odbiorze"
-                      : payment.method === "bank_transfer"
-                      ? "Przelew tradycyjny"
-                      : payment.method === "przelewy24"
-                      ? "Przelewy24"
-                      : payment.method}
-                  </strong>
-                </p>
-                <p>
-                  Koszt dostawy:{" "}
-                  <strong>
-                    {formatGrossPrice(shipping.priceTotal || 0)} zł
-                  </strong>
-                </p>
-              </div>
-
-              {/* Informacje dodatkowe / faktura */}
-              <div className="detail-column">
-                <h3>Informacje dodatkowe</h3>
-
-                {/* Uwagi zawsze z etykietą */}
-                <p>
-                  <h4>Uwagi do zamówienia:</h4>{" "}
-                  {form.notes && form.notes.trim() !== ""
-                    ? form.notes
-                    : "Brak uwag"}
-                </p>
-
-                {/* Dane faktury zawsze z etykietą */}
-                {invoice.type ? (
-                  <>
-                    <p>
-                      <h4>Faktura VAT:</h4>
-                    </p>
-                    <p>Nazwa: {invoice.name}</p>
-                    <p>Adres: {invoice.street}</p>
-                    <p>Kod pocztowy: {invoice.zip}</p>
-                    <p>Miasto: {invoice.city}</p>
-                    <p>Kraj: {invoice.country}</p>
-                    {invoice.type === "company" && invoice.nip && (
-                      <p>NIP: {invoice.nip}</p>
-                    )}
-                    {invoice.email && <p>Email do faktury: {invoice.email}</p>}
-                  </>
-                ) : (
-                  <p>
-                    <h4>Faktura VAT:</h4> Bez faktury VAT
-                  </p>
-                )}
-              </div>
-            </div>
+            <OrderSummaryDetails
+              form={form}
+              shipping={shipping}
+              payment={payment}
+              invoice={invoice}
+            />
 
             <Button
               variant="red"
@@ -190,6 +126,11 @@ export default function CheckoutSummaryPage() {
             >
               Powrót na stronę główną
             </Button>
+            {payment.method === "bank_transfer" && (
+              <Button onClick={handleDownloadPDF}>
+                Pobierz dane do przelewu (PDF)
+              </Button>
+            )}
           </>
         )}
       </div>

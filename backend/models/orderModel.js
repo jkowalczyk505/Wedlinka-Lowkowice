@@ -4,6 +4,8 @@ const OrderModel = {
   // models/orderModel.js
   async create(order) {
     const conn = await db.getConnection(); // <-- bierz osobne połączenie
+    const crypto = require("crypto");
+    const accessToken = crypto.randomBytes(16).toString("hex"); // 32 znaki
     try {
       await conn.beginTransaction();
 
@@ -40,13 +42,14 @@ const OrderModel = {
 
       const [result] = await conn.query(
         `INSERT INTO orders
-         (order_number, user_id,
+         (order_number, access_token, user_id,
           total_net, total_vat, total_brut,
           invoice_name, invoice_street, invoice_city, invoice_zip,
           invoice_country, invoice_type, invoice_nip, invoice_email)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
         [
           orderNumber,
+          accessToken,
           user_id,
           total_net,
           total_vat,
@@ -63,7 +66,7 @@ const OrderModel = {
       );
 
       await conn.commit();
-      return { id: result.insertId, orderNumber };
+      return { id: result.insertId, orderNumber, accessToken };
     } catch (err) {
       await conn.rollback();
       throw err;
@@ -146,10 +149,10 @@ const OrderModel = {
     return rows.length > 0;
   },
 
-  async getFullSummary(orderNumber) {
+  async getFullSummary(orderNumber, token) {
     const [orders] = await db.query(
-      `SELECT * FROM orders WHERE order_number = ? LIMIT 1`,
-      [orderNumber]
+      `SELECT * FROM orders WHERE order_number = ? AND access_token = ? LIMIT 1`,
+      [orderNumber, token]
     );
     if (!orders.length) return null;
 
