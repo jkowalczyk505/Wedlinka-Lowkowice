@@ -27,13 +27,13 @@ PANEL ADMINA
 
 ZAMAWIANIE 2 krok
 - regulamin i polityka podpiac
-- ORDER CONFIRMATION i PAYMETS uzupelnic
-- faktury
 - bramka
 
 ZAMAWIANIE 3 krok
 - ekrany: platnosc przelewem, platnosc przez bramke, platnosc przy odbiorze w sklepie, platnosc przy odbiorze u kuriera
 - dane do przelewu w env
+- na ekranach - dziekujemy, nr zamowienia, co bylo zamowonione, dane adresowe, czy faktura - tak/nie i dane do niej, uwagi do zamowienia, 
+metoda dostawy + koszt, metoda platnosci, suma, status platnosci, status zamowienia, dane kontaktowe do pomocy, opcja drukowania/pdf?, 
 
 ZAMAWIANIE
 - zmiana statusow wysylek, zamowien, platnosci
@@ -46,7 +46,7 @@ FAKTURY
 - wfirma
 
 NA KONIEC
-- MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza kontaktowego, dane do przelewu tradycyjnego, potwierdzenie zamwowienia, faktura
+- MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza kontaktowego, dane do przelewu tradycyjnego, potwierdzenie zamwowienia, faktura (tabela order confirmations)
 - BACKEND zabezpieczyc - rate limit, helmet, cors (www i bez www), ukrycie express
 - baza i backend przenieść
 - middleware (app.use) do przekierowania www na bez www
