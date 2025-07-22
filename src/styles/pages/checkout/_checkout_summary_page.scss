@@ -1,0 +1,27 @@
+.summary-page {
+    padding: 2rem 4rem;
+    padding-bottom: 3rem;
+    min-height: 77vh;
+
+    p {
+        justify-self: center;
+    }
+
+    .summary-title {
+        margin-bottom: 1rem;
+        justify-self: center;
+    }
+
+    .order-total {
+        margin-top: 1rem;
+        margin-right: 1rem;
+        justify-self: right;
+    }
+
+    .custom-button {
+        margin-top: 2rem;
+        margin-right: 1rem;
+        float: right;
+    }
+
+}

@@ -68,10 +68,12 @@
 @import "./components/common/sort_dropdown";
 @import "./pages/product_page";
 @import "./components/common/quantity_stepper";
-@import "./pages/cart/cart_page";
-@import "./pages/cart/delivery_page";
+@import "./pages/checkout/cart_page";
+@import "./pages/checkout/delivery_page";
+@import "./pages/checkout/checkout_summary_page";
 @import "./pages/delivery_info_page";
 @import "./components/checkout/checkout_steps";
+@import "./components/checkout/order_summary_details";
 @import "./components/checkout/cart_summary";
 @import "./components/checkout/recipient_details";
 @import "./components/checkout/peyment_methods";

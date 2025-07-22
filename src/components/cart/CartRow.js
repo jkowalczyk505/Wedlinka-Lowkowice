@@ -18,8 +18,8 @@ export default function CartRow({
   onRemove,
   isHeader,
   removing = false,
+  readOnly = false, // ← nowy prop
 }) {
-  // przygotuj link tylko gdy to nie jest nagłówek
   let productLink = "";
   if (!isHeader) {
     const catSlug = categoryToSlug(product.category);
@@ -28,7 +28,6 @@ export default function CartRow({
 
   return (
     <div className={`cart-row ${isHeader ? "cart-row--header" : ""}`}>
-      {/* kolumna z obrazkiem */}
       <div className="cart-row__img">
         {isHeader ? (
           "PRODUKT"
@@ -42,9 +41,8 @@ export default function CartRow({
         )}
       </div>
 
-      {/* kolumna z nazwą i jednostką */}
       <div className="cart-row__details">
-        {isHeader ? null : (
+        {!isHeader && (
           <>
             <Link to={productLink} className="cart-row__name link-reset">
               {product.name}
@@ -56,15 +54,15 @@ export default function CartRow({
         )}
       </div>
 
-      {/* kolumna cena */}
       <div className="cart-row__price">
         {isHeader ? "CENA" : `${formatGrossPrice(product.price)} zł`}
       </div>
 
-      {/* kolumna ilość */}
       <div className="cart-row__qty">
         {isHeader ? (
           "ILOŚĆ"
+        ) : readOnly ? (
+          quantity // ← tylko wyświetlamy liczbę
         ) : (
           <QuantityStepper
             value={quantity}
@@ -75,24 +73,23 @@ export default function CartRow({
         )}
       </div>
 
-      {/* kolumna kwota */}
       <div className="cart-row__total">
         {isHeader
           ? "KWOTA"
           : `${formatGrossPrice(product.price * quantity)} zł`}
       </div>
 
-      {/* kolumna usuń */}
       <div className="cart-row__remove">
-        {!isHeader && (
-          <button
-            onClick={() => onRemove(product.id)}
-            aria-label="Usuń"
-            disabled={removing}
-          >
-            {removing ? <Spinner size="small" /> : <Trash2 size={13} />}
-          </button>
-        )}
+        {!isHeader &&
+          !readOnly && ( // ← ukrywamy, jeśli readOnly
+            <button
+              onClick={() => onRemove(product.id)}
+              aria-label="Usuń"
+              disabled={removing}
+            >
+              {removing ? <Spinner size="small" /> : <Trash2 size={13} />}
+            </button>
+          )}
       </div>
     </div>
   );
@@ -113,4 +110,5 @@ CartRow.propTypes = {
   onRemove: PropTypes.func,
   isHeader: PropTypes.bool,
   removing: PropTypes.bool,
+  readOnly: PropTypes.bool,
 };
