@@ -1,5 +1,6 @@
 // src/controllers/reviewController.js
 const ReviewModel = require("../models/reviewModel");
+const OrderModel = require("../models/orderModel");
 
 exports.getReviewsForProduct = async (req, res) => {
   try {
@@ -29,6 +30,13 @@ exports.createReview = async (req, res) => {
   try {
     const userId = req.user.id;
     const { productId, rating, comment } = req.body;
+
+    const bought = await OrderModel.userBoughtProduct(userId, productId);
+    if (!bought) {
+      return res
+        .status(403)
+        .json({ error: "Możesz ocenić produkt dopiero po zakupie" });
+    }
 
     // sprawdź, czy już istnieje opinia tego usera na ten produkt
     const existing = await ReviewModel.findByUserAndProduct(userId, productId);

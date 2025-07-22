@@ -10,10 +10,10 @@ const {
   updateAvailability,
   getProductsByCategory,
 } = require("../controllers/productController");
-const { protect, adminOnly } = require("../middleware/authMiddleware");
+const { protect, adminOnly, optionalAuth } = require("../middleware/authMiddleware");
 const upload = require("../middleware/multerUpload");
 
-router.get("/slug/:slug", getProductBySlug);
+router.get("/slug/:slug", optionalAuth, getProductBySlug);
 router.get("/", getAllProducts);
 router.get("/category/:category", getProductsByCategory);
 router.get("/:id", getProductById);

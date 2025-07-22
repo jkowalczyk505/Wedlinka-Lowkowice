@@ -127,6 +127,20 @@ const OrderModel = {
       ]
     );
   },
+
+  async userBoughtProduct(userId, productId) {
+    const [rows] = await db.query(
+      `SELECT 1
+         FROM orders      o
+         JOIN order_items i ON i.order_id = o.id
+        WHERE o.user_id = ?
+          AND i.product_id = ?
+          AND o.status = 'delivered' -- „zaliczone” statusy
+        LIMIT 1`,
+      [userId, productId]
+    );
+    return rows.length > 0;
+  }
 };
 
 module.exports = OrderModel;

@@ -23,8 +23,15 @@
   }
 
     .info-tip-wrapper {
-    position: relative;
-    margin-top: 0.4rem;
+      display: flex;
+      gap: 0.5rem;
+      position: relative;
+      margin-top: 0.4rem;
+
+      .custom-button {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+      }
 
     .info-btn {
       background: none;
