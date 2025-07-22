@@ -30,7 +30,7 @@ ZAMAWIANIE 2 krok
 - ORDER CONFIRMATION i PAYMETS uzupelnic
 - faktury
 - bramka
-- przekierowanie po platnosci na 3 krok - podsumowanie
+- przekierowanie po platnosci na 3 krok - podsumowanie - bledne ekrany w zaleznosci od wysylki
 
 ZAMAWIANIE
 - zmiana statusow wysylek, zamowien, platnosci

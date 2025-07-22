@@ -59,7 +59,38 @@ const createOrder = async (req, res) => {
 
     await Cart.clearCart(user_id);
 
-    res.status(201).json({ success: true, orderId, orderNumber });
+    /* ────────── NOWE ────────── */
+    // stały rachunek – w praktyce przenieś do pliku .env / bazy
+    const BANK_ACCOUNT = "12 3456 0000 1111 2222 3333 4444";
+
+    const payment = {
+      method: paymentMethod, // "bank_transfer" | "cod" | "przelewy24" | …
+      amount: totalBrut.toFixed(2),
+      bankAccount: null,
+      title: null,
+      redirectUrl: null,
+    };
+
+    if (paymentMethod === "bank_transfer") {
+      payment.bankAccount = BANK_ACCOUNT;
+      payment.title = orderNumber;
+    }
+
+    if (paymentMethod === "przelewy24") {
+      // tu generujesz link do bramki P24
+      payment.redirectUrl = await generateP24RedirectUrl(
+        orderNumber,
+        totalBrut /* … */
+      );
+    }
+
+    /* zwracamy payment + orderNumber */
+    res.status(201).json({
+      success: true,
+      orderId,
+      orderNumber,
+      payment,
+    });
   } catch (err) {
     console.error("Create order error:", err);
     res.status(500).json({ error: "Błąd tworzenia zamówienia" });

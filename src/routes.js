@@ -18,6 +18,7 @@ import AllProductsPage from "./pages/AllProductsPage";
 import ProductPage from "./pages/ProductPage";
 import CartPage from "./pages/checkout/CartPage";
 import DeliveryPage from "./pages/checkout/DeliveryPage";
+import CheckoutSummaryPage from "./pages/checkout/CheckoutSummaryPage";
 import ReturnComplaintsPage from "./pages/ReturnComplaintsPage";
 
 import AdminLayout from "./components/auth/AdminLayout";
@@ -53,7 +54,10 @@ export default [
     path: "/zamowienie",
     element: <DeliveryPage />,
   },
-
+  {
+    path: "/podsumowanie",
+    element: <CheckoutSummaryPage />,
+  },
   {
     path: "/konto",
     element: <ProtectedLayout />, // ✔ sprawdza user + <Outlet/>

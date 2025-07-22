@@ -270,19 +270,24 @@ export default function DeliveryPage() {
 
       if (user) {
         // zalogowany – czyścimy koszyk w bazie
-        await AuthFetch(`${API_URL}/api/cart`, { method: "DELETE" });
-        await reloadCart(); // pobierze pusty koszyk z backendu
+        AuthFetch(`${API_URL}/api/cart`, { method: "DELETE" });
+        reloadCart();
       } else {
         // gość – koszyk jest tylko w localStorage
         localStorage.removeItem("cart");
-        setTimeout(reloadCart, 0); // zaktualizuj stan kontekstu
+        reloadCart();
       }
 
-      // 7. Przekierowanie
-      if (paymentMethod === "przelewy24" && data.redirectUrl) {
-        window.location.href = data.redirectUrl;
+      /* 7. Przekierowanie / podsumowanie */
+      const { orderNumber, payment } = data;
+
+      if (payment.method === "przelewy24" && payment.redirectUrl) {
+        window.location.href = payment.redirectUrl; // bramka online
       } else {
-        navigate("/podsumowanie");
+        /* każdy inny wariant  → wewnętrzna strona podsumowania */
+        navigate("/podsumowanie", {
+          state: { orderNumber, payment },
+        });
       }
     } catch (err) {
       showAlert(err.message, "error");
