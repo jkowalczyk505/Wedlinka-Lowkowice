@@ -1,0 +1,41 @@
+.delivery-info-section {
+    .info-wrapper {
+        max-width: 800px;
+        margin: 0 auto;
+
+        .info-title {
+            font-size: 2.5rem;
+            text-transform: none;
+            font-weight: 600;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .shipping-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+
+            th, td {
+                border: 1px solid #ddd;
+                padding: 0.8rem;
+                text-align: left;
+            }
+
+            td {
+                background-color: $primary-color-less-darken;
+            }
+
+            th {
+                background-color: $accent-color;
+                font-weight: 500;
+            }
+        }
+
+        p {
+            line-height: 1.6;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+    }
+}
