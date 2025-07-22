@@ -9,16 +9,29 @@ import Spinner              from "../common/Spinner";
 
 const API = `${process.env.REACT_APP_API_URL}/api/reviews`;
 
-export default function ReviewModal({ open, productId, onClose, onSaved }) {
+export default function ReviewModal({ open, productId, onClose, onSaved, initial = null }) {
   const { showAlert } = useAlert();
 
-  const [rating,   setRating]   = useState(0);     // 1‑5
+  const [rating,   setRating]   = useState(initial?.rating || 0);
   const [hover,    setHover]    = useState(0);
-  const [comment,  setComment]  = useState("");
+  const [comment,  setComment]  = useState(initial?.comment || "");
   const [saving,   setSaving]   = useState(false);
 
   /* wyczyść formularz po każdym otwarciu */
-  useEffect(()=>{ if(open){ setRating(0); setHover(0); setComment(""); } },[open]);
+  // kiedy otwieramy modal — jeśli edytujemy, wczytujemy initial,
+  // inaczej startujemy od zera
+  useEffect(() => {
+    if (!open) return;
+    if (initial) {
+      setRating(initial.rating);
+      setComment(initial.comment);
+    } else {
+      setRating(0);
+      setComment("");
+    }
+    setHover(0);
+  }, [open, initial]);
+
 
   const submit = async e => {
     e.preventDefault();
@@ -26,10 +39,16 @@ export default function ReviewModal({ open, productId, onClose, onSaved }) {
 
     setSaving(true);
     try{
-      const res = await AuthFetch(API,{
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ productId, rating, comment })
+      const url     = initial ? `${API}/${initial.id}` : API;
+      const method  = initial ? "PUT" : "POST";
+      const payload = initial
+          ? { rating, comment, productId }   // backend i tak sprawdzi user_id
+          : { productId, rating, comment };
+
+      const res = await AuthFetch(url,{
+          method,
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify(payload)
       });
       if(!res.ok) throw await res.json();
 

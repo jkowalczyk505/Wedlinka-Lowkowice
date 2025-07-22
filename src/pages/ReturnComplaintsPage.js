@@ -1,3 +1,5 @@
+import React from "react";
+
 function ReturnComplaintsPage() {
     return (
         <main className="page">

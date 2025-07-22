@@ -64,7 +64,6 @@ const ReviewModel = {
     return rows[0] || null;
   },
 
-  // src/models/reviewModel.js
   async hardDeleteByProductId(productId, conn = db) {
     const [res] = await conn.query(
       'DELETE FROM reviews WHERE product_id = ?',
@@ -103,6 +102,26 @@ const ReviewModel = {
 
   async deleteById(id) {
     await db.query(`DELETE FROM reviews WHERE id = ?`, [id]);
+  },
+
+  // Wyszukuje wszystkie opinie danego uzytkownika
+  async findAllByUser(userId) {
+    const [rows] = await db.query(
+      `SELECT
+          r.id, r.rating, r.comment, r.created_at,
+          p.id      AS productId,
+          p.name    AS productName,
+          p.slug    AS productSlug,
+          p.category,
+          p.quantity AS productQuantity,
+          p.unit     AS productUnit
+      FROM reviews r
+      JOIN products p ON p.id = r.product_id
+      WHERE r.user_id = ?
+      ORDER BY r.created_at DESC`,
+      [userId]
+    );
+    return rows;
   },
 };
 

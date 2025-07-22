@@ -1,0 +1,32 @@
+.account-review-item{
+  padding:1.2rem 0; 
+  border-bottom:1px solid #eee;
+  header{ display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+  .product-link{ 
+    font-weight:500; 
+    text-decoration:none; 
+    color:$dark-color; 
+    transition: color 0.2s ease;
+    &:hover {
+      color: $secondary-color;
+    }
+  }
+  time {
+    margin-right: 1rem;
+  }
+  .icon-btn{ 
+    background:none; 
+    border:none; 
+    cursor:pointer; 
+    color:$secondary-color; 
+    transition: color 0.2s ease;
+    &:hover {
+      color: $accent-color;
+    }
+  }
+  .review-comment{ margin:.6rem 0 .2rem 0; }
+}
+
+.account-review-item:last-of-type {
+  margin-bottom: 1rem;
+}

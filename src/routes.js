@@ -9,7 +9,7 @@ import OrdersPage from "./pages/account/OrdersPage";
 import AccountDetails from "./pages/account/AccountDetails";
 import AddressForm from "./pages/account/AddressForm";
 import ChangePassword from "./pages/account/ChangePassword";
-import ReviewList from "./pages/account/ReviewList";
+import AccountReviews from "./pages/account/AccountReviews";
 import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
 import ContactPage from "./pages/ContactPage";
@@ -20,6 +20,7 @@ import CartPage from "./pages/checkout/CartPage";
 import DeliveryPage from "./pages/checkout/DeliveryPage";
 import CheckoutSummaryPage from "./pages/checkout/CheckoutSummaryPage";
 import ReturnComplaintsPage from "./pages/ReturnComplaintsPage";
+import DeliveryInfoPage from "./pages/DeliveryInfoPage";
 
 import AdminLayout from "./components/auth/AdminLayout";
 import AdminPage from "./pages/admin/AdminPage";
@@ -32,6 +33,7 @@ import AdminInvoices from "./pages/admin/AdminInvoices";
 export default [
   { path: "/", element: <HomePage /> },
   { path: "/reklamacje", element: <ReturnComplaintsPage /> },
+  { path: "/informacje-o-dostawie", element: <DeliveryInfoPage /> },
   { path: "/logowanie", element: <AuthPage /> },
   { path: "/kontakt", element: <ContactPage /> },
   {
@@ -70,7 +72,7 @@ export default [
           { path: "dane", element: <AccountDetails /> },
           { path: "adres", element: <AddressForm /> },
           { path: "haslo", element: <ChangePassword /> },
-          { path: "opinie", element: <ReviewList /> },
+          { path: "opinie", element: <AccountReviews /> },
           { path: "*", element: <Navigate to="/konto" replace /> },
         ],
       },

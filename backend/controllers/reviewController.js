@@ -100,3 +100,15 @@ exports.updateReview = async (req, res) => {
      res.status(500).json({ error: "Błąd usuwania opinii" });
    }
  };
+
+ // Moje opinie
+   exports.getMyReviews = async (req, res) => {
+      const userId = req.user.id;
+      try {
+        const list = await ReviewModel.findAllByUser(userId);
+        res.json(list);
+      } catch (err) {
+        console.error("GET MY REVIEWS ERROR:", err);
+        res.status(500).json({ error: "Błąd pobierania Twoich opinii" });
+      }
+    };

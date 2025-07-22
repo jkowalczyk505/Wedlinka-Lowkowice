@@ -33,7 +33,7 @@ function Footer() {
         <div className="footer__col">
           <h4 className="footer__heading">Informacje</h4>
           <ul>
-            <li><NavLink to="/dostawa">Dostawa</NavLink></li>
+            <li><NavLink to="/informacje-o-dostawie">Dostawa</NavLink></li>
             <li><NavLink to="/reklamacje">Reklamacje i zwroty</NavLink></li>
             <li><NavLink to="/kontakt">Kontakt</NavLink></li>
             <li><NavLink to="/regulamin">Regulamin</NavLink></li>
