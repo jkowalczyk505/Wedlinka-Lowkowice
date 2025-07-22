@@ -135,7 +135,7 @@ const OrderModel = {
          JOIN order_items i ON i.order_id = o.id
         WHERE o.user_id = ?
           AND i.product_id = ?
-          AND o.status    IN ('paid','sent','delivered')   -- „zaliczone” statusy
+          AND o.status = 'delivered' -- „zaliczone” statusy
         LIMIT 1`,
       [userId, productId]
     );

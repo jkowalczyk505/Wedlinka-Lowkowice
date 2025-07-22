@@ -1,7 +1,7 @@
 // src/pages/ProductPage.js
 import { useEffect, useState, useCallback } from "react";
 import { useParams, Navigate } from "react-router-dom";
-import axios from "axios";
+import { AuthFetch } from "../components/auth/AuthFetch";
 import { ReactComponent as DefaultIcon } from "../assets/szynka-ikona.svg";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import Button from "../components/common/Button";
@@ -37,30 +37,31 @@ export default function ProductPage() {
   const { addItem } = useCart();
   const [qty, setQty] = useState(1);
 
-  const fetchProduct = useCallback(() => {
-    setLoading(true);
-    setError(false);
-    setNotFound(false);
+ const fetchProduct = useCallback(async () => {
+   setLoading(true);
+   setError(false);
+   setNotFound(false);
 
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/products/slug/${productSlug}`)
-      .then((res) => {
-        if (!res.data) {
-          setNotFound(true);
-        } else {
-          setProduct(res.data);
-        }
-      })
-      .catch((err) => {
-        if (err.response && err.response.status === 404) {
-          setNotFound(true);
-        } else {
-          console.error("Błąd ładowania produktu:", err);
-          setError(true);
-        }
-      })
-      .finally(() => setLoading(false));
-  }, [productSlug]);
+   try {
+     const res = await AuthFetch(
+       `${process.env.REACT_APP_API_URL}/api/products/slug/${productSlug}`
+     );
+
+     if (res.status === 404) {
+       setNotFound(true);
+       return;
+     }
+     if (!res.ok) throw new Error("Network error");
+
+     const data = await res.json();   // ← JSON mamy ręcznie
+     setProduct(data);
+   } catch (err) {
+     console.error("Błąd ładowania produktu:", err);
+     setError(true);
+   } finally {
+     setLoading(false);
+   }
+ }, [productSlug]);
 
   useEffect(() => {
     fetchProduct();
@@ -203,6 +204,8 @@ export default function ProductPage() {
               avg={product.averageRating}
               total={product.reviewsCount}
               canReview={product.canReview}
+              productId={product.id}
+              onReviewAdded={fetchProduct}
           />
 
           <ReviewsList productId={product.id} />
