@@ -9,7 +9,7 @@ import OrdersPage from "./pages/account/OrdersPage";
 import AccountDetails from "./pages/account/AccountDetails";
 import AddressForm from "./pages/account/AddressForm";
 import ChangePassword from "./pages/account/ChangePassword";
-import ReviewList from "./pages/account/ReviewList";
+import AccountReviews from "./pages/account/AccountReviews";
 import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
 import ContactPage from "./pages/ContactPage";
@@ -70,7 +70,7 @@ export default [
           { path: "dane", element: <AccountDetails /> },
           { path: "adres", element: <AddressForm /> },
           { path: "haslo", element: <ChangePassword /> },
-          { path: "opinie", element: <ReviewList /> },
+          { path: "opinie", element: <AccountReviews /> },
           { path: "*", element: <Navigate to="/konto" replace /> },
         ],
       },

@@ -10,9 +10,7 @@
 - podstrona dot. dostawy
 
 RECENZJE 
-- wystawianie przez zalogowanych ktorzy kupili 1 raz na 1 produkt
-- edycja
-- usuwanie
+- edycja i usuwanie na stronie profilu
 
 BACKEND
 - zabezpieczenie multera - przy bledzie niezapisywanie i nienadpisywanie zdjec, brak usuwania starych
@@ -20,6 +18,7 @@ BACKEND
 ACCOUNT
 - dashboard
 - moje zamowienia - zamowienia, faktury
+- opinie
 
 PANEL ADMINA
 *ZAMÓWIENIA
