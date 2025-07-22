@@ -30,13 +30,17 @@ ZAMAWIANIE 2 krok
 - ORDER CONFIRMATION i PAYMETS uzupelnic
 - faktury
 - bramka
-- przekierowanie po platnosci na 3 krok - podsumowanie - bledne ekrany w zaleznosci od wysylki
+
+ZAMAWIANIE 3 krok
+- ekrany: platnosc przelewem, platnosc przez bramke, platnosc przy odbiorze w sklepie, platnosc przy odbiorze u kuriera
+- dane do przelewu w env
 
 ZAMAWIANIE
 - zmiana statusow wysylek, zamowien, platnosci
 
 TOKENY/AUTORYZACJA
 - uzytkownik zalogowany, wygasa token, klika wyloguj i robi sie refresh bez wylogowania i potem dopiero za drugim razem dziala
+- uzytkownik zalogowany, usuwaja sie tokeny, potem dziwne rzeczy w koszyku sie dzieja, dalej pokazuje ze zalogowany
 
 FAKTURY
 - wfirma

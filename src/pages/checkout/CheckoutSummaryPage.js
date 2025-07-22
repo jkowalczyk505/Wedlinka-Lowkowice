@@ -25,7 +25,12 @@ export default function CheckoutSummaryPage() {
         </>
       )}
 
-      {payment.method === "cod" && <p>Zapłacisz przy odbiorze u kuriera.</p>}
+      {payment.method === "cod" && (
+        <p>
+          Zapłacisz przy odbiorze{" "}
+          {payment.deliveryMethod === "pickup" ? "w sklepie." : "u kuriera."}
+        </p>
+      )}
 
       {payment.method === "pickup" && <p>Zapłacisz przy odbiorze w sklepie.</p>}
 

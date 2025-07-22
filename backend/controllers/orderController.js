@@ -64,11 +64,12 @@ const createOrder = async (req, res) => {
     const BANK_ACCOUNT = "12 3456 0000 1111 2222 3333 4444";
 
     const payment = {
-      method: paymentMethod, // "bank_transfer" | "cod" | "przelewy24" | …
+      method: paymentMethod,
       amount: totalBrut.toFixed(2),
       bankAccount: null,
       title: null,
       redirectUrl: null,
+      deliveryMethod: selectedShipping.id,
     };
 
     if (paymentMethod === "bank_transfer") {
