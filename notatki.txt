@@ -25,16 +25,21 @@ ACCOUNT
 PANEL ADMINA
 *ZAMÓWIENIA
 *FAKTURY
+*ZMIANA CEN WYSYŁEK
 
 ZAMAWIANIE 2 krok
 - regulamin i polityka podpiac
 - bramka
 
 ZAMAWIANIE 3 krok
-- ekrany: platnosc przelewem, platnosc przez bramke, platnosc przy odbiorze w sklepie, platnosc przy odbiorze u kuriera
+- ekrany - platnosc przez bramke
+- brak konta nie wyswietla podsumowania
+- konto wysiwtela podsumowanie bez danych
+- podział na komponenty - do wykorzystania w koncie
+- usunac mozliwosc wpisywania url - przekzaywanie tylko state czy jakos inaczej?
+- dane do przelewu wyswietlic
+- imie i nazwisko zamiast nazwa dla faktury person
 - dane do przelewu w env
-- na ekranach - dziekujemy, nr zamowienia, co bylo zamowonione, dane adresowe, czy faktura - tak/nie i dane do niej, uwagi do zamowienia, 
-metoda dostawy + koszt, metoda platnosci, suma, status platnosci, status zamowienia, dane kontaktowe do pomocy
 
 ZAMAWIANIE
 - zmiana statusow wysylek, zamowien, platnosci

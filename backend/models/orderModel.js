@@ -102,7 +102,7 @@ const OrderModel = {
   async addShippingDetails(orderId, form, selectedShipping, lockerCode) {
     const first = form.firstName;
     const last = form.lastName;
-    const street = form.address + (form.address2 ? " " + form.address2 : "");
+    const street = form.address + (form.address2 ? "/" + form.address2 : "");
 
     // Bezpieczne wyliczenie kosztu
     const cost = selectedShipping.priceTotal ?? selectedShipping.price ?? 0;
@@ -112,8 +112,9 @@ const OrderModel = {
        (order_id,
         recipient_first_name, recipient_last_name,
         street, city, postal_code,
-        method, cost, locker_code)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        method, cost, locker_code,
+        recipient_email, recipient_phone, notes)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         orderId,
         first,
@@ -122,8 +123,11 @@ const OrderModel = {
         form.city,
         form.zip,
         selectedShipping.id,
-        cost, // ← nigdy NULL
+        cost,
         lockerCode || null,
+        form.email, // ← e-mail z formularza
+        form.phone, // ← telefon z formularza
+        form.notes || null,
       ]
     );
   },
@@ -140,7 +144,116 @@ const OrderModel = {
       [userId, productId]
     );
     return rows.length > 0;
-  }
+  },
+
+  async getFullSummary(orderNumber) {
+    const [orders] = await db.query(
+      `SELECT * FROM orders WHERE order_number = ? LIMIT 1`,
+      [orderNumber]
+    );
+    if (!orders.length) return null;
+
+    const order = orders[0];
+
+    const [orderItems] = await db.query(
+      `SELECT oi.quantity,
+        p.id, p.name, p.slug, p.image, p.category,
+        p.unit, p.quantity       AS quantityPerUnit,
+        oi.price_brut_snapshot AS price
+      FROM order_items oi
+      JOIN products p ON oi.product_id = p.id
+      WHERE oi.order_id = ?`,
+      [order.id]
+    );
+
+    const items = orderItems.map((item) => ({
+      quantity: item.quantity,
+      product: {
+        id: item.id,
+        name: item.name,
+        slug: item.slug,
+        image: item.image,
+        category: item.category,
+        unit: item.unit,
+        quantityPerUnit: item.quantityPerUnit,
+        price: Number(item.price),
+      },
+    }));
+
+    const [shippingRows] = await db.query(
+      `SELECT *,
+              recipient_email,
+              recipient_phone
+         FROM shipping_details
+        WHERE order_id = ? LIMIT 1`,
+      [order.id]
+    );
+    const shipping = shippingRows[0] || {};
+
+    const [paymentRows] = await db.query(
+      `SELECT * FROM payments WHERE order_id = ? LIMIT 1`,
+      [order.id]
+    );
+    const pay = paymentRows[0] || {};
+
+    const rawStreet = shipping.street || "";
+    // proste split na slash
+    const [addr, apt] = rawStreet.split("/");
+    const form = {
+      firstName: shipping.recipient_first_name,
+      lastName: shipping.recipient_last_name,
+      address: addr,
+      zip: shipping.postal_code,
+      city: shipping.city,
+      country: "Polska",
+      email: shipping.recipient_email, // ← teraz z shipping_details
+      phone: shipping.recipient_phone,
+      wantsInvoice: !!order.invoice_type,
+      companyName: order.invoice_name,
+      nip: order.invoice_nip,
+      address2: apt || "",
+      notes: shipping.notes || "",
+    };
+
+    const invoice = {
+      type: order.invoice_type,
+      name: order.invoice_name,
+      street: order.invoice_street,
+      city: order.invoice_city,
+      zip: order.invoice_zip,
+      country: order.invoice_country,
+      nip: order.invoice_nip,
+      email: order.invoice_email,
+    };
+
+    return {
+      orderNumber: order.order_number,
+      items,
+      shipping: {
+        id: shipping.method,
+        name:
+          shipping.method === "pickup"
+            ? "Odbiór osobisty"
+            : shipping.method === "inpost"
+            ? "Paczkomat InPost"
+            : "Kurier",
+        priceTotal: shipping.cost,
+        lockerCode: shipping.locker_code,
+      },
+      payment: {
+        method: pay.provider,
+        amount: pay.amount,
+        status: pay.status,
+        title: order.order_number,
+        bankAccount:
+          process.env.BANK_ACCOUNT || "12 3456 0000 1111 2222 3333 4444",
+        deliveryMethod: shipping.method,
+      },
+      form,
+      invoice,
+      orderStatus: order.status,
+    };
+  },
 };
 
 module.exports = OrderModel;

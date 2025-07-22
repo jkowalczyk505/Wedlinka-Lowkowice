@@ -10,22 +10,23 @@ const { generateP24RedirectUrl } = require("../services/p24"); // mock P24
 const BANK_ACCOUNT =
   process.env.BANK_ACCOUNT || "12 3456 0000 1111 2222 3333 4444";
 
+// POST /api/orders
 async function createOrder(req, res) {
   try {
-    /* ───── 1. Dane wejściowe ───── */
+    // 1. Dane wejściowe
     const { items, form, paymentMethod, selectedShipping } = req.body;
     const userId = req.user?.id ?? null;
 
-    /* ───── 2. Produkty & podsumowanie ───── */
+    // 2. Produkty & podsumowanie
     const productIds = items.map((i) => i.productId);
     const products = await ProductModel.getByIds(productIds);
     const enriched = items.map((i) => ({
       product: products.find((p) => p.id === i.productId),
       quantity: i.quantity,
     }));
-    const summary = calculateCartSummary(enriched); // { totalNet, totalVat, totalBrut }
+    const summary = calculateCartSummary(enriched);
 
-    /* ───── 3. Wstawienie zamówienia ───── */
+    // 3. Wstawienie zamówienia
     const { id: orderId, orderNumber } = await OrderModel.create({
       user_id: userId,
       form,
@@ -48,13 +49,13 @@ async function createOrder(req, res) {
       form.lockerCode
     );
 
-    /* ───── 4. Payment object + koszt dostawy ───── */
+    // 4. Przygotowanie płatności i kosztu dostawy
     const shippingCost = Number(selectedShipping.priceTotal) || 0;
     const totalWithShipping = summary.totalBrut + shippingCost;
 
     const payment = {
-      method: paymentMethod, // 'bank_transfer' | 'przelewy24' | 'cod'
-      amount: totalWithShipping.toFixed(2), // STRING!
+      method: paymentMethod,
+      amount: totalWithShipping.toFixed(2),
       bankAccount: null,
       title: null,
       redirectUrl: null,
@@ -65,7 +66,6 @@ async function createOrder(req, res) {
       payment.bankAccount = BANK_ACCOUNT;
       payment.title = orderNumber;
     }
-
     if (paymentMethod === "przelewy24") {
       payment.redirectUrl = await generateP24RedirectUrl(
         orderNumber,
@@ -73,24 +73,54 @@ async function createOrder(req, res) {
       );
     }
 
-    /* ───── 5. Zapis do tabeli payments ───── */
+    // 5. Zapis do tabeli payments
     await PaymentModel.create({
-      orderId, // <─ KAMEL-CASE zgodne z modelem
+      orderId,
       provider: payment.method,
       amount: payment.amount,
       currency: "PLN",
-      transactionId: payment.redirectUrl ?? null,
+      transactionId: payment.redirectUrl,
       status: "pending",
     });
 
-    /* ───── 6. Sprzątanie + odpowiedź ───── */
+    // 6. Sprzątanie koszyka
     await Cart.clearCart(userId);
+
+    // 7. Odpowiedź z pełnymi danymi podsumowania
+    const clientItems = enriched.map(({ product, quantity }) => ({
+      product: {
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        image: product.image,
+        category: product.category,
+        unit: product.unit,
+        quantityPerUnit: product.quantityPerUnit,
+        price: product.price,
+      },
+      quantity,
+    }));
 
     return res.status(201).json({
       success: true,
       orderId,
       orderNumber,
       payment,
+      items: clientItems,
+      shipping: {
+        id: selectedShipping.id,
+        name: selectedShipping.name || selectedShipping.id,
+        priceTotal: shippingCost,
+      },
+      form,
+      invoice: {
+        type: form.wantsInvoice
+          ? form.companyName && form.nip
+            ? "company"
+            : "person"
+          : null,
+      },
+      orderStatus: "new",
     });
   } catch (err) {
     console.error("Create order error:", err);
@@ -98,4 +128,19 @@ async function createOrder(req, res) {
   }
 }
 
-module.exports = { createOrder };
+// GET /api/orders/summary/:orderNumber
+async function getOrderSummary(req, res) {
+  const { orderNumber } = req.params;
+  try {
+    const summary = await OrderModel.getFullSummary(orderNumber);
+    if (!summary) {
+      return res.status(404).json({ error: "Nie znaleziono zamówienia" });
+    }
+    return res.json(summary);
+  } catch (err) {
+    console.error("getOrderSummary error:", err);
+    return res.status(500).json({ error: "Błąd pobierania zamówienia" });
+  }
+}
+
+module.exports = { createOrder, getOrderSummary };
