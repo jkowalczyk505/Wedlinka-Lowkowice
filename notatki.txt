@@ -20,6 +20,7 @@ BACKEND
 ACCOUNT
 - dashboard
 - moje zamowienia - zamowienia, faktury
+- moje opinie
 
 PANEL ADMINA
 *ZAMÓWIENIA
@@ -33,7 +34,7 @@ ZAMAWIANIE 3 krok
 - ekrany: platnosc przelewem, platnosc przez bramke, platnosc przy odbiorze w sklepie, platnosc przy odbiorze u kuriera
 - dane do przelewu w env
 - na ekranach - dziekujemy, nr zamowienia, co bylo zamowonione, dane adresowe, czy faktura - tak/nie i dane do niej, uwagi do zamowienia, 
-metoda dostawy + koszt, metoda platnosci, suma, status platnosci, status zamowienia, dane kontaktowe do pomocy, opcja drukowania/pdf?, 
+metoda dostawy + koszt, metoda platnosci, suma, status platnosci, status zamowienia, dane kontaktowe do pomocy
 
 ZAMAWIANIE
 - zmiana statusow wysylek, zamowien, platnosci
