@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import RatingStars from "./RatingStars";
+import Button from "../common/Button";
 import InfoTip from "../common/InfoTip";
 import PropTypes from "prop-types";
 import { FaInfoCircle } from "react-icons/fa";
 
-export default function ReviewSummary({ avg, total }) {
+export default function ReviewSummary({ avg, total, canReview = false }) {
   const [showTip, setShowTip] = useState(false);
   return (
     <div className="review-summary">
@@ -16,6 +17,8 @@ export default function ReviewSummary({ avg, total }) {
         </div>
 
         <div className="info-tip-wrapper">
+          <Button disabled={!canReview}>Oceń</Button>
+
           <button
             type="button"
             className="info-btn"

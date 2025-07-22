@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FiChevronRight, FiChevronDown, FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import Button from "../../common/Button";
 
-const PER_PAGE = 10;
+const PER_PAGE = 2;
 
 export default function ExpandableSection({ title, children }) {
   const [open, setOpen]   = useState(false);

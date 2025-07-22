@@ -202,6 +202,7 @@ export default function ProductPage() {
           <ReviewSummary
               avg={product.averageRating}
               total={product.reviewsCount}
+              canReview={product.canReview}
           />
 
           <ReviewsList productId={product.id} />

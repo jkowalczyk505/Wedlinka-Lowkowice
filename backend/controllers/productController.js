@@ -4,6 +4,7 @@ const path = require("path");
 const ReviewModel = require("../models/reviewModel");
 const { generateProductSlug } = require("../utils/product");
 const db           = require("../config/db");
+const OrderModel = require("../models/orderModel");
 
 const uploadDir = path.join(__dirname, "..", "uploads", "products");
 
@@ -48,7 +49,19 @@ exports.getProductBySlug = async (req, res) => {
     const { avg, total } = await ReviewModel.getStatsByProductId(product.id);
     product.averageRating = avg;
     product.reviewsCount = total;
-    res.json(product);
+
+    // ---- canReview ------------------------------------------------
+    let canReview = false;
+    if (req.user) {                               // dzięki optionalAuth
+      const bought   = await OrderModel.userBoughtProduct(
+                        req.user.id, product.id
+                      );
+      const reviewed = await ReviewModel.findByUserAndProduct(
+                        req.user.id, product.id
+                      );
+      canReview = bought && !reviewed;
+    }
+    res.json({ ...product, canReview });
   } catch (err) {
     console.error("GET PRODUCT BY SLUG ERROR:", err);
     res.status(500).json({ error: "Błąd pobierania produktu po slugu" });
