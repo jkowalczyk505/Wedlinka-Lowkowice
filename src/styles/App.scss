@@ -35,6 +35,7 @@
 /* ================== IMPORTY ================== */
 @import "./variables";
 @import "./components/forms";
+@import "./components/tables";
 @import "./components/auth";
 @import "./components/common/header";
 @import "./components/common/banner.scss";
@@ -90,6 +91,7 @@
 @import "./pages/admin/admin_page";
 @import "./pages/admin/admin_dashboard";
 @import "./pages/admin/admin_products";
+@import "./pages/admin/admin_shipping";
 @import "./components/admin/products/admin_product_tile";
 @import "./components/admin/products/admin_product_category";
 @import "./components/admin/reviews/expandable_section";
