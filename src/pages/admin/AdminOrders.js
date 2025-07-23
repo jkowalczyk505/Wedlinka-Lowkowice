@@ -44,7 +44,7 @@ export default function AdminOrders() {
     setOrders((prev) =>
       prev.map((o) => (o.id === id ? { ...o, order_status: status } : o))
     );
-    showAlert("Status zamówienia zaktualizowany", "info");
+    showAlert("Status zamówienia zaktualizowany", "success");
   };
 
   const updatePaymentStatus = async (id, status) => {
