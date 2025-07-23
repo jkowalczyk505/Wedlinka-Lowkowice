@@ -1,10 +1,12 @@
-// routes/shippingRoutes.js
 const express = require("express");
 const router = express.Router();
-const shippingConfig = require("../config/shippingMethods");
+const {
+  getShippingConfig,
+  updateShippingConfig,
+} = require("../controllers/shippingController");
+const { protect, adminOnly } = require("../middleware/authMiddleware");
 
-router.get("/", (req, res) => {
-  res.json(shippingConfig);
-});
+router.get("/", getShippingConfig);
+router.put("/", protect, adminOnly, updateShippingConfig);
 
 module.exports = router;

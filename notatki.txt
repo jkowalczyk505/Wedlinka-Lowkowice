@@ -18,7 +18,6 @@ ACCOUNT
 PANEL ADMINA
 *ZAMÓWIENIA
 *FAKTURY
-*ZMIANA CEN WYSYŁEK
 
 ZAMAWIANIE 2 krok
 - regulamin i polityka podpiac
@@ -29,10 +28,6 @@ ZAMAWIANIE 3 krok
 
 ZAMAWIANIE
 - zmiana statusow wysylek, zamowien, platnosci
-
-TOKENY/AUTORYZACJA
-- uzytkownik zalogowany, wygasa token, klika wyloguj i robi sie refresh bez wylogowania i potem dopiero za drugim razem dziala
-- uzytkownik zalogowany, usuwaja sie tokeny, potem dziwne rzeczy w koszyku sie dzieja, dalej pokazuje ze zalogowany
 
 FAKTURY
 - wfirma

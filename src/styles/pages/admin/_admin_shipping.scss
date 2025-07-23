@@ -1,0 +1,27 @@
+.admin-shipping {
+    div {
+        label {
+            color: $dark-color;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            input {
+                resize: none;
+                padding: 0.5rem 0.7rem;
+                border: 1px solid $dark-color-lighten;
+                border-radius: 4px;
+                font-size: 0.9rem;
+                font-family: $font-main;
+                background: $primary-color;
+                color: $dark-color;
+
+                &:focus {
+                    outline: none;
+                    border-color: $secondary-color;
+                }
+            }
+        }
+    }
+}
