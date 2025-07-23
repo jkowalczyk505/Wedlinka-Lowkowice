@@ -6,34 +6,36 @@ import { statusToPL }        from "../../utils/orderStatus";
 
 export default function OrderTile({
   order_number, created_at, total_brut, status,
-  itemsCount, images
+  itemsCount, images, distinctCount
 }) {
   const date = new Date(created_at).toLocaleDateString("pl-PL");
   const price = formatGrossPrice(total_brut) + " zł";
-  const left = images.slice(0,3);
-  const more = itemsCount - left.length;
+
+  const thumbs = images;             // max 3 miniaturki
+  const more   = distinctCount - thumbs.length;
 
   return (
     <Link
         to={`/konto/zamowienia/${order_number}`}
         className="order-tile"
         >
-        <header className="tile-head">      {/* ← nowa klasa */}
+        <header className="tile-head">
             <span className="nr">#{order_number}</span>
             <span className="date">{date}</span>
         </header>
 
       <div className="thumbs">
-        {left.map((img,i)=>(
-          <img key={i}
-               src={`${process.env.REACT_APP_API_URL}/uploads/products/${img}`}
-               alt=""
+        {thumbs.map((img, i) => (
+          <img
+            key={i}
+            src={`${process.env.REACT_APP_API_URL}/uploads/products/${img}`}
+            alt=""
           />
         ))}
-        { more>0 && <span className="more">+{more}</span> }
+        {more > 0 && <span className="more">+{more}</span>}
       </div>
 
-      <footer className="tile-foot">      {/* ← nowa klasa */}
+      <footer className="tile-foot">
             <span className="count">{itemsCount} szt.</span>
             <span className="price">{price}</span>
             <span className={`status ${status}`}>{statusToPL(status)}</span>

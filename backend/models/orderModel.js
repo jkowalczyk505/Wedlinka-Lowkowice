@@ -258,7 +258,7 @@ const OrderModel = {
     };
   },
 
-  /* Zwraca ostatnie N zamówień pod kątem „kafla” na dashboardzie */
+  // Ostatnie 2 zamowienia klienta
   async getLatestForUser(userId, limit = 2) {
     const [rows] = await db.query(
       `SELECT  o.id, o.order_number, o.created_at, 
@@ -273,9 +273,9 @@ const OrderModel = {
       [userId, Number(limit)]
     );
 
-    /* Do każdego zamówienia dokładamy pierwsze 3 zdjęcia produktów */
     for (const row of rows) {
-      const [imgRows] = await db.query(
+      // 1) trzy miniaturki
+      const [thumbs] = await db.query(
         `SELECT p.image
           FROM order_items oi
           JOIN products p ON p.id = oi.product_id
@@ -285,7 +285,16 @@ const OrderModel = {
           LIMIT 3`,
         [row.id]
       );
-      row.images = imgRows.map(r => r.image).filter(Boolean);   // np. ['13.jpg', …]
+      row.images = thumbs.map(r => r.image).filter(Boolean);
+
+      // 2) ile w sumie **różnych** produktów
+      const [[{ distinctCount }]] = await db.query(
+        `SELECT COUNT(DISTINCT product_id) AS distinctCount
+          FROM order_items
+          WHERE order_id = ?`,
+        [row.id]
+      );
+      row.distinctCount = distinctCount;
     }
 
     return rows;
