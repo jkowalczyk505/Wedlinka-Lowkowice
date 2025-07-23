@@ -13,6 +13,7 @@ import InfoTip from "../../components/common/InfoTip";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import CartItemTile from "../../components/cart/CartItemTile";
 import { useAlert } from "../../components/common/alert/AlertContext";
+import OrderTile from "../../components/account/OrderTile";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -20,6 +21,7 @@ const AccountDashboard = () => {
   const { user, setLogoutInProgress, logout, setUser } = useAuth();
 
   const [stats, setStats] = useState({ total: 0, pending: 0, unpaid: 0 });
+  const [latestOrders, setLatestOrders] = useState([]);
   const [cartItems, setCartItems] = useState([]);
   const cartPreview = cartItems.slice(0, 3);
   const [invoices, setInvoices] = useState([]);
@@ -63,6 +65,12 @@ const AccountDashboard = () => {
 
       .catch(() => {});
 
+      // 2 ostatnie zamówienia
+    fetch(`${API_URL}/api/orders/latest?limit=2`, { credentials:"include" })
+    .then(r=>r.json())
+    .then(setLatestOrders)
+    .catch(()=>{});
+
     // pobierz 2 ostatnie faktury
     fetch("/api/invoices?limit=2", { credentials: "include" })
       .then((r) => r.json())
@@ -80,9 +88,17 @@ const AccountDashboard = () => {
       {/* ▷ Zamówienia */}
       <section className="order-summary">
         <h2>Twoje zamówienia</h2>
-        <p>....</p>
+
+        {latestOrders.length === 0 ? (
+          <p>Nie masz jeszcze żadnych zamówień.</p>
+        ) : (
+          latestOrders.map(o => (
+            <OrderTile key={o.id} {...o}/>
+          ))
+        )}
+
         <Link to="/konto/zamowienia">
-          <Button variant="beige">Przeglądaj zamówienia</Button>
+          <Button variant="beige">Przeglądaj wszystkie</Button>
         </Link>
       </section>
 

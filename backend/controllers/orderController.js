@@ -152,4 +152,17 @@ async function getOrderSummary(req, res) {
   }
 }
 
-module.exports = { createOrder, getOrderSummary };
+// GET /api/orders/latest?limit=2
+async function getLatestOrders(req, res) {
+  const userId = req.user.id;
+  const limit  = req.query.limit || 2;
+  try {
+    const list = await OrderModel.getLatestForUser(userId, limit);
+    res.json(list);
+  } catch (err) {
+    console.error('getLatestOrders:', err);
+    res.status(500).json({ error: 'Błąd pobierania zamówień' });
+  }
+}
+
+module.exports = { createOrder, getOrderSummary, getLatestOrders };

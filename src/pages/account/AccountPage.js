@@ -1,3 +1,4 @@
+// src/pages/account/AccountPage.js
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { Home, User, Lock, Star, ListOrdered, MapPin } from "lucide-react"; // nowy zestaw ikon

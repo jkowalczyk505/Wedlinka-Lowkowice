@@ -1,7 +1,7 @@
+// models/orderModel.js
 const db = require("../config/db");
 
 const OrderModel = {
-  // models/orderModel.js
   async create(order) {
     const conn = await db.getConnection(); // <-- bierz osobne połączenie
     const crypto = require("crypto");
@@ -257,6 +257,39 @@ const OrderModel = {
       orderStatus: order.status,
     };
   },
+
+  /* Zwraca ostatnie N zamówień pod kątem „kafla” na dashboardzie */
+  async getLatestForUser(userId, limit = 2) {
+    const [rows] = await db.query(
+      `SELECT  o.id, o.order_number, o.created_at, 
+              o.total_brut, o.status,
+              ( SELECT SUM(quantity)
+                  FROM order_items oi 
+                  WHERE oi.order_id = o.id )        AS itemsCount
+        FROM orders o
+        WHERE o.user_id = ?
+        ORDER BY o.created_at DESC
+        LIMIT ?`,
+      [userId, Number(limit)]
+    );
+
+    /* Do każdego zamówienia dokładamy pierwsze 3 zdjęcia produktów */
+    for (const row of rows) {
+      const [imgRows] = await db.query(
+        `SELECT p.image
+          FROM order_items oi
+          JOIN products p ON p.id = oi.product_id
+          WHERE oi.order_id = ?
+          GROUP BY p.id
+          ORDER BY oi.id
+          LIMIT 3`,
+        [row.id]
+      );
+      row.images = imgRows.map(r => r.image).filter(Boolean);   // np. ['13.jpg', …]
+    }
+
+    return rows;
+  }
 };
 
 module.exports = OrderModel;
