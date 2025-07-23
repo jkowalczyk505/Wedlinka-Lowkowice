@@ -7,6 +7,7 @@ const {
   getOrderDetails,
   updateOrderStatus,
   updatePaymentStatus,
+  getLatestOrders,
 } = require("../controllers/orderController");
 const {
   protect,
@@ -17,6 +18,11 @@ const {
 // — Klient —
 router.post("/", optionalAuth, createOrder);
 router.get("/summary/:orderNumber", getOrderSummary);
+router.get(
+  "/latest", // /api/orders/latest?limit=2
+  protect, // musi być zalogowany
+  getLatestOrders
+);
 
 // — Admin (chronione) —
 router.get("/", protect, adminOnly, getAllOrders);
