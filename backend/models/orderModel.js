@@ -260,18 +260,27 @@ const OrderModel = {
 
   // Ostatnie 2 zamowienia klienta
   async getLatestForUser(userId, limit = 2) {
-    const [rows] = await db.query(
-      `SELECT  o.id, o.order_number, o.created_at, 
-              o.total_brut, o.status,
+  const [rows] = await db.query(
+    `SELECT  o.id
+           ,o.order_number
+           ,o.created_at
+           ,( o.total_brut
+              + IFNULL(
+                 (SELECT cost FROM shipping_details WHERE order_id = o.id LIMIT 1)
+               ,0) )                                 AS totalWithShip
+           ,o.status
+           ,CAST(
               ( SELECT SUM(quantity)
-                  FROM order_items oi 
-                  WHERE oi.order_id = o.id )        AS itemsCount
-        FROM orders o
-        WHERE o.user_id = ?
-        ORDER BY o.created_at DESC
-        LIMIT ?`,
-      [userId, Number(limit)]
-    );
+                  FROM order_items oi
+                WHERE oi.order_id = o.id
+              ) AS SIGNED
+            ) AS itemsCount
+       FROM orders o
+      WHERE o.user_id = ?
+      ORDER BY o.created_at DESC
+      LIMIT ?`,
+    [userId, Number(limit)]
+  );
 
     for (const row of rows) {
       // 1) trzy miniaturki
@@ -298,6 +307,63 @@ const OrderModel = {
     }
 
     return rows;
+  },
+
+  // Szczegoly rozwinietego zamowienia
+  async getSummaryForUser(orderId, userId) {
+    // 1. Nagłówek + status + kwoty
+    const [[o]] = await db.query(
+      `SELECT id, order_number, status,
+              total_net, total_vat, total_brut,
+              created_at,
+              invoice_type, invoice_name, invoice_nip,
+              invoice_email, invoice_street, invoice_city,
+              invoice_zip, invoice_country
+        FROM orders
+        WHERE id = ? AND user_id = ?`,
+      [orderId, userId]
+    );
+    if (!o) return null;
+
+    // 2. Pozycje koszyka
+    const [items] = await db.query(
+      `SELECT oi.quantity,
+              p.id, p.name, p.slug, p.image, p.category,
+              p.unit, p.quantity AS quantityPerUnit,
+              oi.price_brut_snapshot AS price
+        FROM order_items oi
+        JOIN products p ON p.id = oi.product_id
+        WHERE oi.order_id = ?`,
+      [orderId]
+    );
+
+    // 3. Dostawa + płatność
+    const [[ship]] = await db.query(
+      `SELECT method, cost, locker_code,
+         recipient_first_name, recipient_last_name,
+         street, city, postal_code,
+         recipient_email, recipient_phone, notes
+    FROM shipping_details
+   WHERE order_id = ?`, [orderId]);
+
+    const [[pay]] = await db.query(
+      `SELECT provider, amount, status
+        FROM payments WHERE order_id = ?`, [orderId]);
+
+    const invoice = o.invoice_type
+      ? {
+          type:   o.invoice_type,
+          name:   o.invoice_name,
+          nip:    o.invoice_nip,
+          email:  o.invoice_email,
+          street: o.invoice_street,
+          city:   o.invoice_city,
+          zip:    o.invoice_zip,
+          country:o.invoice_country,
+        }
+      : null;
+
+    return { order: o, items, shipping: ship, payment: pay, invoice };
   }
 };
 

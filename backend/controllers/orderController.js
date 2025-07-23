@@ -165,4 +165,12 @@ async function getLatestOrders(req, res) {
   }
 }
 
-module.exports = { createOrder, getOrderSummary, getLatestOrders };
+// GET /api/orders/:id
+async function getOneForUser(req, res) {
+  const { id } = req.params;
+  const summary = await OrderModel.getSummaryForUser(id, req.user.id);
+  if (!summary) return res.status(404).json({ error: "Nie znaleziono" });
+  res.json(summary);
+}
+
+module.exports = { createOrder, getOrderSummary, getLatestOrders, getOneForUser };

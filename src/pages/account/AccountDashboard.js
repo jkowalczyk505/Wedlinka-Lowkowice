@@ -1,6 +1,7 @@
 // src/pages/account/AccountDashboard.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../components/auth/AuthContext";
+import { AuthFetch } from "../../components/auth/AuthFetch";
 import { Link } from "react-router-dom";
 import {
   User,
@@ -66,10 +67,24 @@ const AccountDashboard = () => {
       .catch(() => {});
 
       // 2 ostatnie zamówienia
-    fetch(`${API_URL}/api/orders/latest?limit=2`, { credentials:"include" })
-    .then(r=>r.json())
-    .then(setLatestOrders)
-    .catch(()=>{});
+      AuthFetch(`${API_URL}/api/orders/latest?limit=2`)
+      .then(res => {
+        if (!res.ok) throw new Error("Nie udało się pobrać zamówień");
+        return res.json();
+      })
+      .then(data => {
+        // jeśli to nie tablica, to traktujemy jak "brak zamówień"
+        if (Array.isArray(data)) {
+          setLatestOrders(data);
+        } else {
+          console.error("Oczekiwana tablica, dostałem:", data);
+          setLatestOrders([]);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        setLatestOrders([]);  // reset stanu na pustą tablicę
+      });
 
     // pobierz 2 ostatnie faktury
     fetch("/api/invoices?limit=2", { credentials: "include" })
@@ -87,15 +102,12 @@ const AccountDashboard = () => {
 
       {/* ▷ Zamówienia */}
       <section className="order-summary">
-        <h2>Twoje zamówienia</h2>
+        <h2>Ostatnie zamówienia</h2>
 
-        {latestOrders.length === 0 ? (
-          <p>Nie masz jeszcze żadnych zamówień.</p>
-        ) : (
-          latestOrders.map(o => (
-            <OrderTile key={o.id} {...o}/>
-          ))
-        )}
+        { Array.isArray(latestOrders) && latestOrders.length > 0
+            ? latestOrders.map(o => <OrderTile {...o} key={o.id}/>)
+            : <p>Nie masz jeszcze żadnych zamówień.</p>
+        }
 
         <Link to="/konto/zamowienia">
           <Button variant="beige">Przeglądaj wszystkie</Button>
@@ -104,7 +116,7 @@ const AccountDashboard = () => {
 
       {/* ▷ Koszyk */}
       <section className="cart-preview">
-        <h2>Twój koszyk</h2>
+        <h2>Koszyk</h2>
         <ul className="cart-items">
           {cartPreview.length === 0 ? (
             <li className="empty-message">Koszyk jest pusty.</li>
@@ -129,7 +141,7 @@ const AccountDashboard = () => {
 
       {/* ▷ Dane i adres */}
       <section className="profile-info">
-        <h2>Moje dane i adres</h2>
+        <h2>Dane i adres</h2>
         <div className="profile-columns">
           {/* Kolumna: dane osobowe */}
           <div className="profile-left">

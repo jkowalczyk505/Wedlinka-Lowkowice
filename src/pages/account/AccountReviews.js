@@ -54,7 +54,7 @@ export default function AccountReviews() {
 
   return (
     <div className="account-reviews">
-      <h1>Moje opinie</h1>
+      <h2>Moje opinie</h2>
 
       {all.length === 0 && <p>Nie masz jeszcze żadnych opinii.</p>}
 

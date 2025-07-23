@@ -4,6 +4,7 @@ const {
   createOrder,
   getOrderSummary,
   getLatestOrders,
+  getOneForUser
 } = require("../controllers/orderController");
 const { protect, optionalAuth } = require("../middleware/authMiddleware");
 
@@ -17,5 +18,7 @@ router.get(
   protect,            // musi być zalogowany
   getLatestOrders
 );
+
+router.get("/:id", protect, getOneForUser);
 
 module.exports = router;
