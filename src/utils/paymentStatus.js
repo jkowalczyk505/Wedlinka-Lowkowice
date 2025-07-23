@@ -1,12 +1,12 @@
 // src/utils/paymentStatus.js
 
 // Lista wszystkich kluczy statusów płatności
-export const PAYMENT_STATUS_KEYS = ["pending", "paid", "failed"];
+export const PAYMENT_STATUS_KEYS = ["pending", "ok", "failed"];
 
 // Tłumaczenia statusów płatności na polski
 const PAYMENT_STATUS_PL = {
   pending: "Oczekuje na płatność",
-  paid: "Opłacone",
+  ok: "Opłacone",
   failed: "Nieudane",
 };
 
