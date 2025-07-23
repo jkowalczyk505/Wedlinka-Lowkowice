@@ -258,37 +258,18 @@ const OrderModel = {
     };
   },
 
-  // ADMIN: pobierz listę wszystkich zamówień
   async getAllAdmin() {
     const [rows] = await db.query(
       `SELECT
-         o.id,
-         o.order_number,
-         o.created_at,
-         o.total_brut,
-         o.status         AS order_status,
-         p.status         AS payment_status,
-         s.method         AS shipping_method
-       FROM orders o
-       LEFT JOIN payments p         ON p.order_id = o.id
-       LEFT JOIN shipping_details s ON s.order_id = o.id
-       ORDER BY o.created_at DESC`
-    );
-    return rows;
-  },
-
-  // ADMIN: pobierz szczegóły pojedynczego zamówienia
-  async getAllAdmin() {
-    const [rows] = await db.query(
-      `SELECT
-       o.id,
-       o.order_number,
-       o.created_at,
-       o.total_brut,
-       o.status         AS order_status,
-       p.provider       AS payment_method,   -- <— dodaj to
-       p.status         AS payment_status,
-       s.method         AS shipping_method
+      o.id,
+      o.order_number,
+      o.created_at,
+      o.total_brut,
+      s.cost           AS shipping_cost,
+      o.status         AS order_status,
+      p.provider       AS payment_method,
+      p.status         AS payment_status,
+      s.method         AS shipping_method
      FROM orders o
      LEFT JOIN payments p         ON p.order_id = o.id
      LEFT JOIN shipping_details s ON s.order_id = o.id
