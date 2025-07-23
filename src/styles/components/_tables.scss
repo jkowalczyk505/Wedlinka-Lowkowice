@@ -6,7 +6,7 @@
     th,
     td {
         padding: 0.75rem 1rem;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         border-bottom: 1px solid $primary-color-darken;
         vertical-align: middle;
     }
@@ -19,10 +19,11 @@
     }
 
     input[type="text"],
-    input[type="number"] {
+    input[type="number"],
+    select {
         width: 100%;
         padding: 0.45rem 0.7rem;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         border: 1px solid $dark-color-lighten;
         border-radius: 4px;
         font-family: $font-main;
@@ -40,8 +41,26 @@
         }
     }
 
+    select {
+        font-size: 0.8rem;
+        padding: 0.2rem 0.4rem;
+    }
+
     input[type="checkbox"] {
         transform: scale(1.3);
         accent-color: $secondary-color;
+    }
+
+    td a {
+        color: $secondary-color;
+        font-size: 0.8rem;
+
+        &:hover {
+            color: $secondary-color-darken;
+        }
+    }
+
+    td .custom-button {
+        padding: 0.4rem 0.6rem;
     }
 }

@@ -258,6 +258,47 @@ const OrderModel = {
     };
   },
 
+  async getAllAdmin() {
+    const [rows] = await db.query(
+      `SELECT
+      o.id,
+      o.order_number,
+      o.created_at,
+      o.total_brut,
+      s.cost           AS shipping_cost,
+      o.status         AS order_status,
+      p.provider       AS payment_method,
+      p.status         AS payment_status,
+      s.method         AS shipping_method
+     FROM orders o
+     LEFT JOIN payments p         ON p.order_id = o.id
+     LEFT JOIN shipping_details s ON s.order_id = o.id
+     ORDER BY o.created_at DESC`
+    );
+    return rows;
+  },
+
+  // ADMIN: zmień status zamówienia
+  async updateStatus(id, status) {
+    await db.query(
+      `UPDATE orders
+         SET status     = ?,
+             updated_at = NOW()
+       WHERE id = ?`,
+      [status, id]
+    );
+  },
+
+  // ADMIN: zmień status płatności
+  async updatePaymentStatus(orderId, status) {
+    await db.query(
+      `UPDATE payments
+         SET status     = ?,
+             updated_at = NOW()
+       WHERE order_id = ?`,
+      [status, orderId]
+    );
+  },
   // Ostatnie 2 zamowienia klienta
   async getLatestForUser(userId, limit = 2) {
   const [rows] = await db.query(
@@ -294,7 +335,7 @@ const OrderModel = {
           LIMIT 3`,
         [row.id]
       );
-      row.images = thumbs.map(r => r.image).filter(Boolean);
+      row.images = thumbs.map((r) => r.image).filter(Boolean);
 
       // 2) ile w sumie **różnych** produktów
       const [[{ distinctCount }]] = await db.query(
