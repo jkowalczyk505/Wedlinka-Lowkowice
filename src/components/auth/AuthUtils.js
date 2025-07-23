@@ -12,3 +12,13 @@ export async function logout(setUser) {
   localStorage.removeItem("cart");
   window.location.href = "/";
 }
+
+const authContextRef = { current: null };
+
+export function setAuthContext(context) {
+  authContextRef.current = context;
+}
+
+export function getAuthContext() {
+  return authContextRef.current;
+}

@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import Spinner from "../common/Spinner";
 import { AuthFetch } from "./AuthFetch";
-import { logout as logoutFn } from "./AuthUtils";
+import { logout as logoutFn, setAuthContext } from "./AuthUtils";
 
 const AuthContext = createContext();
 
@@ -14,33 +14,24 @@ export function AuthProvider({ children }) {
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
+    setAuthContext({ setUser });
+  }, []);
+
+  useEffect(() => {
     const fetchUser = async () => {
       try {
-        let res = await AuthFetch(
-          `${API_URL}/api/users/me`,
-          { method: "GET" },
-          setUser
-        );
-
-        if (res.status === 498) {
-          setUser(null);
-          return;
-        }
-
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data);
-        } else {
-          setUser(null);
-        }
+        const res = await AuthFetch(`${API_URL}/api/users/me`, {
+          method: "GET",
+        });
+        const data = await res.json();
+        setUser(data);
       } catch (err) {
-        setUser(null);
+        setUser(null); // tu trafi „Session expired” z code 498
       } finally {
         setLoading(false);
-        setAuthChecked(true); // ⬅️ ustawiamy dopiero po zakończeniu
+        setAuthChecked(true);
       }
     };
-
     fetchUser();
   }, [API_URL]);
 
