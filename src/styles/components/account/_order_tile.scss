@@ -15,7 +15,7 @@
     color: $dark-color;
     transition: border-color 0.2s ease;
 
-    &:hover { border-color: $dark-color-lighten; }
+    &:hover { border-color: $secondary-color; }
 
     /* --- górny wiersz ----------------------------------- */
     .tile-head {
