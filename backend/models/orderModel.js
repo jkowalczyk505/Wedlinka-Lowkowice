@@ -257,6 +257,73 @@ const OrderModel = {
       orderStatus: order.status,
     };
   },
+
+  // ADMIN: pobierz listę wszystkich zamówień
+  async getAllAdmin() {
+    const [rows] = await db.query(
+      `SELECT
+         o.id,
+         o.order_number,
+         o.created_at,
+         o.total_brut,
+         o.status         AS order_status,
+         p.status         AS payment_status,
+         s.method         AS shipping_method
+       FROM orders o
+       LEFT JOIN payments p         ON p.order_id = o.id
+       LEFT JOIN shipping_details s ON s.order_id = o.id
+       ORDER BY o.created_at DESC`
+    );
+    return rows;
+  },
+
+  // ADMIN: pobierz szczegóły pojedynczego zamówienia
+  async getByIdAdmin(id) {
+    const [[order]] = await db.query(
+      `SELECT
+         o.*,
+         p.status         AS payment_status,
+         p.provider       AS payment_method,
+         s.method         AS shipping_method,
+         s.recipient_first_name,
+         s.recipient_last_name,
+         s.street,
+         s.city,
+         s.postal_code,
+         s.recipient_email,
+         s.recipient_phone,
+         s.notes
+       FROM orders o
+       LEFT JOIN payments p         ON p.order_id = o.id
+       LEFT JOIN shipping_details s ON s.order_id = o.id
+       WHERE o.id = ?
+       LIMIT 1`,
+      [id]
+    );
+    return order;
+  },
+
+  // ADMIN: zmień status zamówienia
+  async updateStatus(id, status) {
+    await db.query(
+      `UPDATE orders
+         SET status     = ?,
+             updated_at = NOW()
+       WHERE id = ?`,
+      [status, id]
+    );
+  },
+
+  // ADMIN: zmień status płatności
+  async updatePaymentStatus(orderId, status) {
+    await db.query(
+      `UPDATE payments
+         SET status     = ?,
+             updated_at = NOW()
+       WHERE order_id = ?`,
+      [status, orderId]
+    );
+  },
 };
 
 module.exports = OrderModel;

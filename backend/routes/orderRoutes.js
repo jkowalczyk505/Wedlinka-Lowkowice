@@ -1,13 +1,27 @@
+// routes/orderRoutes.js
 const router = require("express").Router();
 const {
   createOrder,
   getOrderSummary,
+  getAllOrders,
+  getOrderDetails,
+  updateOrderStatus,
+  updatePaymentStatus,
 } = require("../controllers/orderController");
-const { protect, optionalAuth } = require("../middleware/authMiddleware");
+const {
+  protect,
+  optionalAuth,
+  adminOnly,
+} = require("../middleware/authMiddleware");
 
-// POST /api/orders — złożenie zamówienia (logowanie opcjonalne)
+// — Klient —
 router.post("/", optionalAuth, createOrder);
-
 router.get("/summary/:orderNumber", getOrderSummary);
+
+// — Admin (chronione) —
+router.get("/", protect, adminOnly, getAllOrders);
+router.get("/:id", protect, adminOnly, getOrderDetails);
+router.put("/:id/status", protect, adminOnly, updateOrderStatus);
+router.put("/:id/payment-status", protect, adminOnly, updatePaymentStatus);
 
 module.exports = router;

@@ -4,7 +4,6 @@
 - w stopce i na kontakt prawdziwe adresy/telefony itp
 - spinnery, loaderror sprawdzic czy wszedzie sa i czy 77vh nigdzie nie przeszkadza
 - czy wszedzie jest authfetch uzyte do refresh
-- obsluzyc status 498 z authfetch w komponentach zeby pokazaly komunikat o zalogowaniu sie ponownie
 - responsywnosc + duże ekrany
 - polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy, okres przechowywania danych invoices + shipping_details (5lat? jak porzucone nieoplacone to krocej)
 
@@ -21,7 +20,7 @@ PANEL ADMINA
 
 ZAMAWIANIE 2 krok
 - regulamin i polityka podpiac
-- bramka
+- bramka + zmiana statusu platnosci
 
 ZAMAWIANIE 3 krok
 - ekrany - platnosc przez bramke
@@ -39,7 +38,7 @@ NA KONIEC
 - middleware (app.use) do przekierowania www na bez www
 - seo + sitemap + robots + index jak zhkr (+og.jpg) + manifest json
 - wysłać sitemap do google
-- react helmet async
+- react helmet async?? chyba ze nic to nie da w react spa
 - env production
 - htaccess - react router SPA + http->https + przekierowanie www
 - anonimazacja danych users zgodnie z RODO (zmienic markAsDeleted? + pola bazy users możliwe na NULL?)

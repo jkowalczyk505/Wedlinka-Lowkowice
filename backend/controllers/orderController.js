@@ -7,8 +7,7 @@ const PaymentModel = require("../models/paymentModel");
 const { calculateCartSummary } = require("../helpers/orderHelpers");
 const { generateP24RedirectUrl } = require("../services/p24"); // mock P24
 
-const BANK_ACCOUNT =
-  process.env.BANK_ACCOUNT || "12 3456 0000 1111 2222 3333 4444";
+const BANK_ACCOUNT = process.env.BANK_ACCOUNT;
 
 // POST /api/orders
 async function createOrder(req, res) {
@@ -152,4 +151,59 @@ async function getOrderSummary(req, res) {
   }
 }
 
-module.exports = { createOrder, getOrderSummary };
+async function getAllOrders(req, res) {
+  try {
+    const orders = await OrderModel.getAllAdmin();
+    res.json(orders);
+  } catch (err) {
+    console.error("Błąd pobierania zamówień:", err);
+    res.status(500).json({ error: "Błąd pobierania zamówień" });
+  }
+}
+
+async function getOrderDetails(req, res) {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const order = await OrderModel.getByIdAdmin(id);
+    if (!order)
+      return res.status(404).json({ error: "Zamówienie nie znalezione" });
+    res.json(order);
+  } catch (err) {
+    console.error("Błąd pobierania szczegółów zamówienia:", err);
+    res.status(500).json({ error: "Błąd pobierania szczegółów" });
+  }
+}
+
+async function updateOrderStatus(req, res) {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const { status } = req.body;
+    await OrderModel.updateStatus(id, status);
+    res.json({ message: "Status zamówienia zaktualizowany" });
+  } catch (err) {
+    console.error("Błąd aktualizacji statusu:", err);
+    res.status(500).json({ error: "Błąd aktualizacji statusu" });
+  }
+}
+
+async function updatePaymentStatus(req, res) {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const { status } = req.body;
+    await OrderModel.updatePaymentStatus(id, status);
+    res.json({ message: "Status płatności zaktualizowany" });
+  } catch (err) {
+    console.error("Błąd aktualizacji statusu płatności:", err);
+    res.status(500).json({ error: "Błąd aktualizacji statusu płatności" });
+  }
+}
+
+module.exports = {
+  createOrder,
+  getOrderSummary,
+  // — admin export —
+  getAllOrders,
+  getOrderDetails,
+  updateOrderStatus,
+  updatePaymentStatus,
+};
