@@ -278,29 +278,23 @@ const OrderModel = {
   },
 
   // ADMIN: pobierz szczegóły pojedynczego zamówienia
-  async getByIdAdmin(id) {
-    const [[order]] = await db.query(
+  async getAllAdmin() {
+    const [rows] = await db.query(
       `SELECT
-         o.*,
-         p.status         AS payment_status,
-         p.provider       AS payment_method,
-         s.method         AS shipping_method,
-         s.recipient_first_name,
-         s.recipient_last_name,
-         s.street,
-         s.city,
-         s.postal_code,
-         s.recipient_email,
-         s.recipient_phone,
-         s.notes
-       FROM orders o
-       LEFT JOIN payments p         ON p.order_id = o.id
-       LEFT JOIN shipping_details s ON s.order_id = o.id
-       WHERE o.id = ?
-       LIMIT 1`,
-      [id]
+       o.id,
+       o.order_number,
+       o.created_at,
+       o.total_brut,
+       o.status         AS order_status,
+       p.provider       AS payment_method,   -- <— dodaj to
+       p.status         AS payment_status,
+       s.method         AS shipping_method
+     FROM orders o
+     LEFT JOIN payments p         ON p.order_id = o.id
+     LEFT JOIN shipping_details s ON s.order_id = o.id
+     ORDER BY o.created_at DESC`
     );
-    return order;
+    return rows;
   },
 
   // ADMIN: zmień status zamówienia

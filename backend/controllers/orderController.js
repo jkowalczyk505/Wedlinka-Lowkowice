@@ -198,15 +198,6 @@ async function updatePaymentStatus(req, res) {
   }
 }
 
-module.exports = {
-  createOrder,
-  getOrderSummary,
-  // — admin export —
-  getAllOrders,
-  getOrderDetails,
-  updateOrderStatus,
-  updatePaymentStatus,
-};
 // GET /api/orders/latest?limit=2
 async function getLatestOrders(req, res) {
   const userId = req.user.id;
@@ -220,4 +211,13 @@ async function getLatestOrders(req, res) {
   }
 }
 
-module.exports = { createOrder, getOrderSummary, getLatestOrders };
+module.exports = {
+  createOrder,
+  getOrderSummary,
+  // — admin export —
+  getAllOrders,
+  getOrderDetails,
+  updateOrderStatus,
+  updatePaymentStatus,
+  getLatestOrders,
+};
