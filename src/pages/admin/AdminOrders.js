@@ -5,6 +5,7 @@ import Spinner from "../../components/common/Spinner";
 import LoadError from "../../components/common/LoadError";
 import OrdersTable from "../../components/admin/orders/OrdersTable";
 import InfoTip from "../../components/common/InfoTip";
+import Pagination from "../../components/common/Pagination";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -13,10 +14,14 @@ export default function AdminOrders() {
 
   const [orders, setOrders] = useState([]);
   const [showArchived, setShowArchived] = useState(false);
+  const [activePage, setActivePage] = useState(1);
+  const [failedPage, setFailedPage] = useState(1);
+  const [archivedPage, setArchivedPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  /* ---------- Fetch zamówień ---------- */
+  const itemsPerPage = 10;
+
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     setError(false);
@@ -35,7 +40,6 @@ export default function AdminOrders() {
     fetchOrders();
   }, [fetchOrders]);
 
-  /* ---------- Aktualizacja statusów ---------- */
   const updateOrderStatus = async (id, status) => {
     const res = await AuthFetch(`${API_URL}/api/orders/${id}/status`, {
       method: "PUT",
@@ -63,10 +67,6 @@ export default function AdminOrders() {
     showAlert("Status płatności zaktualizowany", "info");
   };
 
-  /* ---------- UI ---------- */
-  if (loading) return <Spinner fullscreen={false} />;
-  if (error) return <LoadError onRetry={fetchOrders} />;
-
   const inProgressStatuses = [
     "waiting_payment",
     "paid",
@@ -91,7 +91,6 @@ export default function AdminOrders() {
 
   function sortOrders(ordersArray) {
     return [...ordersArray].sort((a, b) => {
-      // 1. ready_for_pickup na górze
       if (
         a.order_status === "ready_for_pickup" &&
         b.order_status !== "ready_for_pickup"
@@ -102,17 +101,31 @@ export default function AdminOrders() {
         a.order_status !== "ready_for_pickup"
       )
         return 1;
-
-      // 2. payment_status === "pending" na dole
       if (a.payment_status === "pending" && b.payment_status !== "pending")
         return 1;
       if (b.payment_status === "pending" && a.payment_status !== "pending")
         return -1;
-
-      // 3. reszta wg daty malejąco
       return new Date(b.created_at) - new Date(a.created_at);
     });
   }
+
+  const paginatedActiveOrders = sortOrders(activeOrders).slice(
+    (activePage - 1) * itemsPerPage,
+    activePage * itemsPerPage
+  );
+
+  const paginatedFailedOrders = sortOrders(failedOrders).slice(
+    (failedPage - 1) * itemsPerPage,
+    failedPage * itemsPerPage
+  );
+
+  const paginatedArchivedOrders = sortOrders(archivedOrders).slice(
+    (archivedPage - 1) * itemsPerPage,
+    archivedPage * itemsPerPage
+  );
+
+  if (loading) return <Spinner fullscreen={false} />;
+  if (error) return <LoadError onRetry={fetchOrders} />;
 
   return (
     <div className="admin-orders">
@@ -124,11 +137,18 @@ export default function AdminOrders() {
         nieodebrane.
       </InfoTip>
       {activeOrders.length > 0 ? (
-        <OrdersTable
-          orders={sortOrders(activeOrders)}
-          onOrderStatusChange={updateOrderStatus}
-          onPaymentStatusChange={updatePaymentStatus}
-        />
+        <>
+          <OrdersTable
+            orders={paginatedActiveOrders}
+            onOrderStatusChange={updateOrderStatus}
+            onPaymentStatusChange={updatePaymentStatus}
+          />
+          <Pagination
+            currentPage={activePage}
+            totalPages={Math.ceil(activeOrders.length / itemsPerPage)}
+            onPageChange={setActivePage}
+          />
+        </>
       ) : (
         <p>Brak zamówień w realizacji.</p>
       )}
@@ -138,11 +158,18 @@ export default function AdminOrders() {
         Zamówienia anulowane lub z nieudaną płatnością przez bramkę.
       </InfoTip>
       {failedOrders.length > 0 ? (
-        <OrdersTable
-          orders={failedOrders}
-          onOrderStatusChange={updateOrderStatus}
-          onPaymentStatusChange={updatePaymentStatus}
-        />
+        <>
+          <OrdersTable
+            orders={paginatedFailedOrders}
+            onOrderStatusChange={updateOrderStatus}
+            onPaymentStatusChange={updatePaymentStatus}
+          />
+          <Pagination
+            currentPage={failedPage}
+            totalPages={Math.ceil(failedOrders.length / itemsPerPage)}
+            onPageChange={setFailedPage}
+          />
+        </>
       ) : (
         <p>Brak nieudanych zamówień.</p>
       )}
@@ -159,14 +186,20 @@ export default function AdminOrders() {
       <InfoTip>
         Zamówienia zrealizowane i dostarczone lub odebrane przez klienta.
       </InfoTip>
-
       {showArchived &&
         (archivedOrders.length > 0 ? (
-          <OrdersTable
-            orders={archivedOrders}
-            onOrderStatusChange={updateOrderStatus}
-            onPaymentStatusChange={updatePaymentStatus}
-          />
+          <>
+            <OrdersTable
+              orders={paginatedArchivedOrders}
+              onOrderStatusChange={updateOrderStatus}
+              onPaymentStatusChange={updatePaymentStatus}
+            />
+            <Pagination
+              currentPage={archivedPage}
+              totalPages={Math.ceil(archivedOrders.length / itemsPerPage)}
+              onPageChange={setArchivedPage}
+            />
+          </>
         ) : (
           <p>Brak zamówień w archiwum.</p>
         ))}
