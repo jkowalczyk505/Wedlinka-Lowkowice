@@ -18,6 +18,13 @@ export default function OrdersPage() {
   const [error,   setError]   = useState(false);
 
   useEffect(() => {
+    if (openId !== null) {
+      const el = document.getElementById(`order-tile-${openId}`);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [openId]);
+
+  useEffect(() => {
     setLoading(true);
     setError(false);
     AuthFetch(`${API_URL}/api/orders/latest?limit=1000`)
@@ -42,16 +49,21 @@ export default function OrdersPage() {
         ? <p>Nie masz jeszcze żadnych zamówień.</p>
         : slice.map(o => (
             <React.Fragment key={o.id}>
-              <OrderTile
-                {...o}
-                isOpen={openId === o.id}
-                onToggle={() =>
-                  setOpenId(prev => (prev === o.id ? null : o.id))
-                }
-              />
+              <div id={`order-tile-${o.id}`}>
+                <OrderTile
+                  {...o}
+                  isOpen={openId === o.id}
+                  onToggle={() =>
+                    setOpenId(prev => (prev === o.id ? null : o.id))
+                  }
+                />
+              </div>
 
               {openId === o.id && (
-                <div className="order-details-row">
+                <div
+                  id={`order-details-${o.id}`}
+                  className="order-details-row"
+                >
                   <OrderDetails id={o.id} />
                 </div>
               )}

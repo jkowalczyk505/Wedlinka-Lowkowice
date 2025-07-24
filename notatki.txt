@@ -12,7 +12,11 @@ BACKEND
 
 ACCOUNT
 - dashboard
-- moje zamowienia - zamowienia, faktury
+- moje zamowienia:
+    faktury pobieranie 
+    dane do przelewu pobieranie jesli przelew na konto
+    dziwny blad w konsoli unauthorized
+    obrazki i linki do produktow
 
 PANEL ADMINA
 - zamowienia - numer przesylki w bazie do maili wprowadzania dla admina, filtrowanie + sortowanie, szczegoly zamowienia + wydruk faktury

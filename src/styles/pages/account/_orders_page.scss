@@ -22,37 +22,83 @@
     }
     .order-details-row {
         grid-column: 1 / -1;          /* pełna szerokość */
-        display: flex;
-        margin: 2rem 0;
 
         .order-details {
-            display: grid;
-            /* 4 kolumny o równej szerokości */
-            grid-template-columns: repeat(4, 1fr);
-            /* odstępy między kolumnami i wierszami */
-            gap: 2rem;
-            justify-items: center;
+        margin-top: 1rem;
 
-            /* responsywnie przeskaluj do 2 lub 1 kolumny */
-            @media (max-width: 900px) {
-            grid-template-columns: repeat(2, 1fr);
-            }
-            @media (max-width: 600px) {
-            grid-template-columns: 1fr;
+            .products-summary {
+                list-style: none;
+                padding: 0.5rem;
+                margin: 0 0 1rem;
+                background-color: $primary-color-less-darken;
+
+                li {
+                padding: 0.4rem 0;
+                }
+
+                .totals {
+                font-weight: bold;
+                font-size: 1.1rem;
+                padding-top: 0.5rem;
+                border-top: 1px dashed #ddd;
+                color: $secondary-color;
+                }
             }
 
-            h4 {
-                margin: .4rem 0 .2rem;
+            .show-more-btn {
+                display: inline-flex;
+                align-items: center;
+                background: none;
+                border: none;
+                cursor: pointer;
                 font-weight: 600;
                 color: $secondary-color;
-                /* nagłówek w pojedynczej kolumnie */
+                font-size: 1rem;
+
+                .icon {
+                    font-size: 1.5em;
+                    margin-right: 0.3em;
+                }
+
+                &:hover {
+                    text-decoration: underline;
+                }
             }
-            ul {
-                margin: .2rem 0 .6rem 1.2rem;
-            }
-            .totals {
-                margin-top: .4rem;
+
+            .details-expanded {
+                display: flex;
+                gap: 5rem;
+                padding: 0.5rem;
+
+                section {
+                    em {
+                        color: $accent-color-darken;
+                    }
+                    strong {
+                        color: $secondary-color;
+                        font-weight: 500;
+                    }
+                    margin-bottom: 1rem;
+                    
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+
+                    h5 {
+                        font-size: 1rem;
+                        font-weight: bold;
+                        color: $secondary-color;
+                        margin-bottom: 0.4rem;
+                    }
+
+                    p {
+                        font-size: 0.9rem;
+                        line-height: 1.4;
+                        margin: 0;
+                    }
+                }
             }
         }
+
     }
 }
