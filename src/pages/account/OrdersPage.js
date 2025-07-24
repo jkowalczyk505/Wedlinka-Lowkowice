@@ -5,7 +5,7 @@ import Spinner             from "../../components/common/Spinner";
 import LoadError           from "../../components/common/LoadError";
 import OrderTile           from "../../components/account/OrderTile";
 import OrderDetails from "../../components/account/OrderDetails";
-import Button              from "../../components/common/Button";      // <-- importujemy Button
+import Button              from "../../components/common/Button";
 
 const API_URL   = process.env.REACT_APP_API_URL;
 const PAGE_SIZE = 4;

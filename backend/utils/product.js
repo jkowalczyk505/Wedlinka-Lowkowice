@@ -1,3 +1,4 @@
+//utils/product.js
 const SLUG_MAP = {
   wedliny: { title: "Wędliny", apiCategory: "wędliny" },
   kielbasy: { title: "Kiełbasy", apiCategory: "kiełbasy" },

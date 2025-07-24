@@ -48,6 +48,7 @@
 
       .price  { font-weight: 600; color: $secondary-color; font-size: 1.1rem;}
       .status { 
+        font-weight: 500;
 
         &.new,             &.waiting_payment { color: $new-waiting; }   // pomarańcz
         &.paid                                    { color: $paid; } // zielony

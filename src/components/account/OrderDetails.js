@@ -6,8 +6,9 @@ import { AuthFetch } from "../auth/AuthFetch";
 import { shippingToPL } from "../../utils/shippingMethod";
 import { paymentStatusToPL } from "../../utils/paymentStatus";
 import { paymentMethodToPL } from "../../utils/paymentMethod";
-import { formatGrossPrice as fmt } from "../../utils/product";
+import { formatGrossPrice as fmt, categoryToSlug } from "../../utils/product";
 import { FiChevronRight, FiChevronDown } from "react-icons/fi";
+import { Link }                from "react-router-dom";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -46,11 +47,37 @@ export default function OrderDetails({ id }) {
   return (
     <div className="order-details">
       <ul className="products-summary">
-        {items.map(it => (
-          <li key={it.id}>
-            {it.quantity} × {it.name} – {fmt(it.quantity * parseFloat(it.price))} zł
-          </li>
-        ))}
+        {items.map(it => {
+            const unitPrice = parseFloat(it.price);
+            const lineTotal = unitPrice * it.quantity;
+            return (
+                <li key={it.id} className="product-item">
+                <Link
+                    to={`/sklep/${categoryToSlug(it.category)}/${it.slug}`}
+                    className="thumb-link"
+                >
+                    <img
+                    src={`${API_URL}/uploads/products/${it.image}`}
+                    alt={it.name}
+                    className="prod-thumb"
+                    />
+                </Link>
+
+                <div className="product-info">
+                    <Link
+                    to={`/sklep/${categoryToSlug(it.category)}/${it.slug}`}
+                    className="prod-link"
+                    >
+                    {it.name}
+                    </Link>
+                    <div className="price-line">
+                    {it.quantity} × {fmt(unitPrice)} zł /szt. → 
+                    {fmt(lineTotal)} zł
+                    </div>
+                </div>
+                </li>
+            );
+        })}
         <li className="products-total">
           <strong>Produkty:</strong> {fmt(sumProducts)} zł
         </li>

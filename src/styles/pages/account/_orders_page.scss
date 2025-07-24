@@ -32,8 +32,47 @@
                 margin: 0 0 1rem;
                 background-color: $primary-color-less-darken;
 
-                li {
-                padding: 0.4rem 0;
+                .product-item {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    padding: 0.4rem 0;
+
+                    .thumb-link {
+                        display: block; /* żeby hover działał na link + img */
+                        flex-shrink: 0;
+                        overflow: hidden;
+                        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                        transition: filter 0.2s ease, box-shadow 0.2s ease;
+
+                        .prod-thumb {
+                        display: block;
+                        width: 60px;
+                        height: 60px;
+                        object-fit: cover;
+                        /* usuń tu flex-shrink, bo już w thumb-link */
+                        }
+
+                        &:hover {
+                        filter: brightness(0.8);
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                        }
+                    }
+
+                    .product-info {
+                        margin-left: 0.5rem;
+                            .prod-link {
+                            color: $secondary-color;
+                            text-decoration: none;
+                            transition: color 0.2s ease;
+                            &:hover {
+                            color: $accent-color;
+                            }
+                        }
+                    }
+                }
+                .shipping-summary {
+                    margin-bottom: 0.5rem;
                 }
 
                 .totals {
@@ -54,6 +93,7 @@
                 font-weight: 600;
                 color: $secondary-color;
                 font-size: 1rem;
+                transition: color 0.2s ease;
 
                 .icon {
                     font-size: 1.5em;
@@ -61,7 +101,7 @@
                 }
 
                 &:hover {
-                    text-decoration: underline;
+                    color: $accent-color-darken;
                 }
             }
 
