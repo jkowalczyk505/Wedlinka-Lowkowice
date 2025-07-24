@@ -6,23 +6,38 @@ import LoadError           from "../../components/common/LoadError";
 import OrderTile           from "../../components/account/OrderTile";
 import OrderDetails from "../../components/account/OrderDetails";
 import Button              from "../../components/common/Button";
+import { useLocation }     from "react-router-dom";
 
 const API_URL   = process.env.REACT_APP_API_URL;
 const PAGE_SIZE = 4;
 
 export default function OrdersPage() {
-  const [orders,  setOrders]  = useState([]);
-  const [openId,  setOpenId]  = useState(null);
+  const [orders, setOrders] = useState([]);
+  // czytamy ?open=123
+  const { search } = useLocation();
+  const qs = new URLSearchParams(search);
+  const initialOpen = qs.has("open") ? Number(qs.get("open")) : null;
+  const [openId, setOpenId] = useState(initialOpen);
+
   const [page,    setPage]    = useState(1);
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState(false);
 
+  // przewijamy dopiero, gdy w DOM pojawił się kafel / szczegóły
   useEffect(() => {
     if (openId !== null) {
-      const el = document.getElementById(`order-tile-${openId}`);
+      // najpierw spróbuj div‑a ze szczegółami ↓
+      const el =
+        document.getElementById(`order-tile-${openId}`);
+
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [openId]);
+  }, [openId, orders]);           // <‑‑ zależymy też od załadowanych danych
+
+  // każda zmiana page = wracamy na górę
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page]);
 
   useEffect(() => {
     setLoading(true);

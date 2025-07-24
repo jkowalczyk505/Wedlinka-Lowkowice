@@ -51,12 +51,12 @@
       .status { 
         font-weight: 500;
 
-        &.new,             &.waiting_payment { color: $new-waiting; }   // pomarańcz
+        &.waiting_payment { color: $waiting; }   // pomarańcz
         &.paid                                    { color: $paid; } // zielony
         &.packed                                  { color: $packed; } // fiolet‑niebieski
         &.shipped                                 { color: $shipped; } // morski
         &.delivered                               { color: $delivered;    } // grafit
-        &.canceled,         &.failed             { color: $failed-canceled; } // czerwony
+        &.cancelled             { color: $cancelled } // czerwony
       }
     }
   }

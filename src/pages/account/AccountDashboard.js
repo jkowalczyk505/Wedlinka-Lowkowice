@@ -15,11 +15,13 @@ import ConfirmDialog from "../../components/common/ConfirmDialog";
 import CartItemTile from "../../components/cart/CartItemTile";
 import { useAlert } from "../../components/common/alert/AlertContext";
 import OrderTile from "../../components/account/OrderTile";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const AccountDashboard = () => {
   const { user, setLogoutInProgress, logout, setUser } = useAuth();
+  const navigate = useNavigate();    // ⬅️ tu definiujemy navigate
 
   const [stats, setStats] = useState({ total: 0, pending: 0, unpaid: 0 });
   const [latestOrders, setLatestOrders] = useState([]);
@@ -104,9 +106,16 @@ const AccountDashboard = () => {
       <section className="order-summary">
         <h2>Ostatnie zamówienia</h2>
 
-        { Array.isArray(latestOrders) && latestOrders.length > 0
-            ? latestOrders.map(o => <OrderTile {...o} key={o.id}/>)
-            : <p>Nie masz jeszcze żadnych zamówień.</p>
+        { latestOrders.length > 0
+          ? latestOrders.map(o => (
+              <OrderTile
+                key={o.id}
+                {...o}
+                // zamiast rozwijać tu — robimy przejście
+                onToggle={() => navigate(`/konto/zamowienia?open=${o.id}`)}
+              />
+            ))
+          : <p>Nie masz jeszcze żadnych zamówień.</p>
         }
 
         <Link to="/konto/zamowienia">

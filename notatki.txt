@@ -12,9 +12,7 @@ BACKEND
 
 ACCOUNT
 - dashboard
-- moje zamowienia:
-    faktury pobieranie 
-    dane do przelewu pobieranie jesli przelew na konto
+- moje zamowienia: faktury pobieranie 
     bez zdjecia produkt
     
 PANEL ADMINA
