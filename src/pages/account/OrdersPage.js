@@ -87,7 +87,7 @@ export default function OrdersPage() {
       }
 
       {totalPages > 1 && (
-        <div className="pagination">
+        <div className="pagination-orders">
           <Button
             variant="beige"
             onClick={() => setPage(p => Math.max(p - 1, 1))}
