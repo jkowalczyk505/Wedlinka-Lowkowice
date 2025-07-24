@@ -17,7 +17,7 @@ module.exports = {
     {
       "id": "courier",
       "label": "Kurier",
-      "price": 20.99,
+      "price": 18.99,
       "cod": true,
       "codFee": 3
     }
