@@ -7,7 +7,7 @@ import { formatGrossPrice } from "../../utils/product";
 import Spinner from "../../components/common/Spinner";
 import CheckoutSteps from "../../components/checkout/CheckoutSteps";
 import Button from "../../components/common/Button";
-import { generatePaymentPDF } from "../../utils/paymentPdf";
+import DownloadPaymentPDFButton from "../../components/checkout/DownloadPaymentPDFButton";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -55,16 +55,6 @@ export default function CheckoutSummaryPage() {
     (sum, { product, quantity }) => sum + product.price * quantity,
     0
   );
-
-  /* ------------------ PDF ------------------ */
-  const handleDownloadPDF = async () => {
-    const url = await generatePaymentPDF({ orderNumber, payment });
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `dane-przelewu-${orderNumber}.pdf`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
 
   return (
     <div className="page">
@@ -126,11 +116,10 @@ export default function CheckoutSummaryPage() {
             >
               Powrót na stronę główną
             </Button>
-            {payment.method === "bank_transfer" && (
-              <Button onClick={handleDownloadPDF}>
-                Pobierz dane do przelewu (PDF)
-              </Button>
-            )}
+            <DownloadPaymentPDFButton
+              orderNumber={orderNumber}
+              payment={payment}
+            />
           </>
         )}
       </div>
