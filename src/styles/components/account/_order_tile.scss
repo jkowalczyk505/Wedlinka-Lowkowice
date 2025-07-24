@@ -52,10 +52,9 @@
         font-weight: 500;
 
         &.waiting_payment { color: $waiting; }   // pomarańcz
-        &.paid                                    { color: $paid; } // zielony
-        &.packed                                  { color: $packed; } // fiolet‑niebieski
-        &.shipped                                 { color: $shipped; } // morski
+        &.packed, &.shipped, &.paid                                 { color: $realization; } // niebieski
         &.delivered                               { color: $delivered;    } // grafit
+        &.ready_for_pickup {color: $ready;}
         &.cancelled             { color: $cancelled } // czerwony
       }
     }

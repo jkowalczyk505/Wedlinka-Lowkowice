@@ -11,9 +11,8 @@ BACKEND
 - zabezpieczenie multera - przy bledzie niezapisywanie i nienadpisywanie zdjec, brak usuwania starych
 
 ACCOUNT
-- dashboard
-- moje zamowienia: faktury pobieranie 
-    bez zdjecia produkt
+- dashboard - faktury
+- moje zamowienia: faktury pobieranie
     
 PANEL ADMINA
 - zamowienia - numer przesylki w bazie do maili wprowadzania dla admina, filtrowanie + sortowanie, szczegoly zamowienia + wydruk faktury

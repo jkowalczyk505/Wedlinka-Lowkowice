@@ -45,11 +45,12 @@
                         overflow: hidden;
                         box-shadow: 0 2px 6px rgba(0,0,0,0.1);
                         transition: filter 0.2s ease, box-shadow 0.2s ease;
+                        background-color: $primary-color-less-darken;
 
                         .prod-thumb {
                         display: block;
-                        width: 60px;
-                        height: 60px;
+                        width: 70px;
+                        height: 70px;
                         object-fit: cover;
                         /* usuń tu flex-shrink, bo już w thumb-link */
                         }
@@ -62,13 +63,18 @@
 
                     .product-info {
                         margin-left: 0.5rem;
-                            .prod-link {
+                        .prod-link {
                             color: $secondary-color;
                             text-decoration: none;
                             transition: color 0.2s ease;
                             &:hover {
                             color: $accent-color;
                             }
+                        }
+                        .custom-button {
+                            margin-top: 0.4rem;
+                            padding: 0.3rem 0.6rem;
+                            font-size: 0.7rem;
                         }
                     }
                 }

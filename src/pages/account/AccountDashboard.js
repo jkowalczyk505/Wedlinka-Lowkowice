@@ -162,9 +162,9 @@ const AccountDashboard = () => {
                 <AtSign size={25} /> {user?.email}
               </li>
             </ul>
-            <Button as={Link} to="/konto/dane" variant="beige">
-              Edytuj dane
-            </Button>
+            <Link to="/konto/dane">
+              <Button variant="beige">Edytuj dane</Button>
+            </Link>
           </div>
 
           {/* Kolumna: adres */}
@@ -178,9 +178,9 @@ const AccountDashboard = () => {
                 <Mail size={25} /> {user?.postalCode} {user?.city}
               </li>
             </ul>
-            <Button as={Link} to="/konto/adres" variant="beige">
-              Edytuj adres
-            </Button>
+            <Link to="/konto/adres">
+              <Button variant="beige">Edytuj adres</Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -189,9 +189,9 @@ const AccountDashboard = () => {
       <section className="invoices-preview">
         <h2>Faktury</h2>
         <p>............</p>
-        <Button as={Link} to="/konto/zamowienia" variant="beige">
-          Więcej faktur
-        </Button>
+        <Link to="/konto/zamowienia">
+          <Button variant="beige">Więcej faktur</Button>
+        </Link>
       </section>
 
       {/* ▷ Usuwanie konta */}

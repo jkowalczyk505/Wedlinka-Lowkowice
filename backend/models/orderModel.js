@@ -1,5 +1,6 @@
 // models/orderModel.js
 const db = require("../config/db");
+const ReviewModel = require("./reviewModel");
 
 const OrderModel = {
   async create(order) {
@@ -366,17 +367,30 @@ const OrderModel = {
     );
     if (!o) return null;
 
-    // 2. Pozycje koszyka
+    // 2. Pozycje koszyka — pobieramy surowe wiersze
     const [items] = await db.query(
       `SELECT oi.quantity,
-              p.id, p.name, p.slug, p.image, p.category,
-              p.unit, p.quantity AS quantityPerUnit,
+              p.id             AS id,
+              p.name           AS name,
+              p.slug           AS slug,
+              p.image          AS image,
+              p.category       AS category,
+              p.unit           AS unit,
+              p.quantity         AS quantityPerUnit,       -- <— tu
               oi.price_brut_snapshot AS price
         FROM order_items oi
         JOIN products p ON p.id = oi.product_id
         WHERE oi.order_id = ?`,
       [orderId]
     );
+
+    // dopisujemy flaga canReview bez żadnego it.product
+    for (const it of items) {
+      const pid      = it.id;
+      const bought   = await OrderModel.userBoughtProduct(userId, pid);
+      const existing = await ReviewModel.findByUserAndProduct(userId, pid);
+      it.canReview   = bought && !existing;
+    }
 
     // 3. Dostawa + płatność
     const [[ship]] = await db.query(

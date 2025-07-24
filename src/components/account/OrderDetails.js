@@ -6,12 +6,31 @@ import { AuthFetch } from "../auth/AuthFetch";
 import { shippingToPL } from "../../utils/shippingMethod";
 import { paymentStatusToPL } from "../../utils/paymentStatus";
 import { paymentMethodToPL } from "../../utils/paymentMethod";
-import { formatGrossPrice as fmt, categoryToSlug } from "../../utils/product";
+import { formatGrossPrice as fmt, categoryToSlug, formatQuantity } from "../../utils/product";
 import { FiChevronRight, FiChevronDown } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import DownloadPaymentPDFButton from "../checkout/DownloadPaymentPDFButton";
+import { ReactComponent as DefaultIcon } from "../../assets/szynka-ikona.svg";
+
+import Button from "../common/Button";
+import ReviewModal from "../reviews/ReviewModal";
 
 const API_URL = process.env.REACT_APP_API_URL;
+// wewnętrzny thumbnail z fallbackem
+function Thumbnail({ src, alt, className }) {
+  const [error, setError] = useState(false);
+  if (error || !src) {
+    return <DefaultIcon className={className + " default-thumb"} />;
+  }
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      onError={() => setError(true)}
+    />
+  );
+}
 
 export default function OrderDetails({ id }) {
   const [data, setData] = useState(null);
@@ -19,15 +38,25 @@ export default function OrderDetails({ id }) {
   const [error, setErr] = useState(false);
   const [showMore, setShowMore] = useState(false);
 
-  useEffect(() => {
+ // modal do dodawania opinii
+ const [modalProductId, setModalProductId] = useState(null);
+
+  // 1) fetch zamówienia + items z flagą canReview
+  const fetchDetails = () => {
     setLd(true);
     setErr(false);
     AuthFetch(`${API_URL}/api/orders/${id}`)
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then(r => r.ok ? r.json() : Promise.reject())
       .then(setData)
       .catch(() => setErr(true))
       .finally(() => setLd(false));
+  };
+
+
+  useEffect(() => {
+    fetchDetails();
   }, [id]);
+
 
   if (loading) return <Spinner fullscreen={false} />;
   if (error) return <LoadError onRetry={() => window.location.reload()} />;
@@ -51,14 +80,16 @@ export default function OrderDetails({ id }) {
         {items.map((it) => {
           const unitPrice = parseFloat(it.price);
           const lineTotal = unitPrice * it.quantity;
+          const canReview = it.canReview;
+          const imgUrl = `${API_URL}/uploads/products/${it.image}`;
           return (
             <li key={it.id} className="product-item">
               <Link
                 to={`/sklep/${categoryToSlug(it.category)}/${it.slug}`}
                 className="thumb-link"
               >
-                <img
-                  src={`${API_URL}/uploads/products/${it.image}`}
+                <Thumbnail
+                  src={imgUrl}
                   alt={it.name}
                   className="prod-thumb"
                 />
@@ -69,12 +100,25 @@ export default function OrderDetails({ id }) {
                   to={`/sklep/${categoryToSlug(it.category)}/${it.slug}`}
                   className="prod-link"
                 >
-                  {it.name}
+                  {it.name}{" "}
+                  <span className="product-weight">
+                    {formatQuantity(it.quantityPerUnit)} {it.unit}
+                  </span>
                 </Link>
                 <div className="price-line">
-                  {it.quantity} × {fmt(unitPrice)} zł /szt. → 
+                  {it.quantity} × {fmt(unitPrice)} zł → 
                   {fmt(lineTotal)} zł
                 </div>
+
+                {/* przycisk Oceń */}
+               {canReview && (
+                 <Button
+                   variant="beige"
+                   onClick={() => setModalProductId(it.id)}
+                 >
+                   Oceń
+                 </Button>
+               )}
               </div>
             </li>
           );
@@ -156,6 +200,21 @@ export default function OrderDetails({ id }) {
           </section>
         </div>
       )}
+
+      {/* modal recenzji */}
+     {modalProductId && (
+         <ReviewModal
+           open={true}
+           productId={modalProductId}
+           onClose={() => setModalProductId(null)}
+           onSaved={() => {
+            // 1) najpierw zamknij modal
+            setModalProductId(null);
+            // 2) odśwież szczegóły zamówienia (usuwa przyciski dla ocenionych)
+            fetchDetails();
+          }}
+         />
+       )}
     </div>
   );
 }
