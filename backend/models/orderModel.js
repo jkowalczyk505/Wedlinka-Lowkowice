@@ -301,8 +301,8 @@ const OrderModel = {
   },
   // Ostatnie 2 zamowienia klienta
   async getLatestForUser(userId, limit = 2) {
-  const [rows] = await db.query(
-    `SELECT  o.id
+    const [rows] = await db.query(
+      `SELECT  o.id
            ,o.order_number
            ,o.created_at
            ,( o.total_brut
@@ -320,8 +320,8 @@ const OrderModel = {
       WHERE o.user_id = ?
       ORDER BY o.created_at DESC
       LIMIT ?`,
-    [userId, Number(limit)]
-  );
+      [userId, Number(limit)]
+    );
 
     for (const row of rows) {
       // 1) trzy miniaturki
@@ -385,27 +385,37 @@ const OrderModel = {
          street, city, postal_code,
          recipient_email, recipient_phone, notes
     FROM shipping_details
-   WHERE order_id = ?`, [orderId]);
+   WHERE order_id = ?`,
+      [orderId]
+    );
 
     const [[pay]] = await db.query(
       `SELECT provider, amount, status
-        FROM payments WHERE order_id = ?`, [orderId]);
+    FROM payments WHERE order_id = ?`,
+      [orderId]
+    );
+
+    const payment = {
+      ...pay,
+      title: o.order_number,
+      bankAccount: process.env.BANK_ACCOUNT || "BRAK_NUMERU_KONTA",
+    };
 
     const invoice = o.invoice_type
       ? {
-          type:   o.invoice_type,
-          name:   o.invoice_name,
-          nip:    o.invoice_nip,
-          email:  o.invoice_email,
+          type: o.invoice_type,
+          name: o.invoice_name,
+          nip: o.invoice_nip,
+          email: o.invoice_email,
           street: o.invoice_street,
-          city:   o.invoice_city,
-          zip:    o.invoice_zip,
-          country:o.invoice_country,
+          city: o.invoice_city,
+          zip: o.invoice_zip,
+          country: o.invoice_country,
         }
       : null;
 
-    return { order: o, items, shipping: ship, payment: pay, invoice };
-  }
+    return { order: o, items, shipping: ship, payment, invoice };
+  },
 };
 
 module.exports = OrderModel;

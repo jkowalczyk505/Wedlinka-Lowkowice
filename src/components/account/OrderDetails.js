@@ -8,29 +8,29 @@ import { paymentStatusToPL } from "../../utils/paymentStatus";
 import { paymentMethodToPL } from "../../utils/paymentMethod";
 import { formatGrossPrice as fmt, categoryToSlug } from "../../utils/product";
 import { FiChevronRight, FiChevronDown } from "react-icons/fi";
-import { Link }                from "react-router-dom";
+import { Link } from "react-router-dom";
 import DownloadPaymentPDFButton from "../checkout/DownloadPaymentPDFButton";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 export default function OrderDetails({ id }) {
-  const [data, setData]       = useState(null);
-  const [loading, setLd]      = useState(true);
-  const [error, setErr]       = useState(false);
+  const [data, setData] = useState(null);
+  const [loading, setLd] = useState(true);
+  const [error, setErr] = useState(false);
   const [showMore, setShowMore] = useState(false);
 
   useEffect(() => {
     setLd(true);
     setErr(false);
     AuthFetch(`${API_URL}/api/orders/${id}`)
-      .then(r => r.ok ? r.json() : Promise.reject())
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then(setData)
       .catch(() => setErr(true))
       .finally(() => setLd(false));
   }, [id]);
 
   if (loading) return <Spinner fullscreen={false} />;
-  if (error)   return <LoadError onRetry={() => window.location.reload()} />;
+  if (error) return <LoadError onRetry={() => window.location.reload()} />;
 
   const { order, items, shipping, payment, invoice } = data;
 
@@ -48,51 +48,50 @@ export default function OrderDetails({ id }) {
   return (
     <div className="order-details">
       <ul className="products-summary">
-        {items.map(it => {
-            const unitPrice = parseFloat(it.price);
-            const lineTotal = unitPrice * it.quantity;
-            return (
-                <li key={it.id} className="product-item">
-                <Link
-                    to={`/sklep/${categoryToSlug(it.category)}/${it.slug}`}
-                    className="thumb-link"
-                >
-                    <img
-                    src={`${API_URL}/uploads/products/${it.image}`}
-                    alt={it.name}
-                    className="prod-thumb"
-                    />
-                </Link>
+        {items.map((it) => {
+          const unitPrice = parseFloat(it.price);
+          const lineTotal = unitPrice * it.quantity;
+          return (
+            <li key={it.id} className="product-item">
+              <Link
+                to={`/sklep/${categoryToSlug(it.category)}/${it.slug}`}
+                className="thumb-link"
+              >
+                <img
+                  src={`${API_URL}/uploads/products/${it.image}`}
+                  alt={it.name}
+                  className="prod-thumb"
+                />
+              </Link>
 
-                <div className="product-info">
-                    <Link
-                    to={`/sklep/${categoryToSlug(it.category)}/${it.slug}`}
-                    className="prod-link"
-                    >
-                    {it.name}
-                    </Link>
-                    <div className="price-line">
-                    {it.quantity} × {fmt(unitPrice)} zł /szt. → 
-                    {fmt(lineTotal)} zł
-                    </div>
+              <div className="product-info">
+                <Link
+                  to={`/sklep/${categoryToSlug(it.category)}/${it.slug}`}
+                  className="prod-link"
+                >
+                  {it.name}
+                </Link>
+                <div className="price-line">
+                  {it.quantity} × {fmt(unitPrice)} zł /szt. → 
+                  {fmt(lineTotal)} zł
                 </div>
-                </li>
-            );
+              </div>
+            </li>
+          );
         })}
         <li className="products-total">
           <strong>Produkty:</strong> {fmt(sumProducts)} zł
         </li>
         <li className="shipping-summary">
-          <strong>Dostawa:</strong> {shippingToPL(shipping.method)} – {fmt(shipping.cost)} zł
+          <strong>Dostawa:</strong> {shippingToPL(shipping.method)} –{" "}
+          {fmt(shipping.cost)} zł
         </li>
-        <li className="totals">
-          Łącznie: {fmt(totalAll)} zł
-        </li>
+        <li className="totals">Łącznie: {fmt(totalAll)} zł</li>
       </ul>
 
       <button
         className="show-more-btn"
-        onClick={() => setShowMore(prev => !prev)}
+        onClick={() => setShowMore((prev) => !prev)}
       >
         <Icon className="icon" />
         {showMore ? "Ukryj szczegóły" : "Więcej szczegółów"}
@@ -103,12 +102,19 @@ export default function OrderDetails({ id }) {
           <section>
             <h5>Dostawa</h5>
             <p>
-              {shipping.recipient_first_name} {shipping.recipient_last_name}<br/>
-              {shipping.street}<br/>
-              {shipping.postal_code}&nbsp;{shipping.city}<br/>
-              {shipping.recipient_phone && `tel.: ${shipping.recipient_phone}`}<br/>
-              {shipping.recipient_email && `e‑mail: ${shipping.recipient_email}`}<br/>
-              {shipping.locker_code && `Paczkomat: ${shipping.locker_code}`}<br/>
+              {shipping.recipient_first_name} {shipping.recipient_last_name}
+              <br />
+              {shipping.street}
+              <br />
+              {shipping.postal_code}&nbsp;{shipping.city}
+              <br />
+              {shipping.recipient_phone && `tel.: ${shipping.recipient_phone}`}
+              <br />
+              {shipping.recipient_email &&
+                `e‑mail: ${shipping.recipient_email}`}
+              <br />
+              {shipping.locker_code && `Paczkomat: ${shipping.locker_code}`}
+              <br />
               {shipping.notes && <em>Uwagi: {shipping.notes}</em>}
             </p>
           </section>
@@ -116,17 +122,17 @@ export default function OrderDetails({ id }) {
           <section>
             <h5>Płatność</h5>
             <p>
-              {paymentMethodToPL(payment.provider)}<br/>
+              {paymentMethodToPL(payment.provider)}
+              <br />
               Status: <strong>{paymentStatusToPL(payment.status)}</strong>
             </p>
             {payment.provider === "bank_transfer" && (
-                <div className="download-payment-btn">
-                    <DownloadPaymentPDFButton
-                    orderNumber={order.order_number}
-                    // zmapuj provider na property `method`, którego oczekuje przycisk
-                    payment={{ ...payment, method: payment.provider }}
-                    />
-                </div>
+              <div className="download-payment-btn">
+                <DownloadPaymentPDFButton
+                  orderNumber={order.order_number}
+                  payment={{ ...payment, method: payment.provider }}
+                />
+              </div>
             )}
           </section>
 
@@ -134,10 +140,14 @@ export default function OrderDetails({ id }) {
             <h5>Faktura</h5>
             {invoice?.type ? (
               <p>
-                {invoice.type === "company" ? "Firma: " : ""} {invoice.name}<br/>
-                {invoice.street}<br/>
-                {invoice.zip}&nbsp;{invoice.city}, {invoice.country}<br/>
-                {invoice.email}<br/>
+                {invoice.type === "company" ? "Firma: " : ""} {invoice.name}
+                <br />
+                {invoice.street}
+                <br />
+                {invoice.zip}&nbsp;{invoice.city}, {invoice.country}
+                <br />
+                {invoice.email}
+                <br />
                 {invoice.nip && `NIP: ${invoice.nip}`}
               </p>
             ) : (
