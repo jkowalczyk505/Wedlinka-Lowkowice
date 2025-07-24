@@ -136,6 +136,14 @@
                         line-height: 1.4;
                         margin: 0;
                     }
+                    .download-payment-btn {
+                        margin-top: 0.8rem;
+                        width: 100%;
+                        .custom-button {
+                            font-size: 0.7rem;
+                            padding: 0.4rem 0.8rem;
+                        }
+                    }
                 }
             }
         }

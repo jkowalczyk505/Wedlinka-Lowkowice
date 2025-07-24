@@ -9,6 +9,7 @@ import { paymentMethodToPL } from "../../utils/paymentMethod";
 import { formatGrossPrice as fmt, categoryToSlug } from "../../utils/product";
 import { FiChevronRight, FiChevronDown } from "react-icons/fi";
 import { Link }                from "react-router-dom";
+import DownloadPaymentPDFButton from "../checkout/DownloadPaymentPDFButton";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -118,6 +119,15 @@ export default function OrderDetails({ id }) {
               {paymentMethodToPL(payment.provider)}<br/>
               Status: <strong>{paymentStatusToPL(payment.status)}</strong>
             </p>
+            {payment.provider === "bank_transfer" && (
+                <div className="download-payment-btn">
+                    <DownloadPaymentPDFButton
+                    orderNumber={order.order_number}
+                    // zmapuj provider na property `method`, którego oczekuje przycisk
+                    payment={{ ...payment, method: payment.provider }}
+                    />
+                </div>
+            )}
           </section>
 
           <section>
