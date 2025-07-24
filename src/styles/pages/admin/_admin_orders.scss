@@ -1,0 +1,31 @@
+.admin-orders {
+    h2 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        margin-bottom: 2rem;
+    }
+
+    .highlight-pickup {
+        background-color: #e7f9ec;
+        border-left: 3px solid #2e7d32;
+    }
+
+    .highlight-pending {
+        background-color: $primary-color-less-darken;
+    }
+
+    .admin-show-archive-button {
+        font-family: $font-main;
+        margin-left: 1rem;
+        font-size: 0.8rem;
+        color: $secondary-color;
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+}

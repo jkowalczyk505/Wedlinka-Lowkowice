@@ -27,6 +27,7 @@ ZAMAWIANIE 2 krok
 
 ZAMAWIANIE 3 krok
 - ekrany - platnosc przez bramke
+- produkt bez zdjecia ma miec default
 
 ZAMAWIANIE
 - zmiana statusow wysylek, zamowien, platnosci
@@ -35,7 +36,7 @@ FAKTURY
 - wfirma
 
 NA KONIEC
-- MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza kontaktowego, dane do przelewu tradycyjnego, potwierdzenie zamwowienia, faktura (tabela order confirmations)
+- MAILE - reset hasla, potwierdzenie zalozenia konta, wysyłka maila z formularza kontaktowego, dane do przelewu tradycyjnego, potwierdzenie zamwowienia, faktura (tabela order confirmations), zmiana statusu, gotowe do odbioru
 - BACKEND zabezpieczyc - rate limit, helmet, cors (www i bez www), ukrycie express
 - baza i backend przenieść
 - middleware (app.use) do przekierowania www na bez www

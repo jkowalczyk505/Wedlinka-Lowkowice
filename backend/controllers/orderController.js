@@ -124,7 +124,7 @@ async function createOrder(req, res) {
             : "person"
           : null,
       },
-      orderStatus: "new",
+      orderStatus: "waiting_payment",
     });
   } catch (err) {
     console.error("Create order error:", err);
@@ -222,7 +222,8 @@ async function getOneForUser(req, res) {
 module.exports = {
   createOrder,
   getOrderSummary,
-  getLatestOrders, getOneForUser,
+  getLatestOrders,
+  getOneForUser,
   // — admin export —
   getAllOrders,
   getOrderDetails,

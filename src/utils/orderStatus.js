@@ -1,25 +1,23 @@
 // lista kluczy statusów zamówień
 export const ORDER_STATUS_KEYS = [
-  "new",
   "waiting_payment",
   "paid",
   "packed",
+  "ready_for_pickup",
   "shipped",
   "delivered",
-  "canceled",
-  "failed",
+  "cancelled",
 ];
 
 // tłumaczenia
 const STATUS_PL = {
-  new: "Nowe",
   waiting_payment: "Oczekuje na płatność",
   paid: "Opłacone",
   packed: "Gotowe do wysyłki",
+  ready_for_pickup: "Gotowe do odbioru",
   shipped: "Wysłane",
-  delivered: "Dostarczone",
-  canceled: "Anulowane",
-  failed: "Nieudane",
+  delivered: "Odebrane",
+  cancelled: "Anulowane",
 };
 
 /**

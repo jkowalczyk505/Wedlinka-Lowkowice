@@ -37,7 +37,15 @@ export default function OrderRow({
   };
 
   return (
-    <tr>
+    <tr
+      className={
+        order.order_status === "ready_for_pickup"
+          ? "highlight-pickup"
+          : order.payment_status === "pending"
+          ? "highlight-pending"
+          : ""
+      }
+    >
       <td>
         <Link to={`/admin/orders/${order.id}`}>{order.order_number}</Link>
       </td>
@@ -75,7 +83,23 @@ export default function OrderRow({
             value={tempOrderStatus}
             onChange={(e) => setTempOrderStatus(e.target.value)}
           >
-            {ORDER_STATUS_KEYS.map((k) => (
+            {ORDER_STATUS_KEYS.filter((k) => {
+              // "ready_for_pickup" tylko przy odbiorze osobistym
+              if (
+                k === "ready_for_pickup" &&
+                order.shipping_method !== "pickup"
+              )
+                return false;
+
+              // "packed" i "shipped" tylko gdy NIE odbiór osobisty
+              if (
+                (k === "packed" || k === "shipped") &&
+                order.shipping_method === "pickup"
+              )
+                return false;
+
+              return true;
+            }).map((k) => (
               <option key={k} value={k}>
                 {statusToPL(k)}
               </option>

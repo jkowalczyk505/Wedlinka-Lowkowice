@@ -18,6 +18,10 @@
         text-align: left;
     }
 
+    td {
+        color: $dark-color;
+    }
+
     input[type="text"],
     input[type="number"],
     select {
