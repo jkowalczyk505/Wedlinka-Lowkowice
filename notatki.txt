@@ -15,7 +15,7 @@ ACCOUNT
 - moje zamowienia: faktury pobieranie
     
 PANEL ADMINA
-- zamowienia - numer przesylki w bazie do maili wprowadzania dla admina, filtrowanie + sortowanie, szczegoly zamowienia + wydruk faktury
+- zamowienia - numer przesylki w bazie do maili wprowadzania dla admina, szczegoly zamowienia + wydruk faktury
 *FAKTURY
 
 ZAMAWIANIE 2 krok

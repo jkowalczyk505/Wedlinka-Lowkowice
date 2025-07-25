@@ -1,0 +1,61 @@
+.orders-controls {
+    margin-bottom: 2rem;
+
+    .sort-control,
+    .filter-control {
+        margin-bottom: 1.2rem;
+
+        label {
+            color: $dark-color;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-right: 0.5rem;
+            display: inline-block;
+        }
+
+        select {
+            padding: 0.4rem 0.6rem;
+            border-radius: 5px;
+            border: 1px solid $dark-color-lighten;
+            background: white;
+            font-size: 0.9rem;
+            font-family: $font-main;
+            color: $dark-color;
+            transition: border 0.2s;
+
+            &:focus {
+                outline: none;
+                border-color: $secondary-color;
+            }
+        }
+    }
+
+    .status-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin-top: 0.4rem;
+
+        .status-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            cursor: pointer;
+            color: $dark-color;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            border: 1px solid $dark-color-lighten;
+            transition: background-color 0.2s;
+
+            input {
+                margin: 0;
+                accent-color: $secondary-color;
+            }
+
+            &:hover {
+                background-color: $accent-color;
+            }
+        }
+    }
+}

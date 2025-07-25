@@ -6,6 +6,8 @@ import LoadError from "../../components/common/LoadError";
 import OrdersTable from "../../components/admin/orders/OrdersTable";
 import InfoTip from "../../components/common/InfoTip";
 import Pagination from "../../components/common/Pagination";
+import OrdersControls from "../../components/admin/orders/OrdersControls";
+import OrdersSearch from "../../components/admin/orders/OrdersSearch";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -19,6 +21,23 @@ export default function AdminOrders() {
   const [archivedPage, setArchivedPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const [activeSort, setActiveSort] = useState("default");
+  const [activeFilters, setActiveFilters] = useState([
+    "waiting_payment",
+    "paid",
+    "packed",
+    "shipped",
+    "ready_for_pickup",
+  ]);
+
+  const [failedSort, setFailedSort] = useState("desc");
+  const [failedFilters, setFailedFilters] = useState(["cancelled", "failed"]);
+
+  const [archivedSort, setArchivedSort] = useState("desc");
+  const [archivedFilters, setArchivedFilters] = useState(["delivered"]);
+
+  const [searchQuery, setSearchQuery] = useState("");
 
   const itemsPerPage = 10;
 
@@ -39,6 +58,24 @@ export default function AdminOrders() {
   useEffect(() => {
     fetchOrders();
   }, [fetchOrders]);
+
+  useEffect(() => {
+    setActivePage(1);
+    setFailedPage(1);
+    setArchivedPage(1);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setActivePage(1);
+  }, [activeFilters, activeSort]);
+
+  useEffect(() => {
+    setFailedPage(1);
+  }, [failedSort]);
+
+  useEffect(() => {
+    setArchivedPage(1);
+  }, [archivedSort]);
 
   const updateOrderStatus = async (id, status) => {
     const res = await AuthFetch(`${API_URL}/api/orders/${id}/status`, {
@@ -67,30 +104,21 @@ export default function AdminOrders() {
     showAlert("Status płatności zaktualizowany", "info");
   };
 
-  const inProgressStatuses = [
-    "waiting_payment",
-    "paid",
-    "packed",
-    "shipped",
-    "ready_for_pickup",
-  ];
+  const filterAndSort = (array, filters, sortOrder) => {
+    let filtered = filters
+      ? array.filter((o) => filters.includes(o.order_status))
+      : array;
 
-  const activeOrders = orders.filter(
-    (o) =>
-      inProgressStatuses.includes(o.order_status) &&
-      o.payment_status !== "failed"
-  );
+    return filtered.sort((a, b) => {
+      if (sortOrder === "asc") {
+        return new Date(a.created_at) - new Date(b.created_at);
+      }
 
-  const failedOrders = orders.filter(
-    (o) => o.payment_status === "failed" || o.order_status === "cancelled"
-  );
+      if (sortOrder === "desc") {
+        return new Date(b.created_at) - new Date(a.created_at);
+      }
 
-  const archivedOrders = orders.filter(
-    (o) => o.order_status === "delivered" && o.payment_status !== "failed"
-  );
-
-  function sortOrders(ordersArray) {
-    return [...ordersArray].sort((a, b) => {
+      // sortOrder === "default"
       if (
         a.order_status === "ready_for_pickup" &&
         b.order_status !== "ready_for_pickup"
@@ -101,28 +129,59 @@ export default function AdminOrders() {
         a.order_status !== "ready_for_pickup"
       )
         return 1;
-      if (a.payment_status === "pending" && b.payment_status !== "pending")
+
+      if (
+        a.order_status === "waiting_payment" &&
+        b.order_status !== "waiting_payment"
+      )
         return 1;
-      if (b.payment_status === "pending" && a.payment_status !== "pending")
+      if (
+        b.order_status === "waiting_payment" &&
+        a.order_status !== "waiting_payment"
+      )
         return -1;
+
       return new Date(b.created_at) - new Date(a.created_at);
     });
-  }
+  };
 
-  const paginatedActiveOrders = sortOrders(activeOrders).slice(
-    (activePage - 1) * itemsPerPage,
-    activePage * itemsPerPage
+  const filteredOrders = orders.filter((o) =>
+    o.order_number.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const paginatedFailedOrders = sortOrders(failedOrders).slice(
-    (failedPage - 1) * itemsPerPage,
-    failedPage * itemsPerPage
+  const activeOrders = filterAndSort(
+    filteredOrders.filter(
+      (o) =>
+        [
+          "waiting_payment",
+          "paid",
+          "packed",
+          "shipped",
+          "ready_for_pickup",
+        ].includes(o.order_status) && o.payment_status !== "failed"
+    ),
+    activeFilters,
+    activeSort
   );
 
-  const paginatedArchivedOrders = sortOrders(archivedOrders).slice(
-    (archivedPage - 1) * itemsPerPage,
-    archivedPage * itemsPerPage
+  const failedOrders = filterAndSort(
+    filteredOrders.filter(
+      (o) => o.payment_status === "failed" || o.order_status === "cancelled"
+    ),
+    null,
+    failedSort
   );
+
+  const archivedOrders = filterAndSort(
+    filteredOrders.filter(
+      (o) => o.order_status === "delivered" && o.payment_status !== "failed"
+    ),
+    null,
+    archivedSort
+  );
+
+  const paginated = (array, page) =>
+    array.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
   if (loading) return <Spinner fullscreen={false} />;
   if (error) return <LoadError onRetry={fetchOrders} />;
@@ -130,16 +189,23 @@ export default function AdminOrders() {
   return (
     <div className="admin-orders">
       <h1 className="admin-page-title">Zarządzanie zamówieniami</h1>
-
+      <OrdersSearch value={searchQuery} onChange={setSearchQuery} />
       <h2>W trakcie</h2>
       <InfoTip>
         Zamówienia opłacone lub oczekujące na opłacenie, w drodze lub jeszcze
         nieodebrane.
       </InfoTip>
+      <OrdersControls
+        type="active"
+        sortOrder={activeSort}
+        onSortChange={setActiveSort}
+        selectedStatuses={activeFilters}
+        onStatusChange={setActiveFilters}
+      />
       {activeOrders.length > 0 ? (
         <>
           <OrdersTable
-            orders={paginatedActiveOrders}
+            orders={paginated(activeOrders, activePage)}
             onOrderStatusChange={updateOrderStatus}
             onPaymentStatusChange={updatePaymentStatus}
           />
@@ -157,10 +223,17 @@ export default function AdminOrders() {
       <InfoTip>
         Zamówienia anulowane lub z nieudaną płatnością przez bramkę.
       </InfoTip>
+      <OrdersControls
+        type="failed"
+        sortOrder={failedSort}
+        onSortChange={setFailedSort}
+        selectedStatuses={failedFilters}
+        onStatusChange={setFailedFilters}
+      />
       {failedOrders.length > 0 ? (
         <>
           <OrdersTable
-            orders={paginatedFailedOrders}
+            orders={paginated(failedOrders, failedPage)}
             onOrderStatusChange={updateOrderStatus}
             onPaymentStatusChange={updatePaymentStatus}
           />
@@ -186,23 +259,33 @@ export default function AdminOrders() {
       <InfoTip>
         Zamówienia zrealizowane i dostarczone lub odebrane przez klienta.
       </InfoTip>
-      {showArchived &&
-        (archivedOrders.length > 0 ? (
-          <>
-            <OrdersTable
-              orders={paginatedArchivedOrders}
-              onOrderStatusChange={updateOrderStatus}
-              onPaymentStatusChange={updatePaymentStatus}
-            />
-            <Pagination
-              currentPage={archivedPage}
-              totalPages={Math.ceil(archivedOrders.length / itemsPerPage)}
-              onPageChange={setArchivedPage}
-            />
-          </>
-        ) : (
-          <p>Brak zamówień w archiwum.</p>
-        ))}
+      {showArchived && (
+        <>
+          <OrdersControls
+            type="archived"
+            sortOrder={archivedSort}
+            onSortChange={setArchivedSort}
+            selectedStatuses={archivedFilters}
+            onStatusChange={setArchivedFilters}
+          />
+          {archivedOrders.length > 0 ? (
+            <>
+              <OrdersTable
+                orders={paginated(archivedOrders, archivedPage)}
+                onOrderStatusChange={updateOrderStatus}
+                onPaymentStatusChange={updatePaymentStatus}
+              />
+              <Pagination
+                currentPage={archivedPage}
+                totalPages={Math.ceil(archivedOrders.length / itemsPerPage)}
+                onPageChange={setArchivedPage}
+              />
+            </>
+          ) : (
+            <p>Brak zamówień w archiwum.</p>
+          )}
+        </>
+      )}
     </div>
   );
 }

@@ -1,0 +1,37 @@
+.order-search-bar {
+    margin: 2rem 0 1.5rem;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+
+    label {
+        color: $dark-color;
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+    }
+
+    .order-search-input {
+        width: 100%;
+        max-width: 300px;
+        padding: 0.5rem 0.8rem;
+        border: 1px solid $dark-color-lighten;
+        border-radius: 5px;
+        font-size: 0.95rem;
+        font-family: $font-main;
+        color: $dark-color;
+        background-color: white;
+        transition: border-color 0.2s, box-shadow 0.2s;
+
+        &::placeholder {
+            color: $dark-color-lighten;
+            font-size: 0.9rem;
+        }
+
+        &:focus {
+            outline: none;
+            border-color: $secondary-color;
+        }
+    }
+}
