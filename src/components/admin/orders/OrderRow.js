@@ -13,6 +13,8 @@ export default function OrderRow({
   PAYMENT_STATUS_KEYS,
   statusToPL,
   paymentStatusToPL,
+  onToggle,
+  isOpen,
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [tempOrderStatus, setTempOrderStatus] = useState(order.order_status);
@@ -38,17 +40,16 @@ export default function OrderRow({
 
   return (
     <tr
-      className={
+      className={`clickable-row ${
         order.order_status === "ready_for_pickup"
           ? "highlight-pickup"
           : order.payment_status === "pending"
           ? "highlight-pending"
           : ""
-      }
+      }`}
+      onClick={() => !isEditing && onToggle(order.id)}
     >
-      <td>
-        <Link to={`/admin/orders/${order.id}`}>{order.order_number}</Link>
-      </td>
+      <td>{order.order_number}</td>
       <td>{new Date(order.created_at).toLocaleString()}</td>
       <td>
         {formatGrossPrice(
@@ -112,13 +113,33 @@ export default function OrderRow({
       <td>
         {isEditing ? (
           <>
-            <Button onClick={saveChanges}>Zapisz</Button>
-            <Button onClick={cancelEdit} variant="secondary">
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                saveChanges();
+              }}
+            >
+              Zapisz
+            </Button>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                cancelEdit();
+              }}
+              variant="secondary"
+            >
               Anuluj
             </Button>
           </>
         ) : (
-          <Button onClick={() => setIsEditing(true)}>Edytuj</Button>
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsEditing(true);
+            }}
+          >
+            Edytuj
+          </Button>
         )}
       </td>
     </tr>

@@ -8,7 +8,7 @@ const {
   updateOrderStatus,
   updatePaymentStatus,
   getLatestOrders,
-  getOneForUser
+  getOneForUser,
 } = require("../controllers/orderController");
 const {
   protect,
@@ -16,19 +16,15 @@ const {
   adminOnly,
 } = require("../middleware/authMiddleware");
 
-// — Klient —
+// — Klient — //
 router.post("/", optionalAuth, createOrder);
 router.get("/summary/:orderNumber", getOrderSummary);
-router.get(
-  "/latest", // /api/orders/latest?limit=2
-  protect, // musi być zalogowany
-  getLatestOrders
-);
-
+router.get("/latest", protect, getLatestOrders);
 router.get("/:id", protect, getOneForUser);
-// — Admin (chronione) —
+
+// — Admin — //
 router.get("/", protect, adminOnly, getAllOrders);
-router.get("/:id", protect, adminOnly, getOrderDetails);
+router.get("/admin/:id", protect, adminOnly, getOrderDetails);
 router.put("/:id/status", protect, adminOnly, updateOrderStatus);
 router.put("/:id/payment-status", protect, adminOnly, updatePaymentStatus);
 

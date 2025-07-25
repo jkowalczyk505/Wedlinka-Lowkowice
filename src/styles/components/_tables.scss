@@ -22,6 +22,10 @@
         color: $dark-color;
     }
 
+    .clickable-row {
+        cursor: pointer;
+    }
+
     input[type="text"],
     input[type="number"],
     select {

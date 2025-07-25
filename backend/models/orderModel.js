@@ -108,16 +108,18 @@ const OrderModel = {
     const last = form.lastName;
     const street = form.address + (form.address2 ? "/" + form.address2 : "");
 
-    // Bezpieczne wyliczenie kosztu
+    const email = form.email || form.invoice_email || null;
+    const phone = form.phone || null;
+
     const cost = selectedShipping.priceTotal ?? selectedShipping.price ?? 0;
 
     await db.query(
       `INSERT INTO shipping_details
-       (order_id,
-        recipient_first_name, recipient_last_name,
-        street, city, postal_code,
-        method, cost, locker_code,
-        recipient_email, recipient_phone, notes)
+     (order_id,
+      recipient_first_name, recipient_last_name,
+      street, city, postal_code,
+      method, cost, locker_code,
+      recipient_email, recipient_phone, notes)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         orderId,
@@ -129,8 +131,8 @@ const OrderModel = {
         selectedShipping.id,
         cost,
         lockerCode || null,
-        form.email, // ← e-mail z formularza
-        form.phone, // ← telefon z formularza
+        email,
+        phone,
         form.notes || null,
       ]
     );
@@ -351,7 +353,7 @@ const OrderModel = {
     return rows;
   },
 
-  // Szczegoly rozwinietego zamowienia
+  // Szczegoly rozwinietego zamowienia dla klienta
   async getSummaryForUser(orderId, userId) {
     // 1. Nagłówek + status + kwoty
     const [[o]] = await db.query(
@@ -386,10 +388,10 @@ const OrderModel = {
 
     // dopisujemy flaga canReview bez żadnego it.product
     for (const it of items) {
-      const pid      = it.id;
-      const bought   = await OrderModel.userBoughtProduct(userId, pid);
+      const pid = it.id;
+      const bought = await OrderModel.userBoughtProduct(userId, pid);
       const existing = await ReviewModel.findByUserAndProduct(userId, pid);
-      it.canReview   = bought && !existing;
+      it.canReview = bought && !existing;
     }
 
     // 3. Dostawa + płatność
@@ -429,6 +431,67 @@ const OrderModel = {
       : null;
 
     return { order: o, items, shipping: ship, payment, invoice };
+  },
+
+  async getByIdAdmin(id) {
+    const [[o]] = await db.query(`SELECT * FROM orders WHERE id = ?`, [id]);
+    if (!o) return null;
+
+    const [items] = await db.query(
+      `SELECT oi.quantity,
+              p.id, p.name, p.slug, p.image, p.category,
+              p.unit, p.quantity AS quantityPerUnit,
+              oi.price_brut_snapshot AS price
+       FROM order_items oi
+       JOIN products p ON p.id = oi.product_id
+       WHERE oi.order_id = ?`,
+      [id]
+    );
+
+    const [shippingRows] = await db.query(
+      `SELECT * FROM shipping_details WHERE order_id = ? LIMIT 1`,
+      [id]
+    );
+    const ship = shippingRows[0] || {};
+
+    const [paymentRows] = await db.query(
+      `SELECT * FROM payments WHERE order_id = ? LIMIT 1`,
+      [id]
+    );
+    const pay = paymentRows[0] || {};
+
+    const invoice = {
+      type: o.invoice_type,
+      name: o.invoice_name,
+      nip: o.invoice_nip,
+      email: o.invoice_email,
+      street: o.invoice_street,
+      city: o.invoice_city,
+      zip: o.invoice_zip,
+      country: o.invoice_country,
+    };
+
+    return {
+      order: o,
+      items: items.map((it) => ({ ...it, price: Number(it.price) })),
+      shipping: {
+        ...ship,
+        name:
+          ship.method === "pickup"
+            ? "Odbiór osobisty"
+            : ship.method === "inpost"
+            ? "Paczkomat InPost"
+            : "Kurier",
+        priceTotal: ship.cost,
+        deliveryMethod: ship.method,
+      },
+      payment: {
+        ...pay,
+        title: o.order_number,
+        bankAccount: process.env.BANK_ACCOUNT || "BRAK_NUMERU_KONTA",
+      },
+      invoice,
+    };
   },
 };
 
