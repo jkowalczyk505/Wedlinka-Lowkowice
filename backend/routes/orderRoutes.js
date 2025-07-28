@@ -7,6 +7,7 @@ const {
   getOrderDetails,
   updateOrderStatus,
   updatePaymentStatus,
+  updateTrackingNumber,   
   getLatestOrders,
   getOneForUser,
 } = require("../controllers/orderController");
@@ -27,5 +28,11 @@ router.get("/", protect, adminOnly, getAllOrders);
 router.get("/admin/:id", protect, adminOnly, getOrderDetails);
 router.put("/:id/status", protect, adminOnly, updateOrderStatus);
 router.put("/:id/payment-status", protect, adminOnly, updatePaymentStatus);
+router.put(
+   "/:id/tracking-number",
+   protect,
+   adminOnly,
+   updateTrackingNumber
+);
 
 module.exports = router;

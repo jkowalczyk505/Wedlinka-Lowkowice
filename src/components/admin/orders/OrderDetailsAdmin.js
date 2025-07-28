@@ -36,13 +36,18 @@ export default function OrderDetailsAdmin({ id }) {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [editingTrack, setEditingTrack]       = useState(false);
+  const [trackingNumber, setTrackingNumber]   = useState("");
 
   useEffect(() => {
     setLoading(true);
     setError(false);
     AuthFetch(`${API_URL}/api/orders/admin/${id}`)
       .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then(setOrder)
+      .then((data) => {
+        setOrder(data);
+        setTrackingNumber(data.shipping.tracking_number || "");
+      })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, [id]);
@@ -51,6 +56,30 @@ export default function OrderDetailsAdmin({ id }) {
   if (error) return <LoadError onRetry={() => window.location.reload()} />;
 
   const { order: summary, items, shipping, payment, invoice } = order;
+
+   // handler zapisu numeru przesyłki
+ const saveTracking = async () => {
+   try {
+     const res = await AuthFetch(
+       `${API_URL}/api/orders/${summary.id}/tracking-number`,
+       {
+         method: "PUT",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({ trackingNumber }),
+       }
+     );
+     if (!res.ok) throw new Error();
+     // zaktualizuj lokalnie
+     setOrder((o) => ({
+       ...o,
+       shipping: { ...o.shipping, tracking_number: trackingNumber },
+     }));
+     setEditingTrack(false);
+   } catch {
+     alert("Nie udało się zapisać numeru przesyłki");
+   }
+ };
+
 
   const total = parseFloat(payment.amount);
   const sumProducts = items.reduce(
@@ -154,6 +183,48 @@ export default function OrderDetailsAdmin({ id }) {
             </Button>
           </section>
         )}
+
+        <section>
+          <h5>Numer przesyłki</h5>
+          {!editingTrack ? (
+            // jeśli jest numer, pokazujemy go + przycisk edycji
+            shipping.tracking_number ? (
+              <div className="tracking-display">
+                <strong>{shipping.tracking_number}</strong>
+                <Button
+                  variant="red"
+                  onClick={() => setEditingTrack(true)}
+                >
+                  Edytuj
+                </Button>
+              </div>
+            ) : (
+              <Button onClick={() => setEditingTrack(true)}>
+                Dodaj numer przesyłki
+              </Button>
+            )
+          ) : (
+            <div className="tracking-edit">
+              <input
+                type="text"
+                value={trackingNumber}
+                onChange={(e) => setTrackingNumber(e.target.value)}
+                placeholder="Numer przesyłki"
+              />
+              <Button onClick={saveTracking}>Zapisz</Button>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setEditingTrack(false);
+                  setTrackingNumber(shipping.tracking_number || "");
+                }}
+              >
+                Anuluj
+              </Button>
+            </div>
+          )}
+        </section>
+
       </div>
     </div>
   );

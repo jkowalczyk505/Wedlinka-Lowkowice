@@ -396,7 +396,7 @@ const OrderModel = {
 
     // 3. Dostawa + płatność
     const [[ship]] = await db.query(
-      `SELECT method, cost, locker_code,
+      `SELECT method, cost, locker_code, tracking_number,
          recipient_first_name, recipient_last_name,
          street, city, postal_code,
          recipient_email, recipient_phone, notes
@@ -493,6 +493,15 @@ const OrderModel = {
       invoice,
     };
   },
+
+  async updateTrackingNumber(orderId, trackingNumber) {
+    await db.query(
+      `UPDATE shipping_details
+          SET tracking_number = ?
+        WHERE order_id = ?`,
+      [trackingNumber, orderId]
+    );
+  }
 };
 
 module.exports = OrderModel;
