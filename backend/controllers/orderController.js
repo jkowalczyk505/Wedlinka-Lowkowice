@@ -219,6 +219,21 @@ async function getOneForUser(req, res) {
   res.json(summary);
 }
 
+async function updateTrackingNumber(req, res) {
+  try {
+    const orderId = parseInt(req.params.id, 10);
+    const { trackingNumber } = req.body;
+    if (!trackingNumber) {
+      return res.status(400).json({ error: "Brak numeru przesyłki" });
+    }
+    await OrderModel.updateTrackingNumber(orderId, trackingNumber);
+    res.json({ message: "Numer przesyłki zaktualizowany" });
+  } catch (err) {
+    console.error("UPDATE TRACKING ERROR:", err);
+    res.status(500).json({ error: "Błąd aktualizacji numeru przesyłki" });
+  }
+}
+
 module.exports = {
   createOrder,
   getOrderSummary,
@@ -229,5 +244,5 @@ module.exports = {
   getOrderDetails,
   updateOrderStatus,
   updatePaymentStatus,
-  getLatestOrders,
+  updateTrackingNumber,
 };

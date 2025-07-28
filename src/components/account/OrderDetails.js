@@ -130,6 +130,14 @@ export default function OrderDetails({ id }) {
           <strong>Dostawa:</strong> {shippingToPL(shipping.method)} –{" "}
           {fmt(shipping.cost)} zł
         </li>
+        <li className="tracking-number">
+          {/* numer przesyłki (jeśli istnieje) */}
+          {shipping.tracking_number && (
+            <div>
+              <strong>Numer przesyłki:</strong> {shipping.tracking_number}
+            </div>
+          )}
+        </li>
         <li className="totals">Łącznie: {fmt(totalAll)} zł</li>
       </ul>
 
@@ -158,9 +166,12 @@ export default function OrderDetails({ id }) {
                 `e‑mail: ${shipping.recipient_email}`}
               <br />
               {shipping.locker_code && `Paczkomat: ${shipping.locker_code}`}
-              <br />
-              {shipping.notes && <em>Uwagi: {shipping.notes}</em>}
             </p>
+            <p>
+              Numer przesyłki:{" "}
+              {shipping.tracking_number || "Brak"}
+            </p>
+            {shipping.notes && <p><em>Uwagi: {shipping.notes}</em></p>}
           </section>
 
           <section>

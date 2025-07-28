@@ -14,7 +14,7 @@
     .details-grid {
         margin-top: 2rem;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 1rem;
     }
 
@@ -108,6 +108,17 @@
 
         .custom-button {
             margin-top: 0.5rem;
+        }
+
+        .tracking-display {
+            .custom-button {
+                margin-left: 0.5rem;
+            }
+        }
+        .tracking-edit {
+            .custom-button {
+                margin-right: 0.5rem;
+            }
         }
     }
 }
