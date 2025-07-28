@@ -21,6 +21,7 @@
     flex-direction: column;
     justify-content: center;
     text-align: center;
+
     .banner__content {
       justify-items: center;
     }
@@ -58,4 +59,99 @@
   align-items: center;
   justify-content: center;
   z-index: 2;
+}
+
+// 📱 TABLET (≤ 1024px)
+@media (max-width: 1024px) {
+  .banner {
+    height: 60vh;
+
+    .banner__overlay {
+      padding: 2rem;
+
+      .banner__label {
+        font-size: 1.4rem;
+      }
+
+      .banner__title {
+        font-size: 2.4rem;
+      }
+
+      .banner__subtitle {
+        font-size: 1rem;
+        max-width: 80%;
+      }
+    }
+  }
+}
+
+// 📱 MOBILE (≤ 768px)
+@media (max-width: 768px) {
+  .banner {
+    height: 50vh;
+
+    .banner__overlay {
+      padding: 1.5rem;
+
+      .banner__label {
+        font-size: 1.2rem;
+      }
+
+      .banner__title {
+        font-size: 1.8rem;
+      }
+
+      .banner__subtitle {
+        font-size: 0.95rem;
+        max-width: 90%;
+      }
+    }
+  }
+}
+
+// 📱 SMALL MOBILE (≤ 480px)
+@media (max-width: 480px) {
+  .banner {
+    height: 45vh;
+
+    .banner__overlay {
+      padding: 1rem;
+
+      .banner__label {
+        font-size: 1rem;
+      }
+
+      .banner__title {
+        font-size: 1.5rem;
+      }
+
+      .banner__subtitle {
+        font-size: 0.85rem;
+        max-width: 95%;
+      }
+    }
+  }
+}
+
+@media (min-width: 1440px) {
+  .banner {
+    height: 90vh;
+
+    .banner__overlay {
+      padding: 5rem;
+
+      .banner__label {
+        font-size: 3rem;
+      }
+
+      .banner__title {
+        font-size: 5rem;
+      }
+
+      .banner__subtitle {
+        font-size: 2rem;
+        max-width: 45%;
+      }
+    }
+  }
 }

@@ -134,6 +134,18 @@ h3 {
 
   section {
     padding: 3rem;
+
+    @media (max-width: 1024px) {
+      padding: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      padding: 1.5rem;
+    }
+
+    @media (max-width: 480px) {
+      padding: 1rem;
+    }
   }
 
   .dark-section {

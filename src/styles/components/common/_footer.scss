@@ -99,3 +99,185 @@
     border-top: 2px solid rgba($dark-color, .25);
   }
 }
+
+@media (max-width: 1024px) {
+  .footer {
+    padding: 2.5rem 1.5rem 1rem;
+
+    &__inner {
+      gap: 4rem;
+    }
+
+    &__heading {
+      font-size: 1rem;
+    }
+
+    &__info {
+      .footer__logo {
+        width: 120px;
+      }
+
+      .footer__social a {
+        width: 32px;
+        height: 32px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 2rem 1rem 1rem;
+
+    &__inner {
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5rem;
+      text-align: center;
+    }
+
+    &__col {
+      ul li {
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    &__heading {
+      font-size: 1rem;
+      margin-bottom: 0.8rem;
+    }
+
+    &__info {
+      max-width: 100%;
+
+      .footer__address {
+        font-size: 0.95rem;
+      }
+
+      .footer__social a {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+      }
+    }
+
+    &__bottom {
+      font-size: 0.85rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 2rem 0.5rem 1rem;
+
+    &__heading {
+      font-size: 0.95rem;
+    }
+
+    &__info {
+      .footer__logo {
+        width: 100px;
+      }
+
+      .footer__address {
+        font-size: 0.9rem;
+      }
+
+      .footer__social a {
+        width: 28px;
+        height: 28px;
+        font-size: 0.85rem;
+      }
+    }
+
+    &__bottom {
+      font-size: 0.8rem;
+    }
+  }
+}
+
+@media (min-width: 1440px) {
+  .footer {
+    padding: 4rem 3rem 2rem;
+
+    &__inner {
+      gap: 10rem;
+      max-width: 1400px;
+    }
+
+    &__heading {
+      font-size: 1.4rem;
+    }
+
+    &__info {
+      max-width: 360px;
+
+      .footer__logo {
+        width: 160px;
+      }
+
+      .footer__address {
+        font-size: 1.1rem;
+        line-height: 1.7;
+      }
+
+      .footer__social a {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+      }
+    }
+
+    &__col ul li {
+      a {
+        font-size: 1.05rem;
+      }
+    }
+
+    &__bottom {
+      font-size: 1rem;
+    }
+  }
+}
+
+@media (min-width: 1920px) {
+  .footer {
+    padding: 5rem 4rem 2rem;
+
+    &__inner {
+      gap: 12rem;
+      max-width: 1600px;
+    }
+
+    &__heading {
+      font-size: 2rem;
+    }
+
+    &__info {
+      .footer__logo {
+        width: 200px;
+      }
+
+      .footer__address {
+        font-size: 1.5rem;
+      }
+
+      .footer__social a {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+      }
+    }
+
+    &__col ul li {
+      a {
+        font-size: 1.5rem;
+      }
+    }
+
+    &__bottom {
+      font-size: 1.3rem;
+    }
+  }
+}

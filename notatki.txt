@@ -15,7 +15,7 @@ ACCOUNT
 - moje zamowienia: faktury pobieranie (dopiero po zaplacie)
     
 PANEL ADMINA
-- zamowienia - numer przesylki w bazie do maili wprowadzania dla admina, przycisk pobierz fakture (dopiero po zaplacie)
+- zamowienia - przycisk pobierz fakture (dopiero po zaplacie)
 *FAKTURY - potrzebne?
 
 ZAMAWIANIE 2 krok
@@ -47,4 +47,5 @@ NA KONIEC
 - ustaiwneie uzytkownika na usunietego uniemozliwia zalozenie kolejnego na ten sam email - poprawic??
 - archiwizacja i/lub usuwanie kont, danych z zamowien itp - czyszczenie tabel? cron?
 
-
+RESPONSYWNOSC
+- home page - zdjecie z packing info i about us niedopasowane na wieksze ekrany

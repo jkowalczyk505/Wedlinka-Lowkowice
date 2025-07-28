@@ -26,8 +26,8 @@
     align-items: center;
 
     .tile-icon {
-        font-size: 3.5rem;
-        color: $primary-color;
+      font-size: 3.5rem;
+      color: $primary-color;
     }
 
     .tile-title {
@@ -38,5 +38,47 @@
 
   &:hover .tile-image {
     filter: brightness(0.75);
+  }
+
+  @media (max-width: 1024px) {
+    height: 240px;
+
+    .tile-overlay {
+      .tile-icon {
+        font-size: 3rem;
+      }
+
+      .tile-title {
+        font-size: 1.4rem;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    height: 200px;
+
+    .tile-overlay {
+      .tile-icon {
+        font-size: 2.5rem;
+      }
+
+      .tile-title {
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    height: 180px;
+
+    .tile-overlay {
+      .tile-icon {
+        font-size: 2rem;
+      }
+
+      .tile-title {
+        font-size: 1.1rem;
+      }
+    }
   }
 }
