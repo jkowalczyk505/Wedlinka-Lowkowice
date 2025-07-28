@@ -83,3 +83,112 @@
     background: rgba(0, 0, 0, 0.4);
     z-index: 1999;
 }
+
+// TABLET (≤1024px)
+@media (max-width: 1024px) {
+    .cart-drawer {
+        width: 320px;
+        padding: 1rem;
+
+        .cart-header .close-button {
+            font-size: 2.5rem;
+        }
+
+        .cart-footer .total {
+            em span {
+                font-size: 1rem;
+            }
+
+            span {
+                font-size: 0.85rem;
+            }
+        }
+    }
+}
+
+// MOBILE (≤768px)
+@media (max-width: 768px) {
+    .cart-drawer {
+        width: 100%;
+        padding: 1rem;
+
+        .cart-header .close-button {
+            font-size: 2.2rem;
+        }
+
+        .cart-footer .total {
+            em span {
+                font-size: 1rem;
+            }
+
+            span {
+                font-size: 0.8rem;
+            }
+        }
+    }
+}
+
+// SMALL MOBILE (≤480px)
+@media (max-width: 480px) {
+    .cart-drawer {
+        padding: 0.8rem;
+
+        .cart-header .close-button {
+            font-size: 2rem;
+        }
+
+        .cart-footer .total {
+            em span {
+                font-size: 0.95rem;
+            }
+
+            span {
+                font-size: 0.75rem;
+            }
+        }
+    }
+}
+
+// LARGE SCREENS (≥1440px)
+@media (min-width: 1440px) {
+    .cart-drawer {
+        width: 440px;
+        padding: 1.5rem 2rem;
+
+        .cart-footer .total {
+            em span {
+                font-size: 1.3rem;
+            }
+
+            span {
+                font-size: 1rem;
+            }
+        }
+
+        .cart-header .close-button {
+            font-size: 3.5rem;
+        }
+    }
+}
+
+// EXTRA LARGE SCREENS (≥1920px)
+@media (min-width: 1920px) {
+    .cart-drawer {
+        width: 500px;
+        padding: 2rem 2.5rem;
+
+        .cart-footer .total {
+            em span {
+                font-size: 1.7rem;
+            }
+
+            span {
+                font-size: 1.3rem;
+            }
+        }
+
+        .cart-header .close-button {
+            font-size: 4rem;
+        }
+    }
+}

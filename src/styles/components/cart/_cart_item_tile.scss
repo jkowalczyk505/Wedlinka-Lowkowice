@@ -56,3 +56,95 @@
         }
     }
 }
+
+// 📱 MOBILE (≤768px)
+@media (max-width: 768px) {
+    .cart-item-tile {
+        gap: 0.8rem;
+
+        .item-left {
+            gap: 0.8rem;
+
+            img,
+            .default-icon {
+                width: 60px;
+                height: 60px;
+            }
+
+            .item-info {
+                .product-name {
+                    font-size: 0.95rem;
+                }
+
+                .product-qty,
+                .product-unit {
+                    font-size: 0.85rem;
+                }
+            }
+        }
+
+        .remove-button {
+            font-size: 1.2rem;
+            padding: 0.1rem 0.4rem;
+        }
+    }
+}
+
+// 📱 SMALL MOBILE (≤480px)
+@media (max-width: 480px) {
+    .cart-item-tile {
+        .item-left {
+
+            img,
+            .default-icon {
+                width: 50px;
+                height: 50px;
+            }
+
+            .item-info {
+                .product-name {
+                    font-size: 0.9rem;
+                }
+
+                .product-qty,
+                .product-unit {
+                    font-size: 0.8rem;
+                }
+            }
+        }
+
+        .remove-button {
+            font-size: 1.1rem;
+        }
+    }
+}
+
+// 🖥 LARGE SCREENS (≥1440px)
+@media (min-width: 1440px) {
+    .cart-item-tile {
+        .item-left {
+            gap: 1.2rem;
+
+            img,
+            .default-icon {
+                width: 100px;
+                height: 100px;
+            }
+
+            .item-info {
+                .product-name {
+                    font-size: 1.5rem;
+                }
+
+                .product-qty,
+                .product-unit {
+                    font-size: 1.3rem;
+                }
+            }
+        }
+
+        .remove-button {
+            font-size: 1.6rem;
+        }
+    }
+}
