@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { CiUser, CiShoppingCart, CiLogout } from "react-icons/ci";
+import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import { useAuth } from "../auth/AuthContext";
 import { logout } from "../auth/AuthUtils";
 import CartDrawer from "../cart/CartDrawer";
@@ -44,6 +45,26 @@ function Header() {
           </NavLink>
         </div>
 
+        <div className="header-right">
+          <button
+            className="account-button cart-only"
+            onClick={() => setCartOpen(true)}
+          >
+            <div className="cart-icon-wrapper">
+              <CiShoppingCart />
+              {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+            </div>
+          </button>
+
+          <button
+            className="burger-button"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            aria-label="Otwórz lub zamknij menu"
+          >
+            {menuOpen ? <HiOutlineX size={50} /> : <HiOutlineMenu size={50} />}
+          </button>
+        </div>
+
         <nav id="main-nav" className={menuOpen ? "open" : ""}>
           <ul className="menu" onClick={() => setMenuOpen(false)}>
             {navItems.map(({ to, label }) => (
@@ -58,6 +79,20 @@ function Header() {
                 </NavLink>
               </li>
             ))}
+
+            <li className="menu-item account-icons-mobile">
+              <button className="account-button" onClick={handleAccountClick}>
+                <CiUser />
+                Konto
+              </button>
+
+              {user && (
+                <button className="account-button" onClick={handleLogout}>
+                  <CiLogout />
+                  Wyloguj
+                </button>
+              )}
+            </li>
           </ul>
         </nav>
 
@@ -83,6 +118,7 @@ function Header() {
           )}
         </div>
       </div>
+
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </header>
   );
