@@ -4,7 +4,7 @@
 - w stopce i na kontakt prawdziwe adresy/telefony itp
 - spinnery, loaderror sprawdzic czy wszedzie sa i czy 77vh nigdzie nie przeszkadza
 - czy wszedzie jest authfetch uzyte do refresh
-- responsywnosc + duże ekrany
+- responsywnosc + duże ekrany + clamp!!
 - polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy, okres przechowywania danych invoices + shipping_details (5lat? jak porzucone nieoplacone to krocej)
 
 BACKEND
@@ -49,3 +49,4 @@ NA KONIEC
 
 RESPONSYWNOSC
 - home page - zdjecie z packing info i about us niedopasowane na wieksze ekrany
+- poprawic caly home, button, footer i cart drawer - clamp
