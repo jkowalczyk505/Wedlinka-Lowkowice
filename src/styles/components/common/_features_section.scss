@@ -1,148 +1,43 @@
 .page {
     .features-section {
-        padding: 3rem 5rem;
+        padding: clamp(2rem, 5vw, 6rem);
         display: flex;
         justify-content: space-around;
         flex-wrap: wrap;
-        gap: 2rem;
+        gap: clamp(1.5rem, 3vw, 3rem);
 
         .feature-item {
-            flex: 1 1 200px;
-            max-width: 300px;
+            flex: 1 1 clamp(150px, 25vw, 300px);
+            max-width: clamp(200px, 30vw, 360px);
             text-align: center;
 
             .feature-icon {
-                font-size: 2.5rem;
+                font-size: clamp(1.8rem, 2.5vw, 4rem);
             }
 
             .feature-title {
                 font-family: $font-decorative;
                 font-weight: 550;
-                font-size: 1.5rem;
+                font-size: clamp(1.1rem, 1.7vw, 2.3rem);
                 margin-bottom: 0.5rem;
             }
 
             .feature-subtitle {
-                font-size: 1rem;
+                font-size: clamp(0.9rem, 1.2vw, 1.5rem);
                 text-shadow: none;
             }
         }
     }
-}
 
-// TABLET (≤1024px)
-@media (max-width: 1024px) {
-    .page .features-section {
-        padding: 4rem 2rem;
-        gap: 1.5rem;
+    // Układ kolumnowy na mobilu
+    @media (max-width: 767px) {
+        .features-section {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
 
-        .feature-item {
-            flex: 1 1 150px;
-
-            .feature-icon {
-                font-size: 2.2rem;
-            }
-
-            .feature-title {
-                font-size: 1.3rem;
-            }
-
-            .feature-subtitle {
-                font-size: 0.95rem;
-            }
-        }
-    }
-}
-
-// MOBILE (≤768px)
-@media (max-width: 768px) {
-    .page .features-section {
-        padding: 3rem 1.5rem;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-
-        .feature-item {
-            max-width: 90%;
-
-            .feature-icon {
-                font-size: 2rem;
-            }
-
-            .feature-title {
-                font-size: 1.2rem;
-            }
-
-            .feature-subtitle {
-                font-size: 0.95rem;
-            }
-        }
-    }
-}
-
-// SMALL MOBILE (≤480px)
-@media (max-width: 480px) {
-    .page .features-section {
-        padding: 2rem 1rem;
-
-        .feature-item {
-            .feature-icon {
-                font-size: 1.8rem;
-            }
-
-            .feature-title {
-                font-size: 1.1rem;
-            }
-
-            .feature-subtitle {
-                font-size: 0.9rem;
-            }
-        }
-    }
-}
-
-// DESKTOP HD (≥1440px)
-@media (min-width: 1440px) {
-    .page .features-section {
-        padding: 5rem 6rem;
-        gap: 3rem;
-
-        .feature-item {
-            max-width: 340px;
-
-            .feature-icon {
-                font-size: 3rem;
-            }
-
-            .feature-title {
-                font-size: 2rem;
-            }
-
-            .feature-subtitle {
-                font-size: 1.2rem;
-            }
-        }
-    }
-}
-
-// DESKTOP 4K (≥1920px)
-@media (min-width: 1920px) {
-    .page .features-section {
-        padding: 6rem 8rem;
-
-        .feature-item {
-            max-width: 360px;
-
-            .feature-icon {
-                font-size: 4rem;
-            }
-
-            .feature-title {
-                font-size: 2.3rem;
-            }
-
-            .feature-subtitle {
-                font-size: 1.5rem;
+            .feature-item {
+                max-width: 90%;
             }
         }
     }

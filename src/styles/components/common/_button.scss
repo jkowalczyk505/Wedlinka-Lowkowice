@@ -1,12 +1,14 @@
 .custom-button {
     font-family: $font-heading;
     outline: none;
-    padding: 0.8rem 1.6rem;
+    padding: clamp(0.6rem, 1vw, 1rem) clamp(1.2rem, 2vw, 2rem);
     border: none;
     border-radius: 4px;
     cursor: pointer;
     transition: background 0.3s ease;
     letter-spacing: 0.5px;
+    font-size: clamp(0.9rem, 1.1vw, 1.2rem);
+    width: auto;
 
     &.red {
         background-color: $secondary-color;
@@ -38,33 +40,15 @@
     &:disabled {
         background-color: $primary-color-darken;
         color: $dark-color;
-        cursor: not-allowed; // zakazany kursor
-        opacity: 0.6; // delikatne przygaszenie
+        cursor: not-allowed;
+        opacity: 0.6;
 
         &:hover {
             background-color: $primary-color-darken;
         }
     }
-}
 
-@media (max-width: 768px) {
-    .custom-button {
-        font-size: 0.95rem;
-        padding: 0.7rem 1.4rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .custom-button {
-        font-size: 0.9rem;
-        padding: 0.6rem 1.2rem;
+    @media (max-width: 480px) {
         width: 100%;
-    }
-}
-
-@media (min-width: 1440px) {
-    .custom-button {
-        font-size: 1.2rem;
-        padding: 1rem 2rem;
     }
 }

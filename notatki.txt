@@ -49,4 +49,4 @@ NA KONIEC
 
 RESPONSYWNOSC
 - home page - zdjecie z packing info i about us niedopasowane na wieksze ekrany
-- poprawic caly home, button, footer i cart drawer - clamp
+- poprawic cart drawer - clamp
