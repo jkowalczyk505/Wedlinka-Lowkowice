@@ -1,23 +1,41 @@
 .intro-category-section {
-  padding: 2rem 1.6rem;
+  padding: clamp(1rem, 4vw, 2rem) clamp(1rem, 4vw, 1.6rem);
 
   .intro-header {
     display: grid;
-    grid-template-columns: 350px 1fr 350px;
+    grid-template-columns:
+      minmax(120px, clamp(120px, 30vw, 320px))
+      1fr
+      minmax(120px, clamp(120px, 30vw, 320px));
     align-items: center;
-    column-gap: 2rem;
+    column-gap: clamp(0.75rem, 3vw, 2rem);
 
     // tytuł w samym środku
     h1 {
       margin: 0;
       text-align: center;
-      font-size: 2.5rem;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
       font-family: $font-decorative;
       color: $primary-color;
     }
 
     .sort-wrapper {
-        justify-self: right;
+        justify-self: end;
+    }
+
+    @media (max-width: 700px) {
+      grid-template-columns: 1fr;      /* jedna kolumna */
+      row-gap: 1rem;
+
+      /* sort + breadcrumbs lądują pod tytułem */
+      .breadcrumbs-wrapper,
+      .sort-wrapper {
+        justify-self: start;
+      }
+
+      h1 {
+        text-align: left;              /* lepiej wygląda na wąskim */
+      }
     }
   }
 }
@@ -30,10 +48,10 @@
     align-items: center;
 
     .no-products {
-        font-size: 1.5rem;
+        font-size: clamp(1.2rem, 4vw, 1.5rem);
         align-self: center;
     }
     .custom-button {
-        margin-top: 1.5rem
+        margin-top: clamp(1rem, 3vw, 1.5rem);
     }
 }

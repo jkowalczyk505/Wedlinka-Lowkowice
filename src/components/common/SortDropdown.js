@@ -76,7 +76,8 @@ const customStyles = {
       ? HOVER_COLOR
       : '#333',
     cursor: 'pointer',
-    padding: '8px 12px',
+    fontSize: 'clamp(1rem, 2.5vw, 1.125rem)', // 👉 większy font
+    padding: '12px 16px',  
     '&:active': {
       backgroundColor: HOVER_COLOR + '33',
     },

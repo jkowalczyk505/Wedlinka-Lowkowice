@@ -1,7 +1,10 @@
 .breadcrumbs {
-  font-size: 0.9rem;
+  font-size: clamp(0.85rem, 1.2vw, 1.1rem);
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  column-gap: .25rem;      /* poziomy odstęp między elementami */
+  row-gap: .25rem;         /* pionowy odstęp przy złamaniu wiersza */
 
   .crumb {
     display: flex;
