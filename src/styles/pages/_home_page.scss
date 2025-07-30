@@ -4,25 +4,28 @@
       justify-items: center;
 
       h2 {
-        font-size: 2rem;
+        font-size: clamp(1.6rem, 2.5vw, 3.5rem);
+        text-align: center;
       }
 
       p {
         margin-top: 1rem;
-        font-size: 1.2rem;
+        font-size: clamp(1rem, 1.5vw, 2rem);
+        text-align: center;
       }
     }
 
     .show-all-btn {
-      margin-top: 3.5rem;
+      margin-top: clamp(2.5rem, 5vw, 4rem);
       justify-self: center;
-      width: 30%;
-      height: 4rem;
+      width: clamp(250px, 30vw, 400px);
+      height: auto;
+      padding: 0 1rem;
 
       .custom-button {
         width: 100%;
         height: 100%;
-        font-size: 1.35rem;
+        font-size: clamp(1.2rem, 1.5vw, 1.4rem);
       }
     }
   }
@@ -48,13 +51,13 @@
         flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start;
-        padding: 3rem 4rem;
-        font-size: 1.1rem;
+        padding: clamp(2rem, 4vw, 5rem);
+        font-size: clamp(1rem, 1.3vw, 2rem);
         text-align: left;
         color: $dark-color;
 
         h2 {
-          font-size: 1.9rem;
+          font-size: clamp(1.6rem, 3vw, 3.5rem);
           margin-bottom: 1.5rem;
           align-self: flex-start;
           color: $secondary-color;
@@ -68,6 +71,7 @@
           li {
             margin-bottom: 1.2rem;
             line-height: 1.6;
+            font-size: clamp(0.95rem, 1.2vw, 2rem);
 
             strong {
               color: $accent-color-darken;
@@ -77,9 +81,9 @@
       }
 
       .packing-info-image {
-        aspect-ratio: 1 / 1; // trzyma proporcje
+        aspect-ratio: 1 / 1;
         width: 100%;
-        max-height: 600px;
+        max-height: clamp(300px, 40vw, 700px);
         overflow: hidden;
         position: relative;
 
@@ -91,7 +95,6 @@
           object-fit: cover;
         }
       }
-
     }
   }
 
@@ -126,7 +129,7 @@
       }
 
       .about-content {
-        padding: 3rem 4rem;
+        padding: clamp(2rem, 4vw, 5rem);
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -134,7 +137,7 @@
 
         .subtitle {
           font-family: $font-decorative;
-          font-size: 1.5rem;
+          font-size: clamp(1.3rem, 2vw, 2.4rem);
           text-transform: uppercase;
           letter-spacing: 0.1rem;
           margin-bottom: 0.5rem;
@@ -143,12 +146,12 @@
         }
 
         h2 {
-          font-size: 2rem;
+          font-size: clamp(1.6rem, 3vw, 3.5rem);
           margin-bottom: 1rem;
         }
 
         p {
-          font-size: 1.1rem;
+          font-size: clamp(1rem, 1.5vw, 2rem);
           line-height: 1.6;
           margin-bottom: 1rem;
 
@@ -161,94 +164,24 @@
   }
 }
 
+// Responsive layout changes
 @media (max-width: 768px) {
-  .page .categories-section {
-    .categories-info {
-      text-align: center;
 
-      h2 {
-        font-size: 1.6rem;
-      }
-
-      p {
-        font-size: 1rem;
-      }
-    }
-
-    .show-all-btn {
-      margin-top: 2.5rem;
-      width: 100%;
-      padding: 0 1rem;
-
-      .custom-button {
-        font-size: 1.2rem;
-        height: 3.2rem;
-      }
-    }
-  }
-
-  .page .packing-section .packing-info-tile {
-    flex-direction: column;
-
-    .packing-info,
-    .packing-info-image {
-      flex: 1 1 100%;
-      max-width: 100%;
-    }
-
-    .packing-info {
-      padding: 2rem;
-      font-size: 1rem;
-
-      h2 {
-        font-size: 1.6rem;
-      }
-
-      ul li {
-        margin-bottom: 1rem;
-        font-size: 0.95rem;
-      }
-    }
-
-    .packing-info-image {
-      width: 100%;
-      height: 300px; // stała wysokość
-      position: relative;
-
-      img {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-    }
-  }
-
+  .page .packing-section .packing-info-tile,
   .page .about-section .about-tile {
     flex-direction: column;
 
-    .about-image,
-    .about-content {
+    .packing-info,
+    .about-content,
+    .packing-info-image,
+    .about-image {
       flex: 1 1 100%;
       max-width: 100%;
     }
 
-    .about-content {
-      padding: 2rem;
+    .about-content,
+    .packing-info {
       text-align: center;
-
-      .subtitle {
-        font-size: 1.3rem;
-      }
-
-      h2 {
-        font-size: 1.6rem;
-      }
-
-      p {
-        font-size: 1rem;
-      }
     }
 
     .about-image {
@@ -259,154 +192,16 @@
         height: auto;
       }
     }
-  }
-}
 
-@media (min-width: 769px) and (max-width: 1280px) {
-  .page {
-    .packing-section .packing-info-tile {
-      flex-direction: column;
+    .packing-info-image {
+      height: 300px;
 
-      .packing-info,
-      .packing-info-image {
-        flex: 1 1 100%;
-        max-width: 100%;
-      }
-
-      .packing-info {
-        padding: 2.5rem;
-        font-size: 1.05rem;
-
-        h2 {
-          font-size: 1.7rem;
-        }
-
-        ul li {
-          font-size: 1rem;
-        }
-      }
-
-      .packing-info-image {
+      img {
+        position: absolute;
+        inset: 0;
         width: 100%;
-        height: 350px;
-        overflow: hidden;
-
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          display: block;
-          position: relative;
-        }
-      }
-
-    }
-
-    .about-section .about-tile {
-      flex-direction: column;
-
-      .about-image,
-      .about-content {
-        flex: 1 1 100%;
-        max-width: 100%;
-      }
-
-      .about-image {
-        height: 350px;
-        overflow: hidden;
-
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          display: block;
-          position: relative;
-        }
-      }
-
-
-      .about-content {
-        padding: 2.5rem;
-        text-align: center;
-
-        .subtitle {
-          font-size: 1.4rem;
-        }
-
-        h2 {
-          font-size: 1.8rem;
-        }
-
-        p {
-          font-size: 1.05rem;
-        }
-      }
-    }
-  }
-}
-
-@media (min-width: 1440px) {
-  .page {
-    .categories-section {
-      .categories-info {
-        h2 {
-          font-size: 3.5rem;
-        }
-
-        p {
-          font-size: 2rem;
-        }
-      }
-
-      .show-all-btn {
-        margin-top: 4rem;
-        width: 25%;
-        height: 5rem;
-
-        .custom-button {
-          font-size: 2rem;
-        }
-      }
-    }
-
-    .packing-section .packing-info-tile {
-      .packing-info {
-        padding: 4rem 5rem;
-        font-size: 2rem;
-
-        h2 {
-          font-size: 3.5rem;
-        }
-
-        ul li {
-          font-size: 2rem;
-        }
-      }
-
-      .packing-info-image {
-        max-height: 700px;
-
-        img {
-          object-fit: cover;
-        }
-      }
-    }
-
-    .about-section .about-tile {
-      .about-content {
-        padding: 4rem 5rem;
-
-        .subtitle {
-          font-size: 2.4rem;
-        }
-
-        h2 {
-          font-size: 3.5rem;
-        }
-
-        p {
-          font-size: 2rem;
-        }
+        height: 100%;
+        object-fit: cover;
       }
     }
   }
