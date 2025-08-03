@@ -81,11 +81,9 @@
       }
 
       .packing-info-image {
-        aspect-ratio: 1 / 1;
-        width: 100%;
-        max-height: clamp(200px, 40vw, 800px);
-        overflow: hidden;
         position: relative;
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
 
         img {
           position: absolute;
@@ -93,7 +91,22 @@
           width: 100%;
           height: 100%;
           object-fit: cover;
+          display: block;          /* → usuwa biały pasek pod obrazkiem */
         }
+        /* TABLET & MOBILE  |  własna wysokość z clamp → nie “puchnie”       */
+          @media (max-width: 850px) {
+            aspect-ratio: unset;      /* uwalniamy się od 4 : 3        */
+            height: clamp(220px, 55vw, 340px);
+
+            /* na małych ekranach znowu absolutnie, żeby idealnie wypełnić  */
+            img {
+              position: absolute;
+              inset: 0;
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
+          }
       }
     }
   }
@@ -116,7 +129,7 @@
 
       .about-image {
         position: relative;
-        aspect-ratio: 4 / 3;
+        aspect-ratio: 7/6;
         overflow: hidden;
 
         img {
@@ -125,6 +138,7 @@
           width: 100%;
           height: 100%;
           object-fit: cover;
+          display: block;      /* kasuje ewentualną szczelinę inline-block */
         }
       }
 
@@ -165,7 +179,7 @@
 }
 
 // Responsive layout changes
-@media (max-width: 768px) {
+@media (max-width: 850px) {
 
   .page .packing-section .packing-info-tile,
   .page .about-section .about-tile {
@@ -179,8 +193,13 @@
       max-width: 100%;
     }
 
-    .about-content,
     .packing-info {
+      h2 {
+        text-align: center;
+      }
+    }
+
+    .about-content {
       text-align: center;
     }
 
@@ -194,13 +213,12 @@
     }
 
     .packing-info-image {
-      height: 300px;
+      aspect-ratio: unset;
 
       img {
-        position: absolute;
-        inset: 0;
+        position: relative;
         width: 100%;
-        height: 100%;
+        height: auto;
         object-fit: cover;
       }
     }
