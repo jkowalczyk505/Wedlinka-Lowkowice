@@ -1,69 +1,115 @@
 .page {
-    .contact-section {
-        padding: 0;
-        .contact-tile {
-            display: flex;
-            flex-wrap: nowrap;
-            align-items: stretch;
+  .contact-section {
+    padding: 0;
 
-            background-color: $primary-color-less-darken;
-            background-image: url("../../assets/pattern.png");
-            background-repeat: repeat;
-            background-size: auto;
+    .contact-tile {
+      min-height: 77vh;
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: stretch;
 
-            > div {
-                flex: 1 1 50%;
-                max-width: 50%;
-                padding: 4rem 8rem;
-            }
+      background-color: $primary-color-less-darken;
+      background-image: url("../../assets/pattern.png");
+      background-repeat: repeat;
+      background-size: auto;
 
-            .contact-info {
-                align-items: center;
+      > div {
+        flex: 1 1 50%;
+        max-width: 50%;
+        padding: clamp(2rem, 8vw, 4rem) clamp(1.5rem, 8vw, 8rem);
+        min-height: inherit;
+        align-content: center;
+        justify-content: center;
+      }
 
-                display: flex;
-                flex-direction: column;
-                height: 100%; 
-                h2 {
-                    margin-bottom: 2rem;
-                }
+      // mobile: stack vertically
+      @media (max-width: 1024px) {
+        flex-wrap: wrap;
 
-                .contact-box {
-                    width: 70%;
-                    gap: 1rem;
-                    flex: 1;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                    text-align: center;
-                    padding: 1.2rem;
-                    background: $primary-color;
-                    border-radius: 6px;
-                    margin-bottom: 1rem;
-                    border: 1px solid $primary-color-darken;
-
-                    .icon {
-                        font-size: 2rem;
-                        color: $secondary-color;
-                        margin-right: 1rem;
-                    }
-
-                    p {
-                        font-size: 1rem;
-                        line-height: 1.4;
-                    }
-                }
-            }
-            .contact-form {
-                height: 100%;
-                background-color: $primary-color;
-
-                .form-wrapper {
-                    h2 {
-                        font-size: 1.5rem;
-                    }
-                }
-            }
+        > div {
+          max-width: 100%;
+          flex: 1 1 100%;
+          padding: clamp(1.5rem, 5vw, 3rem);
         }
+      }
+
+      .contact-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100%;
+
+        h2 {
+          margin-bottom: clamp(1.5rem, 4vw, 2rem);
+          font-size: clamp(1.5rem, 2.5vw, 2rem);
+        }
+
+        .contact-box {
+          width: 100%;
+          max-width: 400px;
+          max-height: 200px;
+          gap: 1rem;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          padding: clamp(1rem, 2vw, 1.2rem);
+          background: $primary-color;
+          border-radius: 6px;
+          margin-bottom: clamp(1rem, 2vw, 1.2rem);
+          border: 1px solid $primary-color-darken;
+
+          .icon {
+            font-size: clamp(1.6rem, 2vw, 2rem);
+            color: $secondary-color;
+          }
+
+          p {
+            font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+            line-height: 1.4;
+          }
+        }
+      }
+
+      .contact-form {
+        height: 100%;
+        background-color: $primary-color;
+
+        .form-wrapper {
+          h2 {
+            font-size: clamp(1.4rem, 2vw, 1.8rem);
+          }
+        }
+      }
     }
+  }
+}
+
+@media (min-width: 1800px) {
+  .contact-info {
+    h2 {
+      font-size: 2.4rem;
+    }
+
+    .contact-box {
+      padding: 2rem;
+      max-width: 460px;
+
+      .icon {
+        font-size: 2.6rem;
+      }
+
+      p {
+        font-size: 1.25rem;
+      }
+    }
+  }
+
+  .contact-form .form-wrapper {
+    h2 {
+      font-size: 2rem;
+    }
+  }
 }

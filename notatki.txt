@@ -1,4 +1,3 @@
-- animacje
 - w stopce, na home i w innych miejscach odpowiednie linki do plikow + link do fb
 - walidacja contactform
 - w stopce i na kontakt prawdziwe adresy/telefony itp
@@ -51,5 +50,5 @@ NA KONIEC
 - archiwizacja i/lub usuwanie kont, danych z zamowien itp - czyszczenie tabel? cron?
 
 RESPONSYWNOSC
-- home page - zdjecie z packing info i about us niedopasowane na wieksze ekrany
+- home page - zdjecie z packing info sprawdzic czy na pewno ok po dostaniu ostatecznego zdjecia; about us niedopasowane na tablety
 - page ma wysokosc minimalna, ale tlo jest tylko na section, wiec cos trzeba z tym zrobic zeby nie bylo bialego tla
