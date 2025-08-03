@@ -7,7 +7,7 @@
     label {
         color: $dark-color;
         font-weight: 600;
-        font-size: 0.95rem;
+        font-size: clamp(0.9rem, 1.5vw, 1rem);
         margin-bottom: 0.5rem;
         display: inline-block;
     }
@@ -15,10 +15,10 @@
     .order-search-input {
         width: 100%;
         max-width: 300px;
-        padding: 0.5rem 0.8rem;
+        padding: clamp(0.4rem, 1vw, 0.6rem) clamp(0.6rem, 1.5vw, 1rem);
         border: 1px solid $dark-color-lighten;
         border-radius: 5px;
-        font-size: 0.95rem;
+        font-size: clamp(0.9rem, 1.5vw, 1rem);
         font-family: $font-main;
         color: $dark-color;
         background-color: white;
@@ -26,12 +26,20 @@
 
         &::placeholder {
             color: $dark-color-lighten;
-            font-size: 0.9rem;
+            font-size: clamp(0.85rem, 1.3vw, 0.95rem);
         }
 
         &:focus {
             outline: none;
             border-color: $secondary-color;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .order-search-bar {
+        .order-search-input {
+            max-width: 100%;
         }
     }
 }

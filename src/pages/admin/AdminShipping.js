@@ -105,10 +105,10 @@ export default function AdminShipping() {
           <tbody>
             {methods.map((m, idx) => (
               <tr key={m.id}>
-                <td>
+                <td data-label="Nazwa">
                   <input type="text" value={m.label} disabled readOnly />
                 </td>
-                <td>
+                <td data-label="Cena">
                   <input
                     type="text"
                     inputMode="decimal"
@@ -120,7 +120,7 @@ export default function AdminShipping() {
                     }
                   />
                 </td>
-                <td>
+                <td data-label="Pobranie">
                   <input
                     type="checkbox"
                     checked={m.cod}
@@ -128,7 +128,7 @@ export default function AdminShipping() {
                     disabled={m.id !== "courier"}
                   />
                 </td>
-                <td>
+                <td data-label="Opłata za pobranie">
                   <input
                     type="text"
                     inputMode="decimal"

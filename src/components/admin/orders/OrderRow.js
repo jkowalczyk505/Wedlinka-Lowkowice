@@ -49,20 +49,19 @@ export default function OrderRow({
       }`}
       onClick={() => !isEditing && onToggle(order.id)}
     >
-      <td>{order.order_number}</td>
-      <td>{new Date(order.created_at).toLocaleString()}</td>
-      <td>
+      <td data-label="Numer">{order.order_number}</td>
+      <td data-label="Data">{new Date(order.created_at).toLocaleString()}</td>
+      <td data-label="Kwota">
         {formatGrossPrice(
           Number(order.total_brut) + Number(order.shipping_cost || 0)
         )}{" "}
         zł
       </td>
-
-      <td>{shippingToPL(order.shipping_method)}</td>
-      <td>
+      <td data-label="Wysyłka">{shippingToPL(order.shipping_method)}</td>
+      <td data-label="Płatność">
         {order.payment_method ? paymentMethodToPL(order.payment_method) : "-"}
       </td>
-      <td>
+      <td data-label="Status płatności">
         {isEditing ? (
           <select
             value={tempPaymentStatus}
@@ -78,27 +77,23 @@ export default function OrderRow({
           paymentStatusToPL(order.payment_status)
         )}
       </td>
-      <td>
+      <td data-label="Status zamówienia">
         {isEditing ? (
           <select
             value={tempOrderStatus}
             onChange={(e) => setTempOrderStatus(e.target.value)}
           >
             {ORDER_STATUS_KEYS.filter((k) => {
-              // "ready_for_pickup" tylko przy odbiorze osobistym
               if (
                 k === "ready_for_pickup" &&
                 order.shipping_method !== "pickup"
               )
                 return false;
-
-              // "packed" i "shipped" tylko gdy NIE odbiór osobisty
               if (
                 (k === "packed" || k === "shipped") &&
                 order.shipping_method === "pickup"
               )
                 return false;
-
               return true;
             }).map((k) => (
               <option key={k} value={k}>
@@ -110,7 +105,7 @@ export default function OrderRow({
           statusToPL(order.order_status)
         )}
       </td>
-      <td>
+      <td data-label="Akcje">
         {isEditing ? (
           <>
             <Button

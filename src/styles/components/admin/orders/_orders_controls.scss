@@ -8,7 +8,7 @@
         label {
             color: $dark-color;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: clamp(0.85rem, 1.2vw, 0.95rem);
             margin-right: 0.5rem;
             display: inline-block;
         }
@@ -42,9 +42,9 @@
             gap: 0.4rem;
             cursor: pointer;
             color: $dark-color;
-            padding: 0.3rem 0.6rem;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: clamp(0.8rem, 1.1vw, 0.9rem);
+            padding: clamp(0.25rem, 0.7vw, 0.35rem) clamp(0.5rem, 1vw, 0.6rem);
             border: 1px solid $dark-color-lighten;
             transition: background-color 0.2s;
 
@@ -55,6 +55,36 @@
 
             &:hover {
                 background-color: $accent-color;
+            }
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .orders-controls {
+
+        .sort-control,
+        .filter-control {
+            flex-direction: column;
+            align-items: flex-start;
+
+            label {
+                margin-bottom: 0.4rem;
+            }
+
+            select {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+
+        .status-filters {
+            flex-direction: column;
+            gap: 0.5rem;
+
+            .status-checkbox {
+                width: 100%;
+                justify-content: flex-start;
             }
         }
     }

@@ -1,4 +1,7 @@
-.admin-page-container   { min-height: 77vh; display: flex; }
+.admin-page-container {
+  min-height: 77vh;
+  display: flex;
+}
 
 .admin-sidebar {
   width: 20vw;
@@ -6,24 +9,73 @@
   background-repeat: repeat;
   padding: 2rem;
 
-  h2 { font-family: $font-heading; font-size: 1.6rem; margin-bottom: 2rem;
-       color: $accent-color-darken; }
+  h2 {
+    font-family: $font-heading;
+    font-size: 1.6rem;
+    margin-bottom: 2rem;
+    color: $accent-color-darken;
+  }
 
   nav {
-    display: flex; flex-direction: column;
+    display: flex;
+    flex-direction: column;
 
     .nav-link {
-      display: flex; align-items: center;
-      padding: 1rem 0; font-size: 1.1rem;
-      color: $dark-color; text-decoration: none;
-      border-bottom: 1px solid lighten($dark-color,50%);
+      display: flex;
+      align-items: center;
+      padding: 1rem 0;
+      font-size: 1.1rem;
+      color: $dark-color;
+      text-decoration: none;
+      border-bottom: 1px solid lighten($dark-color, 50%);
       transition: color .2s;
 
-      svg { margin-right: .6rem; }
+      svg {
+        margin-right: .6rem;
+      }
 
-      &.active, &:hover { color: $accent-color; }
+      &.active,
+      &:hover {
+        color: $accent-color;
+      }
     }
   }
 }
 
-.admin-main { flex: 1; padding: 4rem; }
+.admin-main {
+  flex: 1;
+  padding: 4rem;
+}
+
+@media (max-width: 1024px) {
+  .admin-page-container {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    padding: 2rem 1.5rem;
+    border-bottom: 1px solid $primary-color-darken;
+
+    nav {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 1rem;
+
+      .nav-link {
+        flex: 1 1 calc(50% - 1rem);
+        padding: 0.8rem;
+        border-bottom: none;
+        border: 1px solid $primary-color-darken;
+        border-radius: 4px;
+        text-align: center;
+        justify-content: center;
+        background: $primary-color;
+      }
+    }
+  }
+
+  .admin-main {
+    padding: 2rem 1.5rem;
+  }
+}

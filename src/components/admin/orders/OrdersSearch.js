@@ -9,6 +9,8 @@ export default function OrdersSearch({ value, onChange }) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="order-search-input"
+        autoComplete="off"
+        aria-label="Szukaj po numerze zamówienia"
       />
     </div>
   );

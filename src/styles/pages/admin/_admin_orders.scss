@@ -29,5 +29,45 @@
         cursor: pointer;
         text-decoration: underline;
     }
+}
 
+@media (max-width: 1023px) {
+    .admin-table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        border: 1px solid $primary-color-darken;
+        border-radius: 5px;
+        white-space: nowrap;
+
+        thead {
+            display: none;
+        }
+
+        tbody {
+            display: block;
+        }
+
+        tr {
+            display: grid;
+            grid-template-columns: 1fr;
+            border-bottom: 1px solid $primary-color-darken;
+            padding: 1rem;
+        }
+
+        td {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 0.5rem 0;
+            gap: 0.2rem;
+            word-break: break-word;
+
+            &::before {
+                content: attr(data-label);
+                font-weight: bold;
+                color: $dark-color-lighten;
+            }
+        }
+    }
 }

@@ -1,6 +1,7 @@
 .cart-page {
     padding: clamp(1rem, 5vw, 4rem);
     padding-bottom: clamp(2rem, 5vw, 3rem);
+    min-height: 77vh;
 
     .login-prompt {
         text-align: center;
@@ -70,6 +71,7 @@
 // Gdy koszyk pusty
 .cart-empty {
     padding: clamp(1rem, 4vw, 2rem) 1rem;
+    min-height: 77vh;
 
     .empty-container {
         text-align: center;
