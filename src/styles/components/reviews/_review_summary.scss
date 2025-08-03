@@ -56,9 +56,21 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 100;
-      width: max-content;
-      min-width: 250px;
-      max-width: 400px;
+
+      width: 100vw;
+      max-width: 90vw;     // ← ograniczamy szerokość
+      padding: 0 1rem;      // ← lekki padding
+      box-sizing: border-box;
+
+      @media (min-width: 480px) {
+        max-width: 400px;  // ← na większych wraca do normalnego rozmiaru
+      }
+
+      /* 📱 ≤ 480 px – przyklejamy do widocznego ekranu */
+      @media (max-width: 480px) {
+        left: 10%;                /* początek wrappera */
+        transform: translateX(-10%);
+      }
     }
   }
 
