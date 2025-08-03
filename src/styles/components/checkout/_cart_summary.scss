@@ -1,13 +1,13 @@
 .cart-summary {
     position: sticky;
-    top: 2rem; // odsunięcie od góry ekranu, dostosuj wartości wedle potrzeb
-    align-self: flex-start; // żeby sticky działało poprawnie we flex containerze
+    top: clamp(1rem, 3vw, 2rem);
+    align-self: flex-start;
 
-    flex: 1;
-    padding: 1.5rem;
+    flex: 1 1 clamp(300px, 35vw, 480px);
+    padding: clamp(1rem, 3vw, 1.5rem);
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: clamp(1rem, 2.5vw, 1.5rem);
     background-color: $primary-color;
     border-radius: 5px;
     border: 1px solid $primary-color-darken;
@@ -20,7 +20,7 @@
         em {
             font-weight: 600;
             font-style: normal;
-            font-size: 1.3rem;
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
         }
 
         &.free {
@@ -47,7 +47,7 @@
             border-bottom: 1px solid $primary-color-darken;
 
             strong {
-                font-size: 1.4rem;
+                font-size: clamp(1.2rem, 2.5vw, 1.4rem);
                 font-family: $font-heading;
                 color: $secondary-color;
             }
@@ -57,7 +57,7 @@
             display: flex;
             justify-content: space-between;
             color: $dark-color-lighten;
-            font-size: 0.9rem;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
             padding: 1rem 0;
             border-bottom: 1px solid $primary-color-darken;
 
@@ -73,9 +73,9 @@
             color: $dark-color-lighten;
             padding: 0.3rem 0;
 
-
             strong {
                 color: $dark-color;
+                font-size: clamp(1rem, 2vw, 1.2rem);
             }
         }
 
@@ -91,7 +91,7 @@
         gap: 1.2rem;
 
         .accept-terms-label {
-            font-size: 0.9rem;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
             display: flex;
             align-items: center;
             gap: 0.6rem;
@@ -108,9 +108,16 @@
         }
 
         button {
-            padding-top: 1rem;
-            padding-bottom: 1rem;
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
             width: 100%;
         }
+    }
+}
+
+@media (max-width: 768px) {
+    .cart-summary {
+        position: static;
+        top: auto;
     }
 }

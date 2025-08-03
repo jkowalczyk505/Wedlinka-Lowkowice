@@ -1,19 +1,6 @@
 .cart-row {
     display: grid;
-    grid-template-columns:
-        100px
-        /* obrazek */
-        2fr
-        /* nazwa+jednostka */
-        100px
-        /* cena */
-        120px
-        /* ilość */
-        100px
-        /* kwota */
-        20px
-        /* usuń */
-    ;
+    grid-template-columns: 100px 2fr 100px 120px 100px 20px;
     align-items: center;
     background-color: $primary-color;
     border-radius: 5px;
@@ -34,14 +21,6 @@
             text-transform: uppercase;
             font-size: 0.9rem;
             text-align: center;
-        }
-
-        .cart-row__details {
-            /* pusta */
-        }
-
-        .cart-row__remove {
-            /* puste */
         }
     }
 
@@ -105,6 +84,74 @@
             &:hover {
                 color: $secondary-color;
             }
+        }
+    }
+
+    // TABLET (≤1024px)
+    @media (max-width: 1024px) {
+        grid-template-columns: 80px 1.5fr 80px 100px 80px 20px;
+
+        &__img img {
+            width: 80px;
+            height: 80px;
+        }
+
+        &__total {
+            font-size: 1.2rem;
+        }
+    }
+
+    // MOBILE (<768px)
+    @media (max-width: 767px) {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 0.8rem;
+        text-align: center;
+
+        &--header {
+            display: none;
+        }
+
+        &__img {
+            justify-self: center;
+
+            img {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        &__details {
+            padding: 0;
+
+            .cart-row__name {
+                font-size: 1.1rem;
+            }
+
+            .cart-row__unit {
+                font-size: 0.85rem;
+            }
+        }
+
+        &__price,
+        &__qty,
+        &__total,
+        &__remove {
+            justify-content: center;
+        }
+
+        &__price,
+        &__qty,
+        &__total {
+            font-size: 1rem;
+        }
+
+        &__total {
+            font-size: 1.2rem;
+        }
+
+        &__remove {
+            order: 10;
         }
     }
 }
