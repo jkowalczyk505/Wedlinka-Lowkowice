@@ -49,4 +49,4 @@ NA KONIEC
 
 RESPONSYWNOSC
 - home page - zdjecie z packing info i about us niedopasowane na wieksze ekrany
-- poprawic cart drawer - clamp
+- page ma wysokosc minimalna, ale tlo jest tylko na section, wiec cos trzeba z tym zrobic zeby nie bylo bialego tla

@@ -102,7 +102,7 @@ const CartPage = () => {
         <div className="cart-empty pattern-section">
           <CheckoutSteps currentStep={1} />
           <div className="empty-container">
-            <ShoppingBag size={140} />
+            <ShoppingBag />
             <p>Twój koszyk jest aktualnie pusty.</p>
             <Link to="/sklep">
               <Button variant="red">Wróć do sklepu</Button>

@@ -5,7 +5,7 @@
 
     h2 {
         font-family: $font-heading;
-        font-size: 1.2rem;
+        font-size: clamp(1.1rem, 2.5vw, 1.5rem);
         margin-bottom: 1.5rem;
         color: $dark-color;
     }
@@ -15,15 +15,16 @@
         color: $dark-color;
         margin-bottom: 0.5rem;
         display: block;
-        font-size: 0.9rem;
+        font-size: clamp(0.85rem, 1.2vw, 1rem);
     }
 
     .password-wrapper {
         position: relative;
-        width: 60%;
+        width: 100%;
+        max-width: 500px;
 
         input {
-            width: 90%;
+            width: 100%;
         }
 
         .eye-button {
@@ -134,10 +135,10 @@
     select {
         resize: none;
         width: 100%;
-        padding: 0.75rem 1rem;
+        padding: clamp(0.6rem, 1vw, 0.9rem) clamp(0.8rem, 2vw, 1.2rem);
         border: 1px solid $dark-color-lighten;
         border-radius: 4px;
-        font-size: 0.9rem;
+        font-size: clamp(0.85rem, 1vw, 1rem);
         margin-bottom: 1.2rem;
         font-family: $font-main;
         background: $primary-color;
@@ -151,7 +152,7 @@
 
     .form-error {
         color: $secondary-color;
-        font-size: 0.9rem;
+        font-size: clamp(0.8rem, 1vw, 0.95rem);
         margin-bottom: 1rem;
     }
 
@@ -165,7 +166,7 @@
     }
 
     .form-note {
-        font-size: 0.85rem;
+        font-size: clamp(0.8rem, 1vw, 0.95rem);
         color: $dark-color;
         opacity: 0.8;
         margin-top: -0.5rem;
@@ -183,7 +184,7 @@
 
     .form-link {
         color: $secondary-color;
-        font-size: 0.9rem;
+        font-size: clamp(0.8rem, 1vw, 0.95rem);
         text-align: right;
         margin-bottom: 0.5rem;
 
@@ -202,9 +203,9 @@
         .postal-digit {
             padding: 0;
             margin: 0;
-            width: 2.5rem;
-            height: 2.5rem;
-            font-size: 1.3rem;
+            font-size: clamp(1.1rem, 2vw, 1.3rem);
+            width: clamp(2.2rem, 6vw, 2.5rem);
+            height: clamp(2.2rem, 6vw, 2.5rem);
             text-align: center;
             border: 2px solid #ccc;
             border-radius: 6px;
@@ -213,7 +214,7 @@
         }
 
         .dash {
-            font-size: 1.4rem;
+            font-size: clamp(1rem, 2vw, 1.4rem);
             margin: 0 0.2rem;
             user-select: none;
             pointer-events: none;

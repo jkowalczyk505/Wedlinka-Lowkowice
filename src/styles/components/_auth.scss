@@ -9,10 +9,11 @@
     .auth-overlay {
         background-color: rgba(0, 0, 0, 0.6);
         width: 100%;
+        min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 5rem 2rem;
+        padding: clamp(1rem, 5vw, 5rem) 1.5rem;
     }
 
     .auth-card-container {
@@ -20,14 +21,14 @@
         flex-wrap: wrap;
         justify-content: center;
         width: 100%;
-        max-width: 1000px;
+        max-width: clamp(320px, 95vw, 1300px);
     }
 
     .auth-card {
         background: $primary-color;
-        padding: 5rem;
-        flex: 1 1 480px;
-        max-width: 500px;
+        padding: clamp(2.5rem, 6vw, 6.5rem);
+        flex: 1 1 clamp(320px, 40vw, 600px);
+        max-width: clamp(320px, 40vw, 600px);
 
         &:last-child {
             position: relative;
@@ -40,15 +41,13 @@
                 transform: translateY(-50%);
                 width: 1px;
                 height: 80%;
-                background-color: rgba(0, 0, 0, 0.10);
+                background-color: rgba(0, 0, 0, 0.1);
             }
         }
-
     }
 
     @media (max-width: 768px) {
         .auth-card {
-            border-radius: 8px;
             max-width: 100%;
             flex: 1 1 100%;
         }
@@ -58,8 +57,7 @@
                 display: none;
             }
 
-            border-left: none;
-            border-top: 1px solid rgba(0, 0, 0, 0.1); // pozioma linia
+            border-top: 1px solid rgba(0, 0, 0, 0.1); // pozioma linia na mobile
             border-top-left-radius: 0;
             border-top-right-radius: 0;
         }

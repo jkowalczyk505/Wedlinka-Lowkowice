@@ -1,16 +1,17 @@
 .cart-steps {
     display: flex;
     justify-content: center;
-    gap: 5rem;
-    margin-bottom: 3rem;
+    flex-wrap: wrap; // 💡 umożliwia zawijanie na małych ekranach
+    gap: clamp(1.5rem, 4vw, 5rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
     padding-top: 1rem;
-    padding-bottom: 3rem;
+    padding-bottom: clamp(1.5rem, 3vw, 3rem);
     border-bottom: 1px solid $dark-color-more-lighten;
 
     .step {
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: clamp(0.5rem, 2vw, 1rem);
         cursor: default;
         position: relative;
 
@@ -19,15 +20,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 3.5rem;
-            height: 3.5rem;
+            width: clamp(2.5rem, 6vw, 3.5rem);
+            height: clamp(2.5rem, 6vw, 3.5rem);
             border: 2px solid $dark-color-lighten;
             border-radius: 50%;
             font-weight: 700;
             color: $dark-color-lighten;
             background: transparent;
             transition: border-color 0.2s, color 0.2s;
-            font-size: 1.4rem;
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
         }
 
         &.done::before {
@@ -42,11 +43,12 @@
         }
 
         .step-label {
-            font-size: 1.5rem;
+            font-size: clamp(1rem, 3vw, 1.5rem);
             color: $dark-color-lighten;
             transition: color 0.2s;
             font-family: $font-heading;
             font-weight: 500;
+            text-align: center;
         }
 
         &.active .step-label,
