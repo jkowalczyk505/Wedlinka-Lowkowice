@@ -5,14 +5,17 @@
     transform: translateX(-50%) translateY(-10px);
     opacity: 0;
     background: $primary-color;
-    padding: 1rem 1.5rem;
+    padding: clamp(0.8rem, 2vw, 1.2rem) clamp(1rem, 4vw, 1.5rem);
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     z-index: 3000;
     display: flex;
     align-items: center;
     gap: 1rem;
-    font-size: 0.9rem;
+    font-size: clamp(0.85rem, 1vw, 1rem);
+    max-width: 90vw;
+    width: max-content;
+    min-width: 250px;
     pointer-events: auto;
     animation: slideFadeIn 0.4s ease forwards;
 
@@ -48,28 +51,40 @@
 }
 
 .confirm-alert-backdrop {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.4);
-  z-index: 5000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 5000;
 
-  .confirm-alert-box {
-    background: $primary-color;
-    padding: 2rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 5001;
-    p{
-        margin-bottom: 1.5rem;
-        font-size: 1.2rem;
+    .confirm-alert-box {
+        background: $primary-color;
+        padding: 2rem;
+        width: 100%;
+        max-width: 400px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        font-size: clamp(1rem, 1.3vw, 1.2rem);
+        z-index: 5001;
+
+        p {
+            margin-bottom: 1.5rem;
+        }
+
+        .confirm-alert-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+
+            button {
+                padding: 0.6rem 1.2rem;
+                font-size: 1rem;
+            }
+        }
     }
-    .confirm-alert-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 1.5rem;
-    }
-  }
 }

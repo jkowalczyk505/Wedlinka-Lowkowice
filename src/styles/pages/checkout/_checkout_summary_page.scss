@@ -1,27 +1,32 @@
 .summary-page {
-    padding: 2rem 4rem;
-    padding-bottom: 3rem;
+    padding: clamp(1rem, 4vw, 4rem);
+    padding-bottom: clamp(2rem, 5vw, 3rem);
     min-height: 77vh;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 
     p {
-        justify-self: center;
+        text-align: left; // zmiana z center
+        font-size: clamp(1rem, 2vw, 1.2rem);
     }
 
     .summary-title {
-        margin-bottom: 1rem;
-        justify-self: center;
+        margin-bottom: 0.5rem;
+        text-align: left; // zmiana z center
+        font-size: clamp(1.5rem, 3vw, 2.2rem);
+        font-family: $font-heading;
     }
 
     .order-total {
         margin-top: 1rem;
-        margin-right: 1rem;
-        justify-self: right;
+        text-align: right;
+        font-size: clamp(1rem, 1.5vw, 1.2rem);
     }
 
     .custom-button {
         margin-top: 2rem;
-        margin-right: 1rem;
-        float: right;
+        align-self: flex-end;
+        font-size: clamp(0.9rem, 1vw, 1.1rem);
     }
-
 }

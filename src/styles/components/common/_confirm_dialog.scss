@@ -6,25 +6,34 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 1rem;
 }
 
 .confirm-box {
-    background: white;
-    padding: 2rem;
+    background: $primary-color;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
     border-radius: 8px;
     max-width: 400px;
-    width: 90%;
+    width: 100%;
     text-align: center;
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
 
     p {
-        margin-bottom: 1.5rem;
-        font-size: 1.1rem;
+        margin-bottom: clamp(1rem, 2vw, 1.5rem);
+        font-size: clamp(1rem, 1.2vw, 1.2rem);
+        color: $dark-color;
     }
 
     .confirm-actions {
         display: flex;
         justify-content: center;
-        gap: 1rem;
+        flex-wrap: wrap;
+        gap: clamp(0.5rem, 2vw, 1.5rem);
+    }
+
+    button {
+        font-size: 1rem;
+        padding: 0.6rem 1.2rem;
+        min-width: 100px;
     }
 }

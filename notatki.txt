@@ -26,6 +26,9 @@ ZAMAWIANIE 3 krok
 - ekrany - platnosc przez bramke
 - produkt bez zdjecia ma miec default
 
+COOKIE BANNER
+- polityka podpiac
+
 ZAMAWIANIE
 - zmiana statusow wysylek, zamowien, platnosci
 
