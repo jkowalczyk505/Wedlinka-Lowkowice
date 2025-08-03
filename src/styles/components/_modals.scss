@@ -9,8 +9,8 @@
 .modal-window{
   position:fixed; top:50%; left:50%;
   transform:translate(-50%,-50%);
-  width: min(650px, 90vw);
-  max-height: 90vh;
+  width: clamp(320px, 60vw, 1000px);
+  max-height: 80vh;
   background:$primary-color;
   box-shadow:0 8px 25px rgba(0,0,0,.25);
   display:flex; flex-direction:column;
@@ -20,9 +20,9 @@
 
 .modal-header{
   display:flex; justify-content:space-between; align-items:center;
-  padding:1.8rem; background:$secondary-color;
+  padding: clamp(1rem, 3vw, 2.4rem); background:$secondary-color;
   h2{ 
-    font-size:1.4rem; 
+    font-size: clamp(1.1rem, 2.2vw, 1.6rem);
     color: $primary-color;
   }
   .close-btn{
@@ -32,11 +32,17 @@
     &:hover {
       color: $dark-color;
     }
+
+    svg,
+    .lucide {
+      width: clamp(20px, 2.2vw, 28px);
+      height: clamp(20px, 2.2vw, 28px);
+    }
   }
 }
 
 .modal-body{
-  padding:1.5rem 1.8rem;
+  padding: clamp(1rem, 3vw, 2rem) clamp(1rem, 3vw, 2.4rem);
   overflow-y:auto;
 }
 
@@ -121,19 +127,25 @@
   textarea{
     width:100%; 
     resize:none; 
-    min-height:150px;
+    min-height: clamp(120px, 25vh, 180px);
     margin-top:.6rem; 
     margin-bottom:1.3rem;
     padding:1rem; 
     border:1px solid #ccc; 
     font-family:$font-main; 
-    font-size:1rem;
+    font-size: clamp(0.9rem, 1.8vw, 1.1rem);
     &:focus {
       outline: none;
       border-color: $accent-color;
     }
   }
-  .stars{ display:flex; gap:.4rem; margin-bottom:1.2rem; }
+  .stars{ display:flex; gap:.4rem; margin-bottom: clamp(1rem, 2.5vw, 1.4rem);
+    svg {
+      width: clamp(26px, 3vw, 40px);
+      height: clamp(26px, 3vw, 40px);
+      cursor: pointer;
+    }
+  }
   .modal-actions {
     display: flex;
     gap: 1rem;
