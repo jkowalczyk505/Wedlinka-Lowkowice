@@ -1,11 +1,12 @@
 .load-error {
     text-align: center;
-    padding: 2rem;
+    padding: clamp(1rem, 4vw, 2rem);
     min-height: 77vh;
-    align-content: center;
+    display: grid;
+    place-content: center;
 
     .load-error-message {
-        font-size: 1.2rem;
-        margin-bottom: 0.8rem;
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        margin-bottom: clamp(0.5rem, 2vw, 0.8rem);
     }
 }

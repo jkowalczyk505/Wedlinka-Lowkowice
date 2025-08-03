@@ -2,7 +2,7 @@
     .form-group {
         .form-section {
             .info-tip {
-                font-size: 0.85rem;
+                font-size: clamp(0.8rem, 1.5vw, 0.95rem);
                 margin: 1rem 0 0 0;
             }
         }
