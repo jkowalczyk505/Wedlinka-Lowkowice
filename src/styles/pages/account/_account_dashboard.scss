@@ -4,16 +4,18 @@
 
     // Nagłówek
     h1 {
-        font-family: $font-heading;
-        color: $secondary-color;
-        margin-bottom: 0.5rem;
-    }
+    font-family: $font-heading;
+    color: $secondary-color;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    margin-bottom: 0.5rem;
+  }
 
-    .welcome-text {
-        font-family: $font-main;
-        color: $dark-color;
-        margin-bottom: 2rem;
-    }
+  .welcome-text {
+    font-family: $font-main;
+    color: $dark-color;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    margin-bottom: 2rem;
+  }
 
     section {
         margin-bottom: 2.5rem;

@@ -87,6 +87,7 @@
   }
 
   .radio-group {
+    flex-wrap: wrap;
     display: flex;
     gap: 2rem;
     margin-top: 0.5rem;

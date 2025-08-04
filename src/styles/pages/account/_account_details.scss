@@ -40,3 +40,30 @@
         text-transform: uppercase;
     }
 }
+
+@media (max-width: 768px) {
+  .account-details {
+    flex-direction: column;
+
+    .account-columns {
+      flex-direction: column;
+      gap: 2rem;
+      padding: 0 1rem;
+    }
+
+    .personal-data,
+    .email-change {
+      flex: 1 1 100%;
+      min-width: 0;
+      padding: 0 1rem;
+    }
+
+    .email-change::before {
+      display: none;
+    }
+
+    h2 {
+      font-size: clamp(1.3rem, 4vw, 1.6rem);
+    }
+  }
+}

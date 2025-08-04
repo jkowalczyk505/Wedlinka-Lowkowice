@@ -59,3 +59,19 @@
       }
     }
   }
+
+  @media (max-width: 500px) {
+  .order-tile {
+    .thumbs {
+      flex-wrap: wrap;
+      gap: 0.4rem;
+
+      img,
+      .more {
+        width: calc(33.333% - 0.4rem);  // 3 w rzędzie
+        height: 80px;
+        font-size: 0.8rem;
+      }
+    }
+  }
+}

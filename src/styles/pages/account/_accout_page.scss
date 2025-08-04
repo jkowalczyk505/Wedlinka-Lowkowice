@@ -59,3 +59,36 @@
         color: $dark-color;
     }
 }
+
+@media (max-width: 1024px) {
+  .account-page-container {
+    flex-direction: column;
+  }
+
+  .account-sidebar {
+    width: 100%;
+    padding: 2rem 1.5rem;
+    border-bottom: 1px solid $primary-color-darken;
+
+    nav {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 1rem;
+
+      .nav-link {
+        flex: 1 1 calc(50% - 1rem);
+        padding: 0.8rem;
+        border-bottom: none;
+        border: 1px solid $primary-color-darken;
+        border-radius: 4px;
+        text-align: center;
+        justify-content: center;
+        background: $primary-color;
+      }
+    }
+  }
+
+  .account-main {
+    padding: 2rem 1.5rem;
+  }
+}
