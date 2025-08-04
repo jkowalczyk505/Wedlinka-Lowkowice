@@ -34,7 +34,7 @@ export default function CartRow({
         ) : (
           <Link to={productLink} className="link-reset">
             <img
-              src={`${process.env.REACT_APP_API_URL}/uploads/products/${product.image}`}
+              src={`${process.env.REACT_APP_API_URL}/api/uploads/products/${product.image}`}
               alt={product.name}
             />
           </Link>

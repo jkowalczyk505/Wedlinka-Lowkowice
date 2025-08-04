@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ReactComponent as DefaultIcon } from "../../assets/szynka-ikona.svg";
 import AddToCartButton from "../common/AddToCart";
-import { formatGrossPrice, formatQuantity, categoryToSlug } from "../../utils/product";
+import {
+  formatGrossPrice,
+  formatQuantity,
+  categoryToSlug,
+} from "../../utils/product";
 import { useCart } from "../cart/CartContext";
 import RatingStars from "../reviews/RatingStars";
 
@@ -25,7 +29,7 @@ function ProductTile({ product }) {
 
   const grossPrice = formatGrossPrice(price_brut);
 
-  const imgUrl = `${process.env.REACT_APP_API_URL}/uploads/products/${image}`;
+  const imgUrl = `${process.env.REACT_APP_API_URL}/api/uploads/products/${image}`;
 
   const [imgError, setImgError] = useState(false);
 
@@ -51,7 +55,9 @@ function ProductTile({ product }) {
       </div>
       <div className="product-content">
         <h3 className="product-name">
-          <Link to={`/sklep/${categorySlug}/${slug}`} className="product-link">{name}</Link>
+          <Link to={`/sklep/${categorySlug}/${slug}`} className="product-link">
+            {name}
+          </Link>
         </h3>
         <p className="product-quantity">
           Ilość: {formatQuantity(quantity)} {unit}

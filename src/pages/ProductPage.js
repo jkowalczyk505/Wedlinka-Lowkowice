@@ -14,7 +14,6 @@ import Spinner from "../components/common/Spinner";
 import ReviewSummary from "../components/reviews/ReviewSummary";
 import ReviewsList from "../components/reviews/ReviewsList";
 
-
 import {
   getCategoryMeta,
   formatSlugTitle,
@@ -31,37 +30,37 @@ export default function ProductPage() {
 
   const [imgError, setImgError] = useState(false);
   const imgUrl = product?.image
-    ? `${process.env.REACT_APP_API_URL}/uploads/products/${product.image}`
+    ? `${process.env.REACT_APP_API_URL}/api/uploads/products/${product.image}`
     : null;
 
   const { addItem } = useCart();
   const [qty, setQty] = useState(1);
 
- const fetchProduct = useCallback(async () => {
-   setLoading(true);
-   setError(false);
-   setNotFound(false);
+  const fetchProduct = useCallback(async () => {
+    setLoading(true);
+    setError(false);
+    setNotFound(false);
 
-   try {
-     const res = await AuthFetch(
-       `${process.env.REACT_APP_API_URL}/api/products/slug/${productSlug}`
-     );
+    try {
+      const res = await AuthFetch(
+        `${process.env.REACT_APP_API_URL}/api/products/slug/${productSlug}`
+      );
 
-     if (res.status === 404) {
-       setNotFound(true);
-       return;
-     }
-     if (!res.ok) throw new Error("Network error");
+      if (res.status === 404) {
+        setNotFound(true);
+        return;
+      }
+      if (!res.ok) throw new Error("Network error");
 
-     const data = await res.json();   // ← JSON mamy ręcznie
-     setProduct(data);
-   } catch (err) {
-     console.error("Błąd ładowania produktu:", err);
-     setError(true);
-   } finally {
-     setLoading(false);
-   }
- }, [productSlug]);
+      const data = await res.json(); // ← JSON mamy ręcznie
+      setProduct(data);
+    } catch (err) {
+      console.error("Błąd ładowania produktu:", err);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [productSlug]);
 
   useEffect(() => {
     fetchProduct();
@@ -83,7 +82,7 @@ export default function ProductPage() {
     return (
       <main className="page">
         <section className="product-overview-section pattern-section">
-          <LoadError 
+          <LoadError
             message="Nie udało się pobrać produktu."
             onRetry={fetchProduct}
           />
@@ -117,16 +116,16 @@ export default function ProductPage() {
 
         <div className="product-overview">
           <div className="image-wrapper">
-          {imgUrl && !imgError ? (
-            <img
-              src={imgUrl}
-              alt={product.name}
-              onError={() => setImgError(true)}
-            />
-          ) : (
-            <DefaultIcon className="default-icon" />
-          )}
-        </div>
+            {imgUrl && !imgError ? (
+              <img
+                src={imgUrl}
+                alt={product.name}
+                onError={() => setImgError(true)}
+              />
+            ) : (
+              <DefaultIcon className="default-icon" />
+            )}
+          </div>
 
           <div className="product-overview-text">
             <div
@@ -157,28 +156,30 @@ export default function ProductPage() {
               </span>
             </div>
 
-            <p className="price">
-              {formatGrossPrice(product.price_brut)} zł
-            </p>
+            <p className="price">{formatGrossPrice(product.price_brut)} zł</p>
 
             <form
-                className="cart-form"
-                onSubmit={e => {
-                    e.preventDefault();
-                    if (product.is_available) addItem(product, qty);
-                }}
-                >
-                <QuantityStepper
-                    value={qty}
-                    min={1}
-                    max={1000}
-                    onChange={setQty}
-                    disabled={!product.is_available}
-                />
+              className="cart-form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (product.is_available) addItem(product, qty);
+              }}
+            >
+              <QuantityStepper
+                value={qty}
+                min={1}
+                max={1000}
+                onChange={setQty}
+                disabled={!product.is_available}
+              />
 
-                <Button type="submit" variant="red" disabled={!product.is_available}>
-                    Dodaj do koszyka
-                </Button>
+              <Button
+                type="submit"
+                variant="red"
+                disabled={!product.is_available}
+              >
+                Dodaj do koszyka
+              </Button>
             </form>
           </div>
         </div>
@@ -201,17 +202,16 @@ export default function ProductPage() {
         <div className="product-reviews">
           <h2>Opinie o produkcie</h2>
           <ReviewSummary
-              avg={product.averageRating}
-              total={product.reviewsCount}
-              canReview={product.canReview}
-              productId={product.id}
-              onReviewAdded={fetchProduct}
+            avg={product.averageRating}
+            total={product.reviewsCount}
+            canReview={product.canReview}
+            productId={product.id}
+            onReviewAdded={fetchProduct}
           />
 
           <ReviewsList productId={product.id} />
         </div>
       </section>
-
     </main>
   );
 }

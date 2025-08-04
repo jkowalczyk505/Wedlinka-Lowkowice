@@ -9,7 +9,6 @@ import { useAlert } from "../../common/alert/AlertContext";
 import { generateProductSlug } from "../../../utils/product";
 
 export default function AdminProductModal({ open, initial, onClose, onSaved }) {
-    
   const { showAlert } = useAlert();
 
   const categories = [
@@ -47,78 +46,84 @@ export default function AdminProductModal({ open, initial, onClose, onSaved }) {
   const [removeCurrent, setRemoveCurrent] = useState(false);
 
   /** bezpieczne ustawienie URL (używamy w dwóch miejscach) */
-    const setSafePreview = useCallback(src => {
+  const setSafePreview = useCallback((src) => {
     // pusta wartość lub nie-prawidłowy URL = brak podglądu
     setPreviewUrl(src && src.length ? src : null);
-    }, []);
+  }, []);
 
-    const fileInputRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const onChooseFile = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
 
-
   useEffect(() => {
-    if (!open) return;          // tylko przy otwarciu
-    const data = initial
-      ? { ...empty, ...initial }
-      : empty;
+    if (!open) return; // tylko przy otwarciu
+    const data = initial ? { ...empty, ...initial } : empty;
     setForm(data);
     setRemoveCurrent(false);
 
     setSafePreview(
       initial?.image
-        ? `${process.env.REACT_APP_API_URL}/uploads/products/${initial.image}`
+        ? `${process.env.REACT_APP_API_URL}/api/uploads/products/${initial.image}`
         : null
     );
   }, [initial, open, setSafePreview]);
 
   useEffect(() => {
-    setForm(f => ({ ...f, slug: generateProductSlug(f) }));
+    setForm((f) => ({ ...f, slug: generateProductSlug(f) }));
   }, [form.name, form.quantity, form.unit]);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
     if (type === "file") {
       const file = files[0];
-      setForm(f => ({ ...f, image: file }));
+      setForm((f) => ({ ...f, image: file }));
       setRemoveCurrent(false);
       setPreviewUrl(URL.createObjectURL(file));
     } else if (type === "checkbox") {
-      setForm(f => ({ ...f, [name]: checked ? 1 : 0 }));
+      setForm((f) => ({ ...f, [name]: checked ? 1 : 0 }));
     } else {
-      setForm(f => ({ ...f, [name]: value }));
+      setForm((f) => ({ ...f, [name]: value }));
     }
   };
 
   const handleRemoveImage = () => {
-    setForm(f => ({ ...f, image: null }));
+    setForm((f) => ({ ...f, image: null }));
     setRemoveCurrent(true);
     setPreviewUrl(null);
   };
 
-  const handleNumber = e => {
+  const handleNumber = (e) => {
     const { name, value } = e.target;
     if (/^[0-9]+([.,][0-9]{0,2})?$/.test(value)) {
-      setForm(f => ({ ...f, [name]: value }));
+      setForm((f) => ({ ...f, [name]: value }));
     }
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
 
     const apiUrl = `${process.env.REACT_APP_API_URL}/api/products`;
     const fd = new FormData();
     const ALLOWED = [
-      "name","category","slug","description","ingredients","allergens",
-      "unit","quantity","price_brut","vat_rate","is_available"
+      "name",
+      "category",
+      "slug",
+      "description",
+      "ingredients",
+      "allergens",
+      "unit",
+      "quantity",
+      "price_brut",
+      "vat_rate",
+      "is_available",
     ];
-    ALLOWED.forEach(k => {
+    ALLOWED.forEach((k) => {
       const v = form[k];
       if (v == null || v === "") return;
-      const val = ["quantity","price_brut","vat_rate"].includes(k)
+      const val = ["quantity", "price_brut", "vat_rate"].includes(k)
         ? String(v).replace(",", ".")
         : v;
       fd.append(k, val);
@@ -133,15 +138,20 @@ export default function AdminProductModal({ open, initial, onClose, onSaved }) {
     }
 
     try {
-      const url    = initial ? `${apiUrl}/${initial.id}` : apiUrl;
-      const method = initial ? "PUT"               : "POST";
+      const url = initial ? `${apiUrl}/${initial.id}` : apiUrl;
+      const method = initial ? "PUT" : "POST";
 
       const res = await AuthFetch(url, {
         method,
-        body: fd
+        body: fd,
       });
       if (!res.ok) throw res;
-      showAlert(initial ? "Produkt zaktualizowany pomyślnie" : "Nowy produkt dodany pomyślnie", "info");
+      showAlert(
+        initial
+          ? "Produkt zaktualizowany pomyślnie"
+          : "Nowy produkt dodany pomyślnie",
+        "info"
+      );
       onSaved();
       onClose();
     } catch (err) {
@@ -157,18 +167,25 @@ export default function AdminProductModal({ open, initial, onClose, onSaved }) {
     }
   };
 
-
   return (
-    <Modal open={open} onClose={onClose} title={initial ? "Edytuj produkt" : "Nowy produkt"}>
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={initial ? "Edytuj produkt" : "Nowy produkt"}
+    >
       <form className="admin-product-form form-wrapper" onSubmit={handleSubmit}>
         {/* Nazwa */}
-        <label>Nazwa <span className="required">*</span></label>
+        <label>
+          Nazwa <span className="required">*</span>
+        </label>
         <input name="name" value={form.name} onChange={handleChange} required />
 
         {/* Kategoria */}
-        <label className="mt-2">Kategoria <span className="required">*</span></label>
+        <label className="mt-2">
+          Kategoria <span className="required">*</span>
+        </label>
         <div className="radio-group">
-          {categories.map(opt => (
+          {categories.map((opt) => (
             <label key={opt.value} className="radio-option">
               <input
                 type="radio"
@@ -184,11 +201,15 @@ export default function AdminProductModal({ open, initial, onClose, onSaved }) {
         </div>
 
         {/* Slug */}
-        <label className="mt-2">Slug <span className="required">*</span></label>
+        <label className="mt-2">
+          Slug <span className="required">*</span>
+        </label>
         <input name="slug" value={form.slug} onChange={handleChange} required />
 
         {/* Ilość */}
-        <label className="mt-2">Ilość <span className="required">*</span></label>
+        <label className="mt-2">
+          Ilość <span className="required">*</span>
+        </label>
         <input
           name="quantity"
           type="text"
@@ -200,9 +221,11 @@ export default function AdminProductModal({ open, initial, onClose, onSaved }) {
         />
 
         {/* Jednostka */}
-        <label className="mt-2">Jednostka <span className="required">*</span></label>
+        <label className="mt-2">
+          Jednostka <span className="required">*</span>
+        </label>
         <div className="radio-group">
-          {["kg", "szt"].map(u => (
+          {["kg", "szt"].map((u) => (
             <label key={u} className="radio-option">
               <input
                 type="radio"
@@ -217,7 +240,9 @@ export default function AdminProductModal({ open, initial, onClose, onSaved }) {
         </div>
 
         {/* Cena */}
-        <label className="mt-2">Cena brutto (zł) <span className="required">*</span></label>
+        <label className="mt-2">
+          Cena brutto (zł) <span className="required">*</span>
+        </label>
         <input
           name="price_brut"
           type="text"
@@ -229,9 +254,11 @@ export default function AdminProductModal({ open, initial, onClose, onSaved }) {
         />
 
         {/* VAT */}
-        <label className="mt-2">Stawka VAT <span className="required">*</span></label>
+        <label className="mt-2">
+          Stawka VAT <span className="required">*</span>
+        </label>
         <div className="radio-group">
-          {vatOptions.map(opt => (
+          {vatOptions.map((opt) => (
             <label key={opt.value} className="radio-option">
               <input
                 type="radio"
@@ -246,16 +273,37 @@ export default function AdminProductModal({ open, initial, onClose, onSaved }) {
         </div>
 
         {/* Opis */}
-        <label className="mt-2">Opis <span className="required">*</span></label>
-        <textarea name="description" required value={form.description} onChange={handleChange} />
+        <label className="mt-2">
+          Opis <span className="required">*</span>
+        </label>
+        <textarea
+          name="description"
+          required
+          value={form.description}
+          onChange={handleChange}
+        />
 
         {/* Składniki */}
-        <label className="mt-2">Składniki <span className="required">*</span></label>
-        <textarea name="ingredients" required value={form.ingredients} onChange={handleChange} />
+        <label className="mt-2">
+          Składniki <span className="required">*</span>
+        </label>
+        <textarea
+          name="ingredients"
+          required
+          value={form.ingredients}
+          onChange={handleChange}
+        />
 
         {/* Alergeny */}
-        <label className="mt-2">Alergeny <span className="required">*</span></label>
-        <textarea name="allergens" required value={form.allergens} onChange={handleChange} />
+        <label className="mt-2">
+          Alergeny <span className="required">*</span>
+        </label>
+        <textarea
+          name="allergens"
+          required
+          value={form.allergens}
+          onChange={handleChange}
+        />
 
         {/* Dostępność */}
         <label className="mt-2">Dostępność</label>
@@ -286,22 +334,22 @@ export default function AdminProductModal({ open, initial, onClose, onSaved }) {
         <label className="mt-2">Zdjęcie</label>
         {/* miniaturka */}
         {previewUrl && (
-            <div className="image-preview">
-                <img
-                src={previewUrl}
-                alt="Podgląd"
-                className="thumbnail"
-                onError={() => setSafePreview(null)}   // ← ukrywa gdy 404/500
-                />
-                <button
-                type="button"
-                className="remove-btn"
-                onClick={handleRemoveImage}
-                aria-label="Usuń zdjęcie"
-                >
-                ×
-                </button>
-            </div>
+          <div className="image-preview">
+            <img
+              src={previewUrl}
+              alt="Podgląd"
+              className="thumbnail"
+              onError={() => setSafePreview(null)} // ← ukrywa gdy 404/500
+            />
+            <button
+              type="button"
+              className="remove-btn"
+              onClick={handleRemoveImage}
+              aria-label="Usuń zdjęcie"
+            >
+              ×
+            </button>
+          </div>
         )}
         {/* ukryty native input */}
         <input
@@ -313,17 +361,19 @@ export default function AdminProductModal({ open, initial, onClose, onSaved }) {
           style={{ display: "none" }}
         />
         <Button
-            variant="beige"
-            className="file-btn"
-            onClick={onChooseFile}
-            type="button"
-            >
-            Wybierz plik
+          variant="beige"
+          className="file-btn"
+          onClick={onChooseFile}
+          type="button"
+        >
+          Wybierz plik
         </Button>
 
         {/* Akcje */}
         <div className="modal-actions">
-          <Button variant="dark" onClick={onClose} type="button">Anuluj</Button>
+          <Button variant="dark" onClick={onClose} type="button">
+            Anuluj
+          </Button>
           <Button variant="red" type="submit" disabled={submitting}>
             {submitting ? <Spinner size="small" /> : "Zapisz"}
           </Button>
@@ -334,7 +384,7 @@ export default function AdminProductModal({ open, initial, onClose, onSaved }) {
 }
 
 AdminProductModal.propTypes = {
-  open:    PropTypes.bool.isRequired,
+  open: PropTypes.bool.isRequired,
   initial: PropTypes.object,
   onClose: PropTypes.func.isRequired,
   onSaved: PropTypes.func.isRequired,

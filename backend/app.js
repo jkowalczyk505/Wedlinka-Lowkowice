@@ -31,7 +31,7 @@ app.use("/api/reviews", require("./routes/reviewRoutes"));
 app.use("/api/orders", require("./routes/orderRoutes"));
 
 app.use(
-  "/uploads/products",
+  "/api/uploads/products",
   express.static(path.join(__dirname, "uploads", "products"))
 );
 
