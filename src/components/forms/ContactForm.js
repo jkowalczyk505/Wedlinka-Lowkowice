@@ -19,9 +19,14 @@ export default function ContactForm() {
       return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showAlert("Podaj poprawny adres e-mail.", "error");
+      return;
+    }
+
     try {
       setSending(true);
-
       const res = await fetch(`${process.env.REACT_APP_API_URL}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
