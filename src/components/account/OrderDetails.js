@@ -6,7 +6,11 @@ import { AuthFetch } from "../auth/AuthFetch";
 import { shippingToPL } from "../../utils/shippingMethod";
 import { paymentStatusToPL } from "../../utils/paymentStatus";
 import { paymentMethodToPL } from "../../utils/paymentMethod";
-import { formatGrossPrice as fmt, categoryToSlug, formatQuantity } from "../../utils/product";
+import {
+  formatGrossPrice as fmt,
+  categoryToSlug,
+  formatQuantity,
+} from "../../utils/product";
 import { FiChevronRight, FiChevronDown } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import DownloadPaymentPDFButton from "../checkout/DownloadPaymentPDFButton";
@@ -38,25 +42,23 @@ export default function OrderDetails({ id }) {
   const [error, setErr] = useState(false);
   const [showMore, setShowMore] = useState(false);
 
- // modal do dodawania opinii
- const [modalProductId, setModalProductId] = useState(null);
+  // modal do dodawania opinii
+  const [modalProductId, setModalProductId] = useState(null);
 
   // 1) fetch zamówienia + items z flagą canReview
   const fetchDetails = () => {
     setLd(true);
     setErr(false);
     AuthFetch(`${API_URL}/api/orders/${id}`)
-      .then(r => r.ok ? r.json() : Promise.reject())
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then(setData)
       .catch(() => setErr(true))
       .finally(() => setLd(false));
   };
 
-
   useEffect(() => {
     fetchDetails();
   }, [id]);
-
 
   if (loading) return <Spinner fullscreen={false} />;
   if (error) return <LoadError onRetry={() => window.location.reload()} />;
@@ -81,18 +83,14 @@ export default function OrderDetails({ id }) {
           const unitPrice = parseFloat(it.price);
           const lineTotal = unitPrice * it.quantity;
           const canReview = it.canReview;
-          const imgUrl = `${API_URL}/uploads/products/${it.image}`;
+          const imgUrl = `${API_URL}/api/uploads/products/${it.image}`;
           return (
             <li key={it.id} className="product-item">
               <Link
                 to={`/sklep/${categoryToSlug(it.category)}/${it.slug}`}
                 className="thumb-link"
               >
-                <Thumbnail
-                  src={imgUrl}
-                  alt={it.name}
-                  className="prod-thumb"
-                />
+                <Thumbnail src={imgUrl} alt={it.name} className="prod-thumb" />
               </Link>
 
               <div className="product-info">
@@ -111,14 +109,14 @@ export default function OrderDetails({ id }) {
                 </div>
 
                 {/* przycisk Oceń */}
-               {canReview && (
-                 <Button
-                   variant="beige"
-                   onClick={() => setModalProductId(it.id)}
-                 >
-                   Oceń
-                 </Button>
-               )}
+                {canReview && (
+                  <Button
+                    variant="beige"
+                    onClick={() => setModalProductId(it.id)}
+                  >
+                    Oceń
+                  </Button>
+                )}
               </div>
             </li>
           );
@@ -167,11 +165,12 @@ export default function OrderDetails({ id }) {
               <br />
               {shipping.locker_code && `Paczkomat: ${shipping.locker_code}`}
             </p>
-            <p>
-              Numer przesyłki:{" "}
-              {shipping.tracking_number || "Brak"}
-            </p>
-            {shipping.notes && <p><em>Uwagi: {shipping.notes}</em></p>}
+            <p>Numer przesyłki: {shipping.tracking_number || "Brak"}</p>
+            {shipping.notes && (
+              <p>
+                <em>Uwagi: {shipping.notes}</em>
+              </p>
+            )}
           </section>
 
           <section>
@@ -213,19 +212,19 @@ export default function OrderDetails({ id }) {
       )}
 
       {/* modal recenzji */}
-     {modalProductId && (
-         <ReviewModal
-           open={true}
-           productId={modalProductId}
-           onClose={() => setModalProductId(null)}
-           onSaved={() => {
+      {modalProductId && (
+        <ReviewModal
+          open={true}
+          productId={modalProductId}
+          onClose={() => setModalProductId(null)}
+          onSaved={() => {
             // 1) najpierw zamknij modal
             setModalProductId(null);
             // 2) odśwież szczegóły zamówienia (usuwa przyciski dla ocenionych)
             fetchDetails();
           }}
-         />
-       )}
+        />
+      )}
     </div>
   );
 }

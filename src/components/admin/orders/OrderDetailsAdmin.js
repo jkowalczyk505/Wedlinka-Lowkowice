@@ -36,8 +36,8 @@ export default function OrderDetailsAdmin({ id }) {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [editingTrack, setEditingTrack]       = useState(false);
-  const [trackingNumber, setTrackingNumber]   = useState("");
+  const [editingTrack, setEditingTrack] = useState(false);
+  const [trackingNumber, setTrackingNumber] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -57,29 +57,28 @@ export default function OrderDetailsAdmin({ id }) {
 
   const { order: summary, items, shipping, payment, invoice } = order;
 
-   // handler zapisu numeru przesyłki
- const saveTracking = async () => {
-   try {
-     const res = await AuthFetch(
-       `${API_URL}/api/orders/${summary.id}/tracking-number`,
-       {
-         method: "PUT",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({ trackingNumber }),
-       }
-     );
-     if (!res.ok) throw new Error();
-     // zaktualizuj lokalnie
-     setOrder((o) => ({
-       ...o,
-       shipping: { ...o.shipping, tracking_number: trackingNumber },
-     }));
-     setEditingTrack(false);
-   } catch {
-     alert("Nie udało się zapisać numeru przesyłki");
-   }
- };
-
+  // handler zapisu numeru przesyłki
+  const saveTracking = async () => {
+    try {
+      const res = await AuthFetch(
+        `${API_URL}/api/orders/${summary.id}/tracking-number`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ trackingNumber }),
+        }
+      );
+      if (!res.ok) throw new Error();
+      // zaktualizuj lokalnie
+      setOrder((o) => ({
+        ...o,
+        shipping: { ...o.shipping, tracking_number: trackingNumber },
+      }));
+      setEditingTrack(false);
+    } catch {
+      alert("Nie udało się zapisać numeru przesyłki");
+    }
+  };
 
   const total = parseFloat(payment.amount);
   const sumProducts = items.reduce(
@@ -95,7 +94,7 @@ export default function OrderDetailsAdmin({ id }) {
         {items.map((it) => {
           const unitPrice = parseFloat(it.price);
           const lineTotal = unitPrice * it.quantity;
-          const imgUrl = `${API_URL}/uploads/products/${it.image}`;
+          const imgUrl = `${API_URL}/api/uploads/products/${it.image}`;
           return (
             <li key={it.id} className="product-item">
               <div className="thumb-link">
@@ -191,10 +190,7 @@ export default function OrderDetailsAdmin({ id }) {
             shipping.tracking_number ? (
               <div className="tracking-display">
                 <strong>{shipping.tracking_number}</strong>
-                <Button
-                  variant="red"
-                  onClick={() => setEditingTrack(true)}
-                >
+                <Button variant="red" onClick={() => setEditingTrack(true)}>
                   Edytuj
                 </Button>
               </div>
@@ -224,7 +220,6 @@ export default function OrderDetailsAdmin({ id }) {
             </div>
           )}
         </section>
-
       </div>
     </div>
   );

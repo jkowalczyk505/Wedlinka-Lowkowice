@@ -8,7 +8,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // frontend
+    origin: "https://wedlinka.hosting24.pl",
     credentials: true,
     exposedHeaders: ["X-Cart-Removed"],
   })
@@ -16,6 +16,16 @@ app.use(
 
 app.use(cookieParser());
 app.use(express.json());
+
+app.use((req, res, next) => {
+  res.set(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
+  next();
+});
 
 app.use((req, res, next) => {
   req.db = db;
@@ -31,7 +41,7 @@ app.use("/api/reviews", require("./routes/reviewRoutes"));
 app.use("/api/orders", require("./routes/orderRoutes"));
 
 app.use(
-  "/uploads/products",
+  "/api/uploads/products",
   express.static(path.join(__dirname, "uploads", "products"))
 );
 

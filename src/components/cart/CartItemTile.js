@@ -29,7 +29,7 @@ const CartItemTile = ({ product, quantity, onRemove, onClick }) => {
     <li className="cart-item-tile">
       <Link to={productLink} className="item-left link-reset" onClick={onClick}>
         <CartItemImage
-          src={`${process.env.REACT_APP_API_URL}/uploads/products/${product.image}`}
+          src={`${process.env.REACT_APP_API_URL}/api/uploads/products/${product.image}`}
           alt={product.name}
         />
         <div className="item-info">

@@ -1,13 +1,13 @@
 - w stopce, na home i w innych miejscach odpowiednie linki do plikow + link do fb
-- walidacja contactform
 - w stopce i na kontakt prawdziwe adresy/telefony itp
-- spinnery, loaderror sprawdzic czy wszedzie sa i czy 77vh nigdzie nie przeszkadza
-- czy wszedzie jest authfetch uzyte do refresh
 - responsywnosc + duże ekrany + clamp!!
 - polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy, okres przechowywania danych invoices + shipping_details (5lat? jak porzucone nieoplacone to krocej)
+- domena
 
 BACKEND
 - zabezpieczenie multera - przy bledzie niezapisywanie i nienadpisywanie zdjec, brak usuwania starych
+- ciasteczka + zmiana cors na domene + zmiana w env dla frontu adresu backendu?
+- czyszczenie i wyzerowanie bazy, utworzenie uzytkownika dla admina
 
 ACCOUNT
 - dashboard - faktury
@@ -23,7 +23,6 @@ ZAMAWIANIE 2 krok
 
 ZAMAWIANIE 3 krok
 - ekrany - platnosc przez bramke
-- produkt bez zdjecia ma miec default
 
 COOKIE BANNER
 - polityka podpiac
@@ -44,7 +43,6 @@ NA KONIEC
 - wysłać sitemap do google
 - react helmet async?? chyba ze nic to nie da w react spa
 - env production
-- htaccess - react router SPA + http->https + przekierowanie www
 - anonimazacja danych users zgodnie z RODO (zmienic markAsDeleted? + pola bazy users możliwe na NULL?)
 - ustaiwneie uzytkownika na usunietego uniemozliwia zalozenie kolejnego na ten sam email - poprawic??
 - archiwizacja i/lub usuwanie kont, danych z zamowien itp - czyszczenie tabel? cron?

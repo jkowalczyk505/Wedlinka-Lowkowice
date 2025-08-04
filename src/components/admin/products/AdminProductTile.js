@@ -1,9 +1,13 @@
 // src/components/admin/AdminProductTile.jsx
 import { useState } from "react";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";   
+import { Link } from "react-router-dom";
 import { ReactComponent as DefaultIcon } from "../../../assets/szynka-ikona.svg";
-import { formatGrossPrice, formatQuantity, categoryToSlug } from "../../../utils/product";
+import {
+  formatGrossPrice,
+  formatQuantity,
+  categoryToSlug,
+} from "../../../utils/product";
 import Button from "../../common/Button";
 
 export default function AdminProductTile({ product, onEdit, onDelete }) {
@@ -19,7 +23,7 @@ export default function AdminProductTile({ product, onEdit, onDelete }) {
   } = product;
 
   const categorySlug = categoryToSlug(category);
-  const imgUrl       = `${process.env.REACT_APP_API_URL}/uploads/products/${image}`;
+  const imgUrl = `${process.env.REACT_APP_API_URL}/api/uploads/products/${image}`;
   const [imgError, setImgError] = useState(false);
 
   return (
@@ -53,8 +57,12 @@ export default function AdminProductTile({ product, onEdit, onDelete }) {
         <p className="price">{formatGrossPrice(price_brut)} zł</p>
 
         <div className="actions">
-          <Button variant="beige" onClick={() => onEdit(product)}>Edytuj</Button>
-          <Button variant="dark"  onClick={() => onDelete(product)}>Usuń</Button>
+          <Button variant="beige" onClick={() => onEdit(product)}>
+            Edytuj
+          </Button>
+          <Button variant="dark" onClick={() => onDelete(product)}>
+            Usuń
+          </Button>
         </div>
       </div>
     </div>
@@ -62,7 +70,7 @@ export default function AdminProductTile({ product, onEdit, onDelete }) {
 }
 
 AdminProductTile.propTypes = {
-  product:  PropTypes.object.isRequired,
-  onEdit:   PropTypes.func.isRequired,
+  product: PropTypes.object.isRequired,
+  onEdit: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
 };
