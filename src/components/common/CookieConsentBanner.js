@@ -27,7 +27,11 @@ function CookieConsentBanner() {
             Używamy plików cookies niezbędnych do działania strony, logowania
             oraz koszyka. Kontynuując, wyrażasz na to zgodę. Szczegóły
             znajdziesz w naszej{" "}
-            <a href="/files/Polityka_Prywatnosci.pdf" download>
+            <a
+              href="/files/Polityka_Prywatnosci.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               polityce prywatności
             </a>
             .

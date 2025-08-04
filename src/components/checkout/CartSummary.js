@@ -91,9 +91,19 @@ export default function CartSummary({
               checked={form.acceptTerms}
               onChange={handleChange}
             />{" "}
-            Oświadczam, że zapoznałem się i akceptuję Regulamin i Politykę
-            prywatności.
-            <span className="required">*</span>
+            Oświadczam, że zapoznałem się i akceptuję{" "}
+            <a href="/regulamin" target="_blank" rel="noopener noreferrer">
+              Regulamin
+            </a>{" "}
+            oraz{" "}
+            <a
+              href="/files/Polityka_Prywatnosci.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Politykę prywatności
+            </a>
+            .<span className="required">*</span>
           </label>
 
           <Button type="submit" disabled={submitting}>

@@ -9,7 +9,6 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer__inner">
-
         {/* ——— LEWY BLOK: logo + dane + social ——— */}
         <div className="footer__col footer__info">
           <NavLink to="/">
@@ -17,15 +16,21 @@ function Footer() {
           </NavLink>
 
           <address className="footer__address">
-            Wędlinka Łowkowice<br/>
-            ul. Przykładowa 12, 08-500 Łowkowice<br/>
-            NIP 123-456-78-90<br/>
-            e-mail: biuro@wedlinka.pl<br/>
+            Wędlinka Łowkowice
+            <br />
+            ul. Przykładowa 12, 08-500 Łowkowice
+            <br />
+            NIP 123-456-78-90
+            <br />
+            e-mail: biuro@wedlinka.pl
+            <br />
             tel. +48 123 456 789
           </address>
 
           <div className="footer__social">
-            <a href="#" aria-label="Facebook"><FaFacebookF/></a>
+            <a href="#" aria-label="Facebook">
+              <FaFacebookF />
+            </a>
           </div>
         </div>
 
@@ -33,11 +38,27 @@ function Footer() {
         <div className="footer__col">
           <h4 className="footer__heading">Informacje</h4>
           <ul>
-            <li><NavLink to="/informacje-o-dostawie">Dostawa</NavLink></li>
-            <li><NavLink to="/reklamacje">Reklamacje i zwroty</NavLink></li>
-            <li><NavLink to="/kontakt">Kontakt</NavLink></li>
-            <li><NavLink to="/regulamin">Regulamin</NavLink></li>
-            <li><NavLink to="/polityka-prywatnosci">Polityka prywatności</NavLink></li>
+            <li>
+              <NavLink to="/informacje-o-dostawie">Dostawa</NavLink>
+            </li>
+            <li>
+              <NavLink to="/reklamacje">Reklamacje i zwroty</NavLink>
+            </li>
+            <li>
+              <NavLink to="/kontakt">Kontakt</NavLink>
+            </li>
+            <li>
+              <NavLink to="/regulamin">Regulamin</NavLink>
+            </li>
+            <li>
+              <a
+                href="/files/Polityka_Prywatnosci.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Polityka prywatności
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -45,11 +66,21 @@ function Footer() {
         <div className="footer__col">
           <h4 className="footer__heading">Nasze produkty</h4>
           <ul>
-            <li><NavLink to="/sklep">Wszystkie produkty</NavLink></li>
-            <li><NavLink to="/sklep/kielbasy">Kiełbasy</NavLink></li>
-            <li><NavLink to="/sklep/wedliny">Wędliny</NavLink></li>
-            <li><NavLink to="/sklep/wyroby-podrobowe">Wyroby podrobowe</NavLink></li>
-            <li><NavLink to="/sklep/nasze-paczki">Paczki</NavLink></li>
+            <li>
+              <NavLink to="/sklep">Wszystkie produkty</NavLink>
+            </li>
+            <li>
+              <NavLink to="/sklep/kielbasy">Kiełbasy</NavLink>
+            </li>
+            <li>
+              <NavLink to="/sklep/wedliny">Wędliny</NavLink>
+            </li>
+            <li>
+              <NavLink to="/sklep/wyroby-podrobowe">Wyroby podrobowe</NavLink>
+            </li>
+            <li>
+              <NavLink to="/sklep/nasze-paczki">Paczki</NavLink>
+            </li>
           </ul>
         </div>
       </div>
