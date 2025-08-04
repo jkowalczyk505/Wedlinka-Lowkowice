@@ -1,8 +1,9 @@
 // src/components/cart/CartRow.jsx
-import React from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { Trash2 } from "lucide-react";
+import { ReactComponent as DefaultIcon } from "../../assets/szynka-ikona.svg";
 import QuantityStepper from "../common/QuantityStepper";
 import Spinner from "../common/Spinner";
 import {
@@ -10,6 +11,20 @@ import {
   formatQuantity,
   categoryToSlug,
 } from "../../utils/product";
+
+const CartRowImage = ({ src, alt }) => {
+  const [hasError, setHasError] = useState(false);
+  if (!src || hasError)
+    return <DefaultIcon className="product-image default-icon" />;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className="product-image"
+      onError={() => setHasError(true)}
+    />
+  );
+};
 
 export default function CartRow({
   product,
@@ -33,7 +48,7 @@ export default function CartRow({
           "PRODUKT"
         ) : (
           <Link to={productLink} className="link-reset">
-            <img
+            <CartRowImage
               src={`${process.env.REACT_APP_API_URL}/api/uploads/products/${product.image}`}
               alt={product.name}
             />
