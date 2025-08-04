@@ -30,6 +30,12 @@
         object-fit: cover;
     }
 
+    &__img .default-icon {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+    }
+
     &__details {
         padding-left: 0.5rem;
 
@@ -96,6 +102,11 @@
             height: 80px;
         }
 
+        &__img .default-icon {
+            width: 80px;
+            height: 80px;
+        }
+
         &__total {
             font-size: 1.2rem;
         }
@@ -116,6 +127,11 @@
             justify-self: center;
 
             img {
+                width: 80px;
+                height: 80px;
+            }
+
+            .default-icon {
                 width: 80px;
                 height: 80px;
             }
