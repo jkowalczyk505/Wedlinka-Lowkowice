@@ -5,7 +5,6 @@
 - czy wszedzie jest authfetch uzyte do refresh
 - responsywnosc + duże ekrany + clamp!!
 - polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy, okres przechowywania danych invoices + shipping_details (5lat? jak porzucone nieoplacone to krocej)
-- cos sie dzieje z wylogowywaniem - 401 unauthorized
 
 BACKEND
 - zabezpieczenie multera - przy bledzie niezapisywanie i nienadpisywanie zdjec, brak usuwania starych
