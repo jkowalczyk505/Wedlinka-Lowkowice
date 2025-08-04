@@ -1,6 +1,5 @@
 - w stopce, na home i w innych miejscach odpowiednie linki do plikow + link do fb
 - w stopce i na kontakt prawdziwe adresy/telefony itp
-- responsywnosc + duże ekrany + clamp!!
 - polityka prywatnosci - wysylka potwierdzen, faktur, formularz kontaktowy, okres przechowywania danych invoices + shipping_details (5lat? jak porzucone nieoplacone to krocej)
 - domena
 
@@ -49,5 +48,4 @@ NA KONIEC
 
 RESPONSYWNOSC
 - home page - zdjecie z packing info sprawdzic czy na pewno ok po dostaniu ostatecznego zdjecia; about us niedopasowane na tablety
-- page ma wysokosc minimalna, ale tlo jest tylko na section, wiec cos trzeba z tym zrobic zeby nie bylo bialego tla
 - w forms.sccss zepsute oczka do hasla
