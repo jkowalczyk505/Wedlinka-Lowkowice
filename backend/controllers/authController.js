@@ -24,6 +24,13 @@ exports.register = async (req, res, next) => {
     if (!email || !password || !name || !surname || !phone) {
       return res.status(400).json({ error: "Wszystkie pola są wymagane" });
     }
+
+    // Sprawdź, czy email był kiedykolwiek użyty (nawet przez konto usunięte)
+    const exists = await User.existsAnyEmail(email);
+    if (exists) {
+      return res.status(409).json({ error: "Ten e-mail jest już zajęty" });
+    }
+
     const hash = await bcrypt.hash(password, 10);
     const user = await User.create({
       email,
@@ -34,9 +41,6 @@ exports.register = async (req, res, next) => {
     });
     res.status(201).json(user);
   } catch (err) {
-    if (err.code === "ER_DUP_ENTRY") {
-      return res.status(409).json({ error: "E-mail już istnieje" });
-    }
     next(err);
   }
 };

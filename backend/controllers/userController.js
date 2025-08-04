@@ -94,7 +94,7 @@ exports.changeEmail = async (req, res, next) => {
     const match = await bcrypt.compare(password, user.passwordHash);
     if (!match) return res.status(401).json({ error: "Nieprawidłowe hasło" });
 
-    const existing = await User.findByEmail(newEmail);
+    const existing = await User.existsAnyEmail(newEmail);
     if (existing) {
       return res.status(409).json({ error: "Ten e-mail jest już zajęty" });
     }

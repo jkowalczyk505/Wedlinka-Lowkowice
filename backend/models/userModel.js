@@ -29,6 +29,14 @@ const UserModel = {
     return rows[0] || null;
   },
 
+  async existsAnyEmail(email) {
+    const [rows] = await db.query(
+      `SELECT id FROM users WHERE email = ? AND is_deleted = 0`,
+      [email]
+    );
+    return rows.length > 0;
+  },
+
   async findById(id) {
     const [rows] = await db.query(
       `SELECT id, email, name, surname, phone, role,
@@ -99,7 +107,18 @@ const UserModel = {
 
   async markAsDeleted(id) {
     await db.query(
-      `UPDATE users SET is_deleted = 1, updated_at = NOW() WHERE id = ?`,
+      `UPDATE users 
+     SET is_deleted = 1,
+         email = CONCAT('anon_', id, '@deleted.local'),
+         name = Użytkownik usunięty,
+         surname = Użytkownik usunięty,
+         phone = NULL,
+         street = NULL,
+         apartment_number = NULL,
+         postal_code = NULL,
+         city = NULL,
+         updated_at = NOW()
+     WHERE id = ?`,
       [id]
     );
   },

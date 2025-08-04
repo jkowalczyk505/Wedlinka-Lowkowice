@@ -42,9 +42,7 @@ NA KONIEC
 - wysłać sitemap do google
 - react helmet async?? chyba ze nic to nie da w react spa
 - env production
-- anonimazacja danych users zgodnie z RODO (zmienic markAsDeleted? + pola bazy users możliwe na NULL?)
-- ustaiwneie uzytkownika na usunietego uniemozliwia zalozenie kolejnego na ten sam email - poprawic??
-- archiwizacja i/lub usuwanie kont, danych z zamowien itp - czyszczenie tabel? cron?
+- cron do usuwania: 1 - shipping details 6 miesiecy od created_at, 2 - orders, payments, orders_items + invoices 5 lat od created at, 3 - usuwanie wszystkiego z anulowanymi niezrealizowanymi zamowieniami po 90 dniach od created_at
 
 RESPONSYWNOSC
 - home page - zdjecie z packing info sprawdzic czy na pewno ok po dostaniu ostatecznego zdjecia; about us niedopasowane na tablety
