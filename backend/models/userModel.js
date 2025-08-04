@@ -110,8 +110,8 @@ const UserModel = {
       `UPDATE users 
      SET is_deleted = 1,
          email = CONCAT('anon_', id, '@deleted.local'),
-         name = Użytkownik usunięty,
-         surname = Użytkownik usunięty,
+         name = 'Użytkownik usunięty',
+         surname = 'Użytkownik usunięty',
          phone = NULL,
          street = NULL,
          apartment_number = NULL,
