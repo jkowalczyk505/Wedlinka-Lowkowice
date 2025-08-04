@@ -170,7 +170,11 @@ function RegisterForm() {
         Twoje dane osobowe zostaną użyte do obsługi twojej wizyty na naszej
         stronie, zarządzania dostępem do twojego konta oraz w innych celach
         opisanych w naszej{" "}
-        <a href="/Polityka_Prywatnosci.pdf" download>
+        <a
+          href="/files/Polityka_Prywatnosci.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           polityce prywatności
         </a>
         .
