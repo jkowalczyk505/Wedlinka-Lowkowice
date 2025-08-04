@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Button from "../common/Button";
 import Spinner from "../common/Spinner";
-import { useAlert } from "../common/AlertContext";
+import { useAlert } from "../common/alert/AlertContext";
 
 export default function ContactForm() {
   const { showAlert } = useAlert();
