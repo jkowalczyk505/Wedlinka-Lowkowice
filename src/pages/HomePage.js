@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import Banner from "../components/common/Banner";
-import bannerImage from "../assets/home-banner.jpg";
+import bannerImage from "../assets/home-banner.webp";
 
 import CategoryGrid from "../components/categories/CategoryGrid";
 import { customerCategories } from "../data/categories";
@@ -22,8 +22,8 @@ import useInView from "../hooks/useInView";
 function HomePage() {
   const navigate = useNavigate();
 
-  const [packImgRef,  packInView]  = useInView(0.5);   // prawy obraz „Jak pakujemy”
-  const [aboutImgRef, aboutInView] = useInView(0.5);   // lewy obraz w sekcji About
+  const [packImgRef, packInView] = useInView(0.5); // prawy obraz „Jak pakujemy”
+  const [aboutImgRef, aboutInView] = useInView(0.5); // lewy obraz w sekcji About
 
   return (
     <main className="page">
@@ -40,7 +40,7 @@ function HomePage() {
         </div>
         <CategoryGrid items={customerCategories} />
         <div className="show-all-btn">
-          <Button variant='red' onClick={() => navigate("/sklep")}>
+          <Button variant="red" onClick={() => navigate("/sklep")}>
             Pokaż wszystkie
           </Button>
         </div>
@@ -81,8 +81,8 @@ function HomePage() {
               alt="Pakowanie produktów"
               className={
                 packInView
-                  ? "animate--slide-in-right"   // start animacji
-                  : "ghost"                     // ukryty do czasu inView
+                  ? "animate--slide-in-right" // start animacji
+                  : "ghost" // ukryty do czasu inView
               }
             />
           </div>
@@ -95,11 +95,7 @@ function HomePage() {
               ref={aboutImgRef}
               src={aboutImage}
               alt="Nasz zespół"
-              className={
-                aboutInView
-                  ? "animate--slide-in-left"
-                  : "ghost"
-              }
+              className={aboutInView ? "animate--slide-in-left" : "ghost"}
             />
           </div>
           <div className="about-content">
