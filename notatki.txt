@@ -1,11 +1,8 @@
 - w stopce, na home i w innych miejscach odpowiednie linki do plikow + link do fb
 - w stopce i na kontakt prawdziwe adresy/telefony itp
-- domena
-- zmiana danych na fakturze na wedlinka
 
 BACKEND
 - zabezpieczenie multera - przy bledzie niezapisywanie i nienadpisywanie zdjec, brak usuwania starych
-- ciasteczka + zmiana cors na domene + zmiana w env dla frontu adresu backendu?
 - czyszczenie i wyzerowanie bazy, utworzenie uzytkownika dla admina
 
 ACCOUNT
@@ -36,9 +33,10 @@ NA KONIEC
 - seo + sitemap + robots + index jak zhkr (+og.jpg) + manifest json
 - wysłać sitemap do google
 - react helmet async?? chyba ze nic to nie da w react spa
-- env production
 - cron do usuwania: 1 - shipping details 6 miesiecy od created_at, 2 - orders, payments, orders_items + invoices 5 lat od created at, 3 - usuwanie wszystkiego z anulowanymi niezrealizowanymi zamowieniami po 90 dniach od created_at
 
 RESPONSYWNOSC
 - home page - zdjecie z packing info sprawdzic czy na pewno ok po dostaniu ostatecznego zdjecia; about us niedopasowane na tablety
 - w forms.sccss zepsute oczka do hasla
+- w podsumowaniu zakupu wystylowac tekst z regulamiem i polityka
+- w podsumowaniu na telefonie dorownac do lewej produkty w koszyku
