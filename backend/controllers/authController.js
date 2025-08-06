@@ -2,6 +2,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
+const { sendAccountCreatedEmail } = require("../services/emailService");
 
 const {
   JWT_SECRET,
@@ -25,7 +26,6 @@ exports.register = async (req, res, next) => {
       return res.status(400).json({ error: "Wszystkie pola są wymagane" });
     }
 
-    // Sprawdź, czy email był kiedykolwiek użyty (nawet przez konto usunięte)
     const exists = await User.existsAnyEmail(email);
     if (exists) {
       return res.status(409).json({ error: "Ten e-mail jest już zajęty" });
@@ -39,6 +39,11 @@ exports.register = async (req, res, next) => {
       surname,
       phone,
     });
+
+    // Najpierw wysyłamy maila
+    await sendAccountCreatedEmail(user.email, user.name);
+
+    // Potem zwracamy odpowiedź
     res.status(201).json(user);
   } catch (err) {
     next(err);
