@@ -6,9 +6,20 @@ const path = require("path");
 
 const app = express();
 
+const allowedOrigins = [
+  "https://wedlinka.hosting24.pl",
+  "https://wedlinkalowkowice.pl",
+];
+
 app.use(
   cors({
-    origin: "https://wedlinka.hosting24.pl",
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
     exposedHeaders: ["X-Cart-Removed"],
   })
