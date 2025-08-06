@@ -21,3 +21,19 @@ exports.sendAccountCreatedEmail = async (to, name) => {
     html,
   });
 };
+
+exports.sendContactEmail = async (name, email, message) => {
+  const html = `
+    <h3>Nowa wiadomość z formularza kontaktowego</h3>
+    <p><strong>Imię:</strong> ${name}</p>
+    <p><strong>Email:</strong> ${email}</p>
+    <p><strong>Wiadomość:</strong><br/>${message.replace(/\n/g, "<br/>")}</p>
+  `;
+
+  await transporter.sendMail({
+    from: '"Formularz kontaktowy" <system@wedlinkalowkowice.pl>',
+    to: "kontakt@wedlinkalowkowice.pl",
+    subject: `Wiadomość od ${name} (${email})`,
+    html,
+  });
+};
