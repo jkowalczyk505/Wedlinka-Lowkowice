@@ -26,10 +26,13 @@ const PAYMENT_PL = {
 };
 
 const STATUS_PL = {
-  processing: "Przyjęto do realizacji",
-  shipped: "Wysłano",
-  delivered: "Dostarczono",
-  cancelled: "Anulowano",
+  waiting_payment: "Oczekuje na płatność",
+  paid: "Opłacone",
+  packed: "Gotowe do wysyłki",
+  ready_for_pickup: "Gotowe do odbioru",
+  shipped: "Wysłane",
+  delivered: "Odebrane",
+  cancelled: "Anulowane",
 };
 
 exports.sendAccountCreatedEmail = async (to, name) => {
@@ -222,13 +225,14 @@ exports.sendOrderConfirmationEmail = async (to, data) => {
     subject: `Potwierdzenie zamówienia ${data.orderNumber}`,
     html,
   });
-  console.log(`[MAIL] potwierdzenie wysłane – id: ${info.messageId}`);
 };
 
 exports.sendOrderStatusChangedEmail = async (to, data) => {
   const itemsHtml = data.items
     .map((item) => {
-      const p = item.product;
+      const p = item.product ?? item; // ← JEDNA ZMIANA
+      if (!p) return ""; // opcjonalne zabezpieczenie
+
       const brut = Number(p.price_brut ?? p.price ?? 0);
       const price = brut.toFixed(2);
       const total = (brut * item.quantity).toFixed(2);
@@ -239,8 +243,8 @@ exports.sendOrderStatusChangedEmail = async (to, data) => {
 
       const thumb = p.image
         ? `<img src="https://wedlinkalowkowice.pl/api/uploads/products/${p.image}"
-            width="60" height="60"
-            alt="" style="object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle">`
+                width="60" height="60"
+                alt="" style="object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle">`
         : "";
 
       return `
@@ -278,6 +282,4 @@ exports.sendOrderStatusChangedEmail = async (to, data) => {
     subject: `Nowy status zamówienia ${data.orderNumber}`,
     html,
   });
-
-  console.log(`[MAIL] status zamówienia wysłany – id: ${info.messageId}`);
 };

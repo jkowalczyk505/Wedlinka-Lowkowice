@@ -14,6 +14,12 @@ const {
 
 const BANK_ACCOUNT = process.env.BANK_ACCOUNT;
 
+const PAYMENT_PL = {
+  przelewy24: "Płatność online (Przelewy24)",
+  bank_transfer: "Przelew tradycyjny",
+  cod: "Przy odbiorze",
+};
+
 // POST /api/orders
 async function createOrder(req, res) {
   try {
@@ -244,7 +250,7 @@ async function updateOrderStatus(req, res) {
 
     // pobierz dane do maila
     const full = await OrderModel.getByIdAdmin(id);
-    const email = full.order.invoice_email || full.shipping.recipient_email;
+    const email = full.invoice?.email || full.shipping?.recipient_email;
 
     if (email) {
       await sendOrderStatusChangedEmail(email, {
