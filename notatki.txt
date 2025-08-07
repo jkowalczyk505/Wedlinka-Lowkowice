@@ -28,7 +28,7 @@ FAKTURY
 - wystawianie faktury dopiero po zaplacie!!
 
 NA KONIEC
-- MAILE - faktura, zmiana statusu, gotowe do odbioru, CZY MAILE PRZYCHODZA NA ADRES MAILOWY PODANY W ZAMOWIENIU, NIE KONTO
+- MAILE - faktura, CZY MAILE PRZYCHODZA NA ADRES MAILOWY PODANY W ZAMOWIENIU A NIE KONTO
 - BACKEND zabezpieczyc - rate limit, helmet, ukrycie express
 - seo + sitemap + robots + index jak zhkr (+og.jpg) + manifest json
 - wysłać sitemap do google
