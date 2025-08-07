@@ -77,8 +77,8 @@
       fetch("https://api.ipify.org?format=json")
         .then((res) => res.json())
         .then((data) => {
-          const myIp = "95.215.232.175";
-          if (data.ip !== myIp) {
+          const allowedIps = ["95.215.232.175", "83.26.185.75"];
+          if (!allowedIps.includes(data.ip)) {
             document.body.innerHTML = `
           <div style="text-align:center; padding:100px; font-family:sans-serif;">
             <h1>Strona w budowie</h1>
