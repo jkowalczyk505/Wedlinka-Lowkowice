@@ -43,7 +43,7 @@
     .store-info {
       h2 {
         font-family: $font-heading;
-        font-size: clamp(1.6rem, 3vw, 2.4rem);
+        font-size: clamp(1.6rem, 3vw, 3rem);  // ← było 2.4rem
         letter-spacing: 0.02em;
         line-height: 1.2;
         margin-bottom: 1rem;
@@ -51,14 +51,14 @@
       }
 
       .description {
-        font-size: clamp(1rem, 1.4vw, 1.25rem);
+        font-size: clamp(1rem, 1.4vw, 1.5rem);  // ← było 1.25rem
         line-height: 1.55;
         margin-bottom: 1.25rem;
         max-width: 60ch;
       }
 
       .address {
-        font-size: clamp(1rem, 1.3vw, 1.2rem);
+        font-size: clamp(1rem, 1.3vw, 1.35rem);  // ← było 1.2rem
         font-weight: 600;
       }
     }
