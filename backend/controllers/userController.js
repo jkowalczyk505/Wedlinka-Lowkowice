@@ -2,6 +2,7 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const db = require("../config/db");
+const { sendEmailChangedNotification } = require("../services/emailService");
 
 const {
   COOKIE_NAME,
@@ -104,6 +105,7 @@ exports.changeEmail = async (req, res, next) => {
     }
 
     await User.updateEmail(req.user.id, newEmail);
+    await sendEmailChangedNotification(newEmail, newEmail);
     res.json({ message: "E-mail zmieniony" });
   } catch (err) {
     next(err);

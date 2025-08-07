@@ -37,3 +37,13 @@ exports.sendContactEmail = async (name, email, message) => {
     html,
   });
 };
+
+exports.sendEmailChangedNotification = async (to, newEmail) => {
+  const html = loadTemplateWithFooter("emailChanged", { newEmail });
+  await transporter.sendMail({
+    from: '"Wędlinka Łowkowice" <system@wedlinkalowkowice.pl>',
+    to,
+    subject: "Twój adres e-mail został zmieniony",
+    html,
+  });
+};
