@@ -26,7 +26,7 @@ export const homeFeatures = [
     icon: <RiSecurePaymentFill />,
     title: "Bezpieczne płatności",
     subtitle:
-      "Zapłać szybko i bez obaw przez PayU lub tradycyjny przelew."
+      "Zapłać szybko i bez obaw przez Przelewy24 lub tradycyjny przelew."
   }
 ];
 
@@ -43,7 +43,7 @@ export const contactFeatures = [
     icon: <IoIosMail />,
     title: "Napisz wiadomość",
     subtitle:
-      "kontakt@example.com"
+      "kontakt@wedlinkalowkowice.pl"
   },
   {
     id: "address",

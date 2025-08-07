@@ -18,7 +18,7 @@ function ReturnComplaintsPage() {
                         Jeśli produkt dotarł do Ciebie uszkodzony, nieświeży lub niezgodny z
                         zamówieniem – skontaktuj się z nami niezwłocznie, najlepiej tego samego dnia,
                         przesyłając zdjęcie oraz numer zamówienia na:&nbsp;
-                        <a href="mailto:kontakt@wedlinyzlowkowic.pl">kontakt@wedlinyzlowkowic.pl</a>.
+                        <a href="mailto:kontakt@wedlinkalowkowice.pl">kontakt@wedlinkalowkowice.pl</a>.
                     </p>
 
                     <p>

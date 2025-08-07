@@ -7,6 +7,7 @@ const path = require("path");
 const app = express();
 
 const allowedOrigins = [
+  "http://localhost:3000",
   "https://wedlinka.hosting24.pl",
   "https://wedlinkalowkowice.pl",
 ];

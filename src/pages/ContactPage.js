@@ -23,7 +23,7 @@ function ContactPage() {
 
                         <div className="contact-box">
                             <FaEnvelope className="icon" />
-                            <p>kontakt@example.com</p>
+                            <p>kontakt@wedlinkalowkowice.pl</p>
                         </div>
                     </div>
 

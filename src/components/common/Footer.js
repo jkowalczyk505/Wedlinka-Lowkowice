@@ -22,7 +22,7 @@ function Footer() {
             <br />
             NIP 123-456-78-90
             <br />
-            e-mail: biuro@wedlinka.pl
+            e-mail: kontakt@wedlinkalowkowice.pl
             <br />
             tel. +48 123 456 789
           </address>

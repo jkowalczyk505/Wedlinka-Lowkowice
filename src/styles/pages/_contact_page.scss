@@ -27,6 +27,7 @@
         flex-wrap: wrap;
 
         > div {
+          min-height: auto;
           max-width: 100%;
           flex: 1 1 100%;
           padding: clamp(1.5rem, 5vw, 3rem);

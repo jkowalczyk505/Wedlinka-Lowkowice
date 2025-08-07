@@ -126,7 +126,7 @@ function ChangePassword() {
                 onClick={() => setShowNewPassword((prev) => !prev)}
                 className="eye-button"
               >
-                {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
 
@@ -144,7 +144,7 @@ function ChangePassword() {
                 onClick={() => setShowConfirmPassword((prev) => !prev)}
                 className="eye-button"
               >
-                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
 
