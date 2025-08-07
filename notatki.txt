@@ -33,7 +33,7 @@ NA KONIEC
 - seo + sitemap + robots + index jak zhkr (+og.jpg) + manifest json
 - wysłać sitemap do google
 - react helmet async?? chyba ze nic to nie da w react spa
-- cron do usuwania: 1 - shipping details 6 miesiecy od created_at, 2 - orders, payments, orders_items + invoices 5 lat od created at, 3 - usuwanie wszystkiego z anulowanymi niezrealizowanymi zamowieniami po 90 dniach od created_at
+- cron do usuwania: 1 - shipping details 6 miesiecy od created_at, 2 - orders, payments, orders_items + invoices 5 lat od created at, 3 - usuwanie wszystkiego z anulowanymi niezrealizowanymi zamowieniami po 90 dniach od created_at, 4 - wygasle tokeny w password_resets
 
 RESPONSYWNOSC
 - home page - zdjecie z packing info sprawdzic czy na pewno ok po dostaniu ostatecznego zdjecia; about us niedopasowane na tablety
