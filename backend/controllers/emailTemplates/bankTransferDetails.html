@@ -1,0 +1,39 @@
+<tr>
+  <td style="padding: 20px 0; text-align: center">
+    <h2 style="color: #333">Dane do przelewu</h2>
+    <p style="color: #555">
+      Dziękujemy za złożenie zamówienia <strong>{{orderNumber}}</strong>.
+    </p>
+    <p style="color: #555">Prosimy o dokonanie przelewu na poniższe dane:</p>
+
+    <table
+      width="100%"
+      style="margin: 20px auto; max-width: 400px; font-size: 14px; color: #333"
+    >
+      <tr>
+        <td style="padding: 5px 0"><strong>Odbiorca:</strong></td>
+        <td>{{recipient}}</td>
+      </tr>
+      <tr>
+        <td style="padding: 5px 0"><strong>Tytuł przelewu:</strong></td>
+        <td>{{title}}</td>
+      </tr>
+      <tr>
+        <td style="padding: 5px 0"><strong>Kwota:</strong></td>
+        <td>{{amount}} zł</td>
+      </tr>
+      <tr>
+        <td style="padding: 5px 0"><strong>Numer konta:</strong></td>
+        <td style="font-family: monospace">{{bankAccount}}</td>
+      </tr>
+      <tr>
+        <td style="padding: 5px 0"><strong>Bank:</strong></td>
+        <td>{{bankName}}</td>
+      </tr>
+    </table>
+
+    <p style="color: #555">
+      Po zaksięgowaniu płatności rozpoczniemy realizację zamówienia.
+    </p>
+  </td>
+</tr>

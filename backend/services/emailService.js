@@ -78,3 +78,20 @@ exports.sendPasswordResetEmail = async (to, resetUrl) => {
     html,
   });
 };
+
+exports.sendBankTransferDetailsEmail = async (to, data) => {
+  const html = loadTemplateWithFooter("bankTransferDetails", {
+    orderNumber: data.orderNumber,
+    bankAccount: process.env.BANK_ACCOUNT,
+    bankName: process.env.BANK_NAME || "Twój Bank",
+    recipient: process.env.BANK_RECIPIENT || "Odbiorca",
+    amount: data.amount,
+  });
+
+  await transporter.sendMail({
+    from: '"Wędlinka Łowkowice" <system@wedlinkalowkowice.pl>',
+    to,
+    subject: `Dane do przelewu za zamówienie ${data.orderNumber}`,
+    html,
+  });
+};

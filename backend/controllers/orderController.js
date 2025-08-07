@@ -6,6 +6,7 @@ const PaymentModel = require("../models/paymentModel");
 
 const { calculateCartSummary } = require("../helpers/orderHelpers");
 const { generateP24RedirectUrl } = require("../services/p24"); // mock P24
+const { sendBankTransferDetailsEmail } = require("../services/emailService");
 
 const BANK_ACCOUNT = process.env.BANK_ACCOUNT;
 
@@ -85,6 +86,21 @@ async function createOrder(req, res) {
       transactionId: payment.redirectUrl,
       status: "pending",
     });
+
+    // 5a. Wysyłka maila z danymi do przelewu
+    if (paymentMethod === "bank_transfer") {
+      try {
+        await sendBankTransferDetailsEmail(form.email, {
+          orderNumber,
+          amount: payment.amount,
+          bankAccount: payment.bankAccount,
+          bankName: process.env.BANK_NAME,
+          recipient: process.env.BANK_RECIPIENT,
+        });
+      } catch (mailErr) {
+        console.error("Błąd wysyłki maila z przelewem:", mailErr);
+      }
+    }
 
     // 6. Sprzątanie koszyka
     await Cart.clearCart(userId);
