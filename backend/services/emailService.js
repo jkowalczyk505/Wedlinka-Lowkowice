@@ -82,9 +82,10 @@ exports.sendPasswordResetEmail = async (to, resetUrl) => {
 exports.sendBankTransferDetailsEmail = async (to, data) => {
   const html = loadTemplateWithFooter("bankTransferDetails", {
     orderNumber: data.orderNumber,
+    title: data.orderNumber,
     bankAccount: process.env.BANK_ACCOUNT,
-    bankName: process.env.BANK_NAME || "Twój Bank",
-    recipient: process.env.BANK_RECIPIENT || "Odbiorca",
+    bankName: process.env.BANK_NAME,
+    recipient: process.env.BANK_RECIPIENT,
     amount: data.amount,
   });
 
