@@ -38,12 +38,32 @@ exports.sendContactEmail = async (name, email, message) => {
   });
 };
 
-exports.sendEmailChangedNotification = async (to, newEmail) => {
-  const html = loadTemplateWithFooter("emailChanged", { newEmail });
+exports.sendEmailChangedOldEmail = async (to, newEmail) => {
+  const html = loadTemplateWithFooter("emailChangedOld", { newEmail });
   await transporter.sendMail({
     from: '"Wędlinka Łowkowice" <system@wedlinkalowkowice.pl>',
     to,
     subject: "Twój adres e-mail został zmieniony",
+    html,
+  });
+};
+
+exports.sendEmailChangedNewEmail = async (to) => {
+  const html = loadTemplateWithFooter("emailChangedNew");
+  await transporter.sendMail({
+    from: '"Wędlinka Łowkowice" <system@wedlinkalowkowice.pl>',
+    to,
+    subject: "Nowy adres przypisany do konta",
+    html,
+  });
+};
+
+exports.sendAccountDeletedEmail = async (to) => {
+  const html = loadTemplateWithFooter("accountDeleted");
+  await transporter.sendMail({
+    from: '"Wędlinka Łowkowice" <system@wedlinkalowkowice.pl>',
+    to,
+    subject: "Twoje konto zostało usunięte",
     html,
   });
 };

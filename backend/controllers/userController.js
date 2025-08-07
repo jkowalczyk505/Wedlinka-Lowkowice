@@ -2,7 +2,11 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const db = require("../config/db");
-const { sendEmailChangedNotification } = require("../services/emailService");
+const {
+  sendEmailChangedOldEmail,
+  sendEmailChangedNewEmail,
+  sendAccountDeletedEmail,
+} = require("../services/emailService");
 
 const {
   COOKIE_NAME,
@@ -104,8 +108,14 @@ exports.changeEmail = async (req, res, next) => {
       return res.status(400).json({ error: "Nieprawidłowy adres e-mail" });
     }
 
+    const oldEmail = user.email;
+
     await User.updateEmail(req.user.id, newEmail);
-    await sendEmailChangedNotification(newEmail, newEmail);
+
+    // osobne maile
+    await sendEmailChangedOldEmail(oldEmail, newEmail);
+    await sendEmailChangedNewEmail(newEmail);
+
     res.json({ message: "E-mail zmieniony" });
   } catch (err) {
     next(err);
@@ -116,16 +126,20 @@ exports.deleteMe = async (req, res, next) => {
   const userId = req.user.id;
 
   try {
+    const user = await User.findById(userId);
+    if (!user)
+      return res.status(404).json({ error: "Nie znaleziono użytkownika" });
+
     await db.query(`DELETE FROM cart_items WHERE user_id = ?`, [userId]);
     await User.markAsDeleted(userId);
 
-    // Usuń ciasteczka JWT
+    await sendAccountDeletedEmail(user.email);
+
     res.clearCookie(COOKIE_NAME, {
       httpOnly: true,
       secure: COOKIE_SECURE === "true",
       sameSite: COOKIE_SAMESITE,
     });
-
     res.clearCookie(REFRESH_COOKIE_NAME, {
       httpOnly: true,
       secure: REFRESH_COOKIE_SECURE === "true",
