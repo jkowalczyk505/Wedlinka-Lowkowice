@@ -244,8 +244,9 @@ async function updateOrderStatus(req, res) {
 
     // pobierz dane do maila
     const full = await OrderModel.getByIdAdmin(id);
-    if (full?.order?.invoice_email) {
-      const email = full.order.invoice_email;
+    const email = full.order.invoice_email || full.shipping.recipient_email;
+
+    if (email) {
       await sendOrderStatusChangedEmail(email, {
         orderNumber: full.order.order_number,
         orderStatus: status,
