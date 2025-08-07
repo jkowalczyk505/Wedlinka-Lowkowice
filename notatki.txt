@@ -28,7 +28,7 @@ FAKTURY
 - wystawianie faktury dopiero po zaplacie!!
 
 NA KONIEC
-- MAILE - potwierdzenie zamwowienia, (tabela order confirmations), faktura, zmiana statusu, gotowe do odbioru
+- MAILE - faktura, zmiana statusu, gotowe do odbioru
 - BACKEND zabezpieczyc - rate limit, helmet, ukrycie express
 - seo + sitemap + robots + index jak zhkr (+og.jpg) + manifest json
 - wysłać sitemap do google
