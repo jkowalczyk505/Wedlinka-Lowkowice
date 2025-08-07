@@ -2,7 +2,11 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
-const { sendAccountCreatedEmail } = require("../services/emailService");
+const {
+  sendAccountCreatedEmail,
+  sendPasswordResetEmail,
+} = require("../services/emailService");
+const { generateResetToken } = require("../utils/tokenGenerator");
 
 const {
   JWT_SECRET,
@@ -145,3 +149,52 @@ function msToNum(str) {
   if (str.endsWith("d")) return num * 24 * 60 * 60 * 1000;
   return num;
 }
+
+exports.requestPasswordReset = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findByEmail(email);
+    if (!user) return res.status(200).end(); // cichy sukces
+
+    const token = generateResetToken();
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 minut
+
+    await db.query(
+      `INSERT INTO password_resets (user_id, token, expires_at) VALUES (?, ?, ?)`,
+      [user.id, token, expiresAt]
+    );
+
+    const resetUrl = `https://wedlinkalowkowice.pl/reset-hasla/${token}`;
+    await sendPasswordResetEmail(user.email, resetUrl);
+
+    res.status(200).end();
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    const [rows] = await db.query(
+      `SELECT * FROM password_resets WHERE token = ? AND expires_at > NOW()`,
+      [token]
+    );
+
+    const reset = rows[0];
+    if (!reset)
+      return res.status(400).json({ error: "Nieprawidłowy lub wygasły token" });
+
+    const hash = await bcrypt.hash(newPassword, 10);
+    await User.updatePassword(reset.user_id, hash);
+
+    await db.query(`DELETE FROM password_resets WHERE user_id = ?`, [
+      reset.user_id,
+    ]);
+
+    res.status(200).json({ message: "Hasło zostało zresetowane" });
+  } catch (err) {
+    next(err);
+  }
+};
