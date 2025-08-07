@@ -11,10 +11,27 @@ export default function PasswordResetConfirmPage() {
   const { showAlert } = useAlert();
 
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      showAlert(
+        "Hasło musi mieć min. 8 znaków, zawierać dużą literę i cyfrę.",
+        "error"
+      );
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      showAlert("Hasła muszą być takie same.", "error");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -55,6 +72,14 @@ export default function PasswordResetConfirmPage() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <label>Powtórz hasło</label>
+          <input
+            type="password"
+            required
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
 
           <div className="submit-button">
