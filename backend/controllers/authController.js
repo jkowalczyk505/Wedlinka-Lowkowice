@@ -7,6 +7,7 @@ const {
   sendPasswordResetEmail,
 } = require("../services/emailService");
 const { generateResetToken } = require("../utils/tokenGenerator");
+const db = require("../config/db");
 
 const {
   JWT_SECRET,
