@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const { loadTemplateWithFooter } = require("../helpers/emailTemplates");
+const { renderTemplate } = require("../helpers/emailTemplates");
 
 const transporter = nodemailer.createTransport({
   host: "mail.wedlinkalowkowice.pl",
@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.sendAccountCreatedEmail = async (to, name) => {
-  const html = loadTemplateWithFooter("accountCreated", { name });
+  const html = renderTemplate("accountCreated", { name });
 
   await transporter.sendMail({
     from: '"Wędlinka Łowkowice" <system@wedlinkalowkowice.pl>',
@@ -39,7 +39,7 @@ exports.sendContactEmail = async (name, email, message) => {
 };
 
 exports.sendEmailChangedOldEmail = async (to, newEmail) => {
-  const html = loadTemplateWithFooter("emailChangedOld", { newEmail });
+  const html = renderTemplate("emailChangedOld", { newEmail });
   await transporter.sendMail({
     from: '"Wędlinka Łowkowice" <system@wedlinkalowkowice.pl>',
     to,
@@ -49,7 +49,7 @@ exports.sendEmailChangedOldEmail = async (to, newEmail) => {
 };
 
 exports.sendEmailChangedNewEmail = async (to) => {
-  const html = loadTemplateWithFooter("emailChangedNew");
+  const html = renderTemplate("emailChangedNew");
   await transporter.sendMail({
     from: '"Wędlinka Łowkowice" <system@wedlinkalowkowice.pl>',
     to,
@@ -59,7 +59,7 @@ exports.sendEmailChangedNewEmail = async (to) => {
 };
 
 exports.sendAccountDeletedEmail = async (to) => {
-  const html = loadTemplateWithFooter("accountDeleted");
+  const html = renderTemplate("accountDeleted");
   await transporter.sendMail({
     from: '"Wędlinka Łowkowice" <system@wedlinkalowkowice.pl>',
     to,
@@ -69,7 +69,7 @@ exports.sendAccountDeletedEmail = async (to) => {
 };
 
 exports.sendPasswordResetEmail = async (to, resetUrl) => {
-  const html = loadTemplateWithFooter("passwordReset", { resetUrl });
+  const html = renderTemplate("passwordReset", { resetUrl });
 
   await transporter.sendMail({
     from: '"Wędlinka Łowkowice" <system@wedlinkalowkowice.pl>',
@@ -80,7 +80,7 @@ exports.sendPasswordResetEmail = async (to, resetUrl) => {
 };
 
 exports.sendBankTransferDetailsEmail = async (to, data) => {
-  const html = loadTemplateWithFooter("bankTransferDetails", {
+  const html = renderTemplate("bankTransferDetails", {
     orderNumber: data.orderNumber,
     title: data.orderNumber,
     bankAccount: process.env.BANK_ACCOUNT,
@@ -95,4 +95,125 @@ exports.sendBankTransferDetailsEmail = async (to, data) => {
     subject: `Dane do przelewu za zamówienie ${data.orderNumber}`,
     html,
   });
+};
+
+const SHIPPING_PL = {
+  pickup: "Odbiór osobisty",
+  inpost: "Paczkomaty InPost 24/7",
+  courier: "Kurier",
+  courier_prepaid: "Kurier (przedpłata)",
+  courier_cod: "Kurier (za pobraniem)",
+};
+
+const PAYMENT_PL = {
+  przelewy24: "Płatność online (Przelewy24)",
+  bank_transfer: "Przelew tradycyjny",
+  cod: "Przy odbiorze",
+};
+
+exports.sendOrderConfirmationEmail = async (to, data) => {
+  /* ---------- tabela z pozycjami ---------- */
+  const itemsHtml = data.items
+    .map((item) => {
+      const p = item.product;
+
+      /* 1. kwoty --------------------------------------------------------- */
+      const brut = Number(p.price_brut ?? p.price ?? 0);
+      const price = brut.toFixed(2);
+      const total = (brut * item.quantity).toFixed(2);
+
+      /* 2. jednostki ----------------------------------------------------- */
+      const perPack = Number(
+        p.quantityPerUnit ?? p.quantity /* kolumna w DB */ ?? 1
+      );
+      const unitsTotal = perPack * item.quantity; // 2 × 8 szt = 16 szt
+      const unitsLabel = `${unitsTotal.toLocaleString("pl-PL")} ${p.unit}`;
+
+      /* 3. miniatura (60 px, zaokr. rogi) -------------------------------- */
+      const thumb = p.image
+        ? `<img src="https://wedlinkalowkowice.pl/api/uploads/products/${p.image}"
+            width="60" height="60"
+            alt="" style="object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle">`
+        : "";
+
+      /* 4. wiersz -------------------------------------------------------- */
+      return `
+    <tr>
+      <td style="padding:8px 10px;">
+        ${thumb}
+        <span style="vertical-align:middle">
+          ${p.name}<br/><small style="color:#777;">${unitsLabel}</small>
+        </span>
+      </td>
+      <td align="center" style="padding:8px 10px;">${price} zł</td>
+      <td align="center" style="padding:8px 10px;">${item.quantity}</td>
+      <td align="right"  style="padding:8px 10px;"><strong>${total} zł</strong></td>
+    </tr>`;
+    })
+    .join("");
+
+  /* ---------- etykiety ---------- */
+  const shippingLabel = SHIPPING_PL[data.shippingMethod] || data.shippingMethod;
+  const paymentLabel = PAYMENT_PL[data.paymentMethod] || data.paymentMethod;
+
+  /* ---------- dodatkowe wiersze ---------- */
+  const shippingLine = `${shippingLabel} – ${Number(data.shippingCost).toFixed(
+    2
+  )} zł`;
+  const shippingExtra = data.lockerCode
+    ? `<strong>Paczkomat:</strong> ${data.lockerCode}<br/>`
+    : "";
+
+  /* ---------- adresy ---------- */
+  const shippingAddressHtml = [
+    `${data.shipping.firstName} ${data.shipping.lastName}`,
+    data.shipping.street,
+    `${data.shipping.zip} ${data.shipping.city}`,
+    data.shipping.country,
+    data.shipping.phone ? "tel.: " + data.shipping.phone : null,
+    data.shipping.email,
+  ]
+    .filter(Boolean)
+    .join("<br/>");
+
+  const invoiceBlock = data.invoice
+    ? `<h3 style="margin:25px 0 5px 0;color:#333;font-size:16px">Dane do faktury</h3>
+       <p style="margin:0;color:#555">${[
+         data.invoice.name,
+         data.invoice.street,
+         `${data.invoice.zip} ${data.invoice.city}`,
+         data.invoice.country,
+         data.invoice.nip ? "NIP: " + data.invoice.nip : null,
+         data.invoice.email,
+       ]
+         .filter(Boolean)
+         .join("<br/>")}</p>`
+    : "";
+
+  const notesBlock = data.notes.trim()
+    ? `<h3 style="margin:25px 0 5px 0;color:#333;font-size:16px">Uwagi do zamówienia</h3>
+       <p style="margin:0;color:#555">${data.notes}</p>`
+    : "";
+
+  /* ---------- render szablonu ---------- */
+  const html = renderTemplate("orderConfirmation", {
+    orderNumber: data.orderNumber,
+    itemsHtml,
+    shippingLine,
+    shippingExtra,
+    paymentLabel,
+    total: Number(data.total).toFixed(2),
+    shippingAddressHtml,
+    invoiceBlock,
+    notesBlock,
+  });
+
+  /* ---------- wysyłka ---------- */
+  const info = await transporter.sendMail({
+    from: '"Wędlinka Łowkowice" <system@wedlinkalowkowice.pl>',
+    to,
+    subject: `Potwierdzenie zamówienia ${data.orderNumber}`,
+    html,
+  });
+  console.log(`[MAIL] potwierdzenie wysłane – id: ${info.messageId}`);
 };

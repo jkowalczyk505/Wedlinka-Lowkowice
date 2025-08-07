@@ -6,7 +6,10 @@ const PaymentModel = require("../models/paymentModel");
 
 const { calculateCartSummary } = require("../helpers/orderHelpers");
 const { generateP24RedirectUrl } = require("../services/p24"); // mock P24
-const { sendBankTransferDetailsEmail } = require("../services/emailService");
+const {
+  sendBankTransferDetailsEmail,
+  sendOrderConfirmationEmail,
+} = require("../services/emailService");
 
 const BANK_ACCOUNT = process.env.BANK_ACCOUNT;
 
@@ -115,10 +118,51 @@ async function createOrder(req, res) {
         category: product.category,
         unit: product.unit,
         quantityPerUnit: product.quantityPerUnit,
-        price: product.price,
+        price_brut: Number(product.price_brut), // ← ważne!
       },
       quantity,
     }));
+
+    try {
+      await sendOrderConfirmationEmail(form.email, {
+        orderNumber,
+        items: enriched,
+        shippingMethod: selectedShipping.id, // <── nowa właściwość
+        shippingCost,
+        lockerCode: form.lockerCode || "", // <── nowa właściwość
+        paymentMethod: payment.method,
+        total: totalWithShipping,
+        notes: form.notes || "",
+
+        /* dane do sekcji „Adres dostawy” */
+        shipping: {
+          firstName: form.firstName,
+          lastName: form.lastName,
+          street: form.address + (form.address2 ? " / " + form.address2 : ""),
+          zip: form.zip,
+          city: form.city,
+          country: form.country || "Polska",
+          phone: form.phone || "",
+          email: form.email || "",
+        },
+
+        /* dane fakturowe – lub null, jeśli brak */
+        invoice: form.wantsInvoice
+          ? {
+              name: form.companyName || `${form.firstName} ${form.lastName}`,
+              street:
+                form.address + (form.address2 ? " / " + form.address2 : ""),
+              zip: form.zip,
+              city: form.city,
+              country: form.country || "Polska",
+              nip: form.nip || "",
+              email: form.invoice_email || form.email,
+            }
+          : null,
+      });
+    } catch (mailErr) {
+      console.error("Błąd wysyłki maila potwierdzającego zamówienie:", mailErr);
+    }
 
     return res.status(201).json({
       success: true,
