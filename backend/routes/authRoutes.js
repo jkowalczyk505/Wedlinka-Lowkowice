@@ -5,7 +5,10 @@ const {
   login,
   refresh,
   logout,
+  requestPasswordReset,
+  resetPassword,
 } = require("../controllers/authController");
+
 const { protect } = require("../middleware/authMiddleware");
 const { getMe } = require("../controllers/userController");
 
@@ -14,7 +17,11 @@ router.post("/login", login);
 router.post("/refresh", refresh);
 router.post("/logout", protect, logout);
 
-// opcjonalnie, endpoint /auth/me
+// 🔐 Authenticated user info
 router.get("/me", protect, getMe);
+
+// 🔑 Password reset
+router.post("/password-reset/request", requestPasswordReset);
+router.post("/password-reset/confirm", resetPassword);
 
 module.exports = router;

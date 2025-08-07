@@ -67,3 +67,14 @@ exports.sendAccountDeletedEmail = async (to) => {
     html,
   });
 };
+
+exports.sendPasswordResetEmail = async (to, resetUrl) => {
+  const html = loadTemplateWithFooter("passwordReset", { resetUrl });
+
+  await transporter.sendMail({
+    from: '"Wędlinka Łowkowice" <system@wedlinkalowkowice.pl>',
+    to,
+    subject: "Reset hasła",
+    html,
+  });
+};
