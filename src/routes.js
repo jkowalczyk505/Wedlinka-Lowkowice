@@ -12,6 +12,8 @@ import ChangePassword from "./pages/account/ChangePassword";
 import AccountReviews from "./pages/account/AccountReviews";
 import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
+import PasswordResetRequestPage from "./pages/PasswordResetRequestPage";
+import PasswordResetConfirmPage from "./pages/PasswordResetConfirmPage";
 import ContactPage from "./pages/ContactPage";
 import CategoryPage from "./pages/CategoryPage";
 import AllProductsPage from "./pages/AllProductsPage";
@@ -80,7 +82,6 @@ export default [
     ],
   },
 
-  // ↓ DODAJ PRZED sekcją 404
   {
     path: "/admin",
     element: <AdminLayout />,
@@ -98,6 +99,14 @@ export default [
         ],
       },
     ],
+  },
+  {
+    path: "/reset-hasla",
+    element: <PasswordResetRequestPage />,
+  },
+  {
+    path: "/reset-hasla/:token",
+    element: <PasswordResetConfirmPage />,
   },
 
   // ewentualnie catch-all 404

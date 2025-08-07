@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import FormContainer from "./FormContainer";
 import Button from "../common/Button";
 import Spinner from "../common/Spinner";
@@ -100,7 +100,7 @@ function LoginForm() {
         </label>
 
         <div className="form-link">
-          <a href="#">Nie pamiętasz hasła?</a>
+          <Link to="/reset-hasla">Nie pamiętasz hasła?</Link>
         </div>
       </div>
 
