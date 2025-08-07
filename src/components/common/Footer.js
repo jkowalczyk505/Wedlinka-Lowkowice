@@ -48,6 +48,9 @@ function Footer() {
               <NavLink to="/kontakt">Kontakt</NavLink>
             </li>
             <li>
+              <NavLink to="/nasze-sklepy">Nasze sklepy</NavLink>
+            </li>
+            <li>
               <NavLink to="/regulamin">Regulamin</NavLink>
             </li>
             <li>
