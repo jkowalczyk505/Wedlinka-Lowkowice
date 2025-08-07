@@ -11,6 +11,27 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+const SHIPPING_PL = {
+  pickup: "Odbiór osobisty",
+  inpost: "Paczkomaty InPost 24/7",
+  courier: "Kurier",
+  courier_prepaid: "Kurier (przedpłata)",
+  courier_cod: "Kurier (za pobraniem)",
+};
+
+const PAYMENT_PL = {
+  przelewy24: "Płatność online (Przelewy24)",
+  bank_transfer: "Przelew tradycyjny",
+  cod: "Przy odbiorze",
+};
+
+const STATUS_PL = {
+  processing: "Przyjęto do realizacji",
+  shipped: "Wysłano",
+  delivered: "Dostarczono",
+  cancelled: "Anulowano",
+};
+
 exports.sendAccountCreatedEmail = async (to, name) => {
   const html = renderTemplate("accountCreated", { name });
 
@@ -95,20 +116,6 @@ exports.sendBankTransferDetailsEmail = async (to, data) => {
     subject: `Dane do przelewu za zamówienie ${data.orderNumber}`,
     html,
   });
-};
-
-const SHIPPING_PL = {
-  pickup: "Odbiór osobisty",
-  inpost: "Paczkomaty InPost 24/7",
-  courier: "Kurier",
-  courier_prepaid: "Kurier (przedpłata)",
-  courier_cod: "Kurier (za pobraniem)",
-};
-
-const PAYMENT_PL = {
-  przelewy24: "Płatność online (Przelewy24)",
-  bank_transfer: "Przelew tradycyjny",
-  cod: "Przy odbiorze",
 };
 
 exports.sendOrderConfirmationEmail = async (to, data) => {
@@ -216,4 +223,61 @@ exports.sendOrderConfirmationEmail = async (to, data) => {
     html,
   });
   console.log(`[MAIL] potwierdzenie wysłane – id: ${info.messageId}`);
+};
+
+exports.sendOrderStatusChangedEmail = async (to, data) => {
+  const itemsHtml = data.items
+    .map((item) => {
+      const p = item.product;
+      const brut = Number(p.price_brut ?? p.price ?? 0);
+      const price = brut.toFixed(2);
+      const total = (brut * item.quantity).toFixed(2);
+
+      const perPack = Number(p.quantityPerUnit ?? p.quantity ?? 1);
+      const unitsTotal = perPack * item.quantity;
+      const unitsLabel = `${unitsTotal.toLocaleString("pl-PL")} ${p.unit}`;
+
+      const thumb = p.image
+        ? `<img src="https://wedlinkalowkowice.pl/api/uploads/products/${p.image}"
+            width="60" height="60"
+            alt="" style="object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle">`
+        : "";
+
+      return `
+      <tr>
+        <td style="padding:8px 10px;">
+          ${thumb}
+          <span style="vertical-align:middle">
+            ${p.name}<br/><small style="color:#777;">${unitsLabel}</small>
+          </span>
+        </td>
+        <td align="center" style="padding:8px 10px;">${price} zł</td>
+        <td align="center" style="padding:8px 10px;">${item.quantity}</td>
+        <td align="right"  style="padding:8px 10px;"><strong>${total} zł</strong></td>
+      </tr>`;
+    })
+    .join("");
+
+  const html = renderTemplate("orderStatusChanged", {
+    orderNumber: data.orderNumber,
+    orderStatusLabel: STATUS_PL[data.orderStatus] || data.orderStatus,
+    itemsHtml,
+    shippingLine: data.shippingLine,
+    shippingExtra: data.shippingExtra || "",
+    paymentLabel: data.paymentLabel,
+    total: Number(data.total).toFixed(2),
+    shippingAddressHtml: data.shippingAddressHtml,
+    invoiceBlock: data.invoiceBlock || "",
+    notesBlock: data.notesBlock || "",
+    token: data.token,
+  });
+
+  const info = await transporter.sendMail({
+    from: '"Wędlinka Łowkowice" <system@wedlinkalowkowice.pl>',
+    to,
+    subject: `Nowy status zamówienia ${data.orderNumber}`,
+    html,
+  });
+
+  console.log(`[MAIL] status zamówienia wysłany – id: ${info.messageId}`);
 };

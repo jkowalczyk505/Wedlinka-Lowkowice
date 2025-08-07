@@ -108,8 +108,9 @@ const OrderModel = {
     const last = form.lastName;
     const street = form.address + (form.address2 ? "/" + form.address2 : "");
 
-    const email = form.email || form.invoice_email || null;
-    const phone = form.phone || null;
+    // 🔽 Teraz pobieramy e-mail i telefon z form — bez względu na fakturę
+    const email = form.email?.trim() || null;
+    const phone = form.phone?.trim() || null;
 
     const cost = selectedShipping.priceTotal ?? selectedShipping.price ?? 0;
 
@@ -501,7 +502,7 @@ const OrderModel = {
         WHERE order_id = ?`,
       [trackingNumber, orderId]
     );
-  }
+  },
 };
 
 module.exports = OrderModel;
