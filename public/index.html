@@ -13,20 +13,14 @@
     <title>Wędlinka Łowkowice</title>
 
     <!-- meta description -->
-    <meta
-      name="description"
-      content="----------"
-    />
+    <meta name="description" content="----------" />
 
     <!-- meta keywords (opcjonalnie) -->
-    <meta
-      name="keywords"
-      content="--------"
-    />
+    <meta name="keywords" content="--------" />
 
     <!-- canonical URL -->
     <link rel="canonical" href="https://twojastrona.pl/" />
-    
+
     <!-- Open Graph (Facebook, LinkedIn) -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://twojastrona.pl/" />
@@ -71,11 +65,36 @@
       title="Sitemap"
       href="/sitemap.xml"
     />
-
   </head>
   <body>
-    <noscript>Musisz włączyć JavaScript, aby ta aplikacja działała poprawnie.</noscript>
+    <noscript
+      >Musisz włączyć JavaScript, aby ta aplikacja działała poprawnie.</noscript
+    >
     <div id="root"></div>
-    <div id="modal-root"></div>   <!-- ⬅️ tu lądują portale -->
+    <div id="modal-root"></div>
+    <!-- ⬅️ tu lądują portale -->
+    <script>
+      fetch("https://api.ipify.org?format=json")
+        .then((res) => res.json())
+        .then((data) => {
+          const myIp = "95.215.232.175";
+          if (data.ip !== myIp) {
+            document.body.innerHTML = `
+          <div style="text-align:center; padding:100px; font-family:sans-serif;">
+            <h1>Strona w budowie</h1>
+            <p>Zapraszamy wkrótce.</p>
+          </div>
+        `;
+          }
+        })
+        .catch(() => {
+          document.body.innerHTML = `
+        <div style="text-align:center; padding:100px; font-family:sans-serif;">
+          <h1>Strona w budowie</h1>
+          <p>Zapraszamy wkrótce.</p>
+        </div>
+      `;
+        });
+    </script>
   </body>
 </html>

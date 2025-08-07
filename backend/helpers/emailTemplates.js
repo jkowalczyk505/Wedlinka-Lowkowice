@@ -1,31 +1,30 @@
 const fs = require("fs");
 const path = require("path");
 
-exports.loadTemplateWithFooter = (templateName, replacements = {}) => {
-  const templatePath = path.join(
-    __dirname,
-    "..",
-    "controllers",
-    "emailTemplates",
-    `${templateName}.html`
+exports.renderTemplate = (name, repl = {}) => {
+  const base = fs.readFileSync(
+    path.join(__dirname, "..", "controllers", "emailTemplates", "base.html"),
+    "utf-8"
   );
-  const footerPath = path.join(
-    __dirname,
-    "..",
-    "controllers",
-    "emailTemplates",
-    "footer.html"
+  const body = fs.readFileSync(
+    path.join(__dirname, "..", "controllers", "emailTemplates", `${name}.html`),
+    "utf-8"
+  );
+  const footer = fs.readFileSync(
+    path.join(__dirname, "..", "controllers", "emailTemplates", "footer.html"),
+    "utf-8"
   );
 
-  let html = fs.readFileSync(templatePath, "utf-8");
-  const footer = fs.readFileSync(footerPath, "utf-8");
+  // 1) wstawiamy treść i stopkę w miejsce {{content}}
+  let html = base.replace("{{content}}", body + footer);
 
-  html += footer;
-
-  // Podstaw zmienne {{name}}, {{link}}, itd.
-  for (const [key, value] of Object.entries(replacements)) {
-    html = html.replace(new RegExp(`{{${key}}}`, "g"), value);
+  // 2) placeholdery użytkownika
+  for (const [k, v] of Object.entries(repl)) {
+    html = html.replace(new RegExp(`{{${k}}}`, "g"), v);
   }
+
+  // 3) rok w stopce
+  html = html.replace(/{{year}}/g, new Date().getFullYear());
 
   return html;
 };

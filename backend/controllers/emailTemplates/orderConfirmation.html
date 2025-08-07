@@ -1,0 +1,67 @@
+<tr>
+  <td style="padding: 20px; font-family: sans-serif">
+    <h2 style="text-align: center; color: #333">
+      Dziękujemy za zamówienie {{orderNumber}}
+    </h2>
+    <p style="text-align: center; color: #555">
+      Rozpoczniemy jego realizację tak szybko, jak to możliwe.
+    </p>
+
+    <!-- tabela produktów -->
+    <table
+      style="
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        font-size: 14px;
+      "
+    >
+      <thead>
+        <tr style="background: #f0f0f0">
+          <th align="left" style="padding: 10px">Produkt</th>
+          <th align="center" style="padding: 10px">Cena</th>
+          <th align="center" style="padding: 10px">Ilość</th>
+          <th align="right" style="padding: 10px">Kwota</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{itemsHtml}}
+      </tbody>
+    </table>
+
+    <!-- podsumowanie -->
+    <p style="margin-top: 20px; color: #555">
+      <strong>Dostawa:</strong> {{shippingLine}}<br />
+      {{shippingExtra}}
+      <strong>Płatność:</strong> {{paymentLabel}}<br />
+      <strong>Razem do zapłaty:</strong> {{total}} zł
+    </p>
+
+    <!-- adres dostawy -->
+    <h3 style="margin: 25px 0 5px 0; color: #333; font-size: 16px">
+      Adres dostawy
+    </h3>
+    <p style="margin: 0; color: #555">{{shippingAddressHtml}}</p>
+
+    <!-- opcjonalnie faktura -->
+    {{invoiceBlock}}
+
+    <!-- opcjonalnie uwagi -->
+    {{notesBlock}}
+
+    <!-- linki -->
+    <p style="margin-top: 25px; color: #555">
+      Podgląd zamówienia:
+      <a
+        href="https://wedlinkalowkowice.pl/podsumowanie/{{orderNumber}}?token={{token}}"
+        >kliknij tutaj</a
+      ><br />
+      Reklamacje i zwroty:
+      <a href="https://wedlinkalowkowice.pl/reklamacje">kliknij tutaj</a><br />
+      Informacje o dostawie:
+      <a href="https://wedlinkalowkowice.pl/informacje-o-dostawie"
+        >kliknij tutaj</a
+      >
+    </p>
+  </td>
+</tr>

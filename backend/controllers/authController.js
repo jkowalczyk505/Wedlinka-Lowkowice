@@ -7,6 +7,7 @@ const {
   sendPasswordResetEmail,
 } = require("../services/emailService");
 const { generateResetToken } = require("../utils/tokenGenerator");
+const db = require("../config/db");
 
 const {
   JWT_SECRET,
@@ -175,7 +176,7 @@ exports.requestPasswordReset = async (req, res, next) => {
 
 exports.resetPassword = async (req, res, next) => {
   try {
-    const { token, newPassword } = req.body;
+    const { token, password } = req.body;
 
     const [rows] = await db.query(
       `SELECT * FROM password_resets WHERE token = ? AND expires_at > NOW()`,
@@ -186,7 +187,7 @@ exports.resetPassword = async (req, res, next) => {
     if (!reset)
       return res.status(400).json({ error: "Nieprawidłowy lub wygasły token" });
 
-    const hash = await bcrypt.hash(newPassword, 10);
+    const hash = await bcrypt.hash(password, 10);
     await User.updatePassword(reset.user_id, hash);
 
     await db.query(`DELETE FROM password_resets WHERE user_id = ?`, [

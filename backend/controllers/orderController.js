@@ -6,6 +6,11 @@ const PaymentModel = require("../models/paymentModel");
 
 const { calculateCartSummary } = require("../helpers/orderHelpers");
 const { generateP24RedirectUrl } = require("../services/p24"); // mock P24
+const {
+  sendBankTransferDetailsEmail,
+  sendOrderConfirmationEmail,
+  sendOrderStatusChangedEmail,
+} = require("../services/emailService");
 
 const BANK_ACCOUNT = process.env.BANK_ACCOUNT;
 
@@ -86,6 +91,21 @@ async function createOrder(req, res) {
       status: "pending",
     });
 
+    // 5a. Wysyłka maila z danymi do przelewu
+    if (paymentMethod === "bank_transfer") {
+      try {
+        await sendBankTransferDetailsEmail(form.email, {
+          orderNumber,
+          amount: payment.amount,
+          bankAccount: payment.bankAccount,
+          bankName: process.env.BANK_NAME,
+          recipient: process.env.BANK_RECIPIENT,
+        });
+      } catch (mailErr) {
+        console.error("Błąd wysyłki maila z przelewem:", mailErr);
+      }
+    }
+
     // 6. Sprzątanie koszyka
     await Cart.clearCart(userId);
 
@@ -99,10 +119,51 @@ async function createOrder(req, res) {
         category: product.category,
         unit: product.unit,
         quantityPerUnit: product.quantityPerUnit,
-        price: product.price,
+        price_brut: Number(product.price_brut), // ← ważne!
       },
       quantity,
     }));
+
+    try {
+      await sendOrderConfirmationEmail(form.email, {
+        orderNumber,
+        items: enriched,
+        shippingMethod: selectedShipping.id, // <── nowa właściwość
+        shippingCost,
+        lockerCode: form.lockerCode || "", // <── nowa właściwość
+        paymentMethod: payment.method,
+        total: totalWithShipping,
+        notes: form.notes || "",
+
+        /* dane do sekcji „Adres dostawy” */
+        shipping: {
+          firstName: form.firstName,
+          lastName: form.lastName,
+          street: form.address + (form.address2 ? " / " + form.address2 : ""),
+          zip: form.zip,
+          city: form.city,
+          country: form.country || "Polska",
+          phone: form.phone || "",
+          email: form.email || "",
+        },
+
+        /* dane fakturowe – lub null, jeśli brak */
+        invoice: form.wantsInvoice
+          ? {
+              name: form.companyName || `${form.firstName} ${form.lastName}`,
+              street:
+                form.address + (form.address2 ? " / " + form.address2 : ""),
+              zip: form.zip,
+              city: form.city,
+              country: form.country || "Polska",
+              nip: form.nip || "",
+              email: form.invoice_email || form.email,
+            }
+          : null,
+      });
+    } catch (mailErr) {
+      console.error("Błąd wysyłki maila potwierdzającego zamówienie:", mailErr);
+    }
 
     return res.status(201).json({
       success: true,
@@ -178,7 +239,59 @@ async function updateOrderStatus(req, res) {
   try {
     const id = parseInt(req.params.id, 10);
     const { status } = req.body;
+
     await OrderModel.updateStatus(id, status);
+
+    // pobierz dane do maila
+    const full = await OrderModel.getByIdAdmin(id);
+    if (full?.order?.invoice_email) {
+      const email = full.order.invoice_email;
+      await sendOrderStatusChangedEmail(email, {
+        orderNumber: full.order.order_number,
+        orderStatus: status,
+        token: full.order.access_token,
+        items: full.items,
+        shippingLine: `${full.shipping.name} – ${Number(
+          full.shipping.priceTotal
+        ).toFixed(2)} zł`,
+        shippingExtra: full.shipping.locker_code
+          ? `<strong>Paczkomat:</strong> ${full.shipping.locker_code}<br/>`
+          : "",
+        paymentLabel:
+          PAYMENT_PL[full.payment.provider] || full.payment.provider,
+        total: Number(full.payment.amount),
+        shippingAddressHtml: [
+          `${full.shipping.recipient_first_name} ${full.shipping.recipient_last_name}`,
+          full.shipping.street,
+          `${full.shipping.postal_code} ${full.shipping.city}`,
+          "Polska",
+          full.shipping.recipient_phone
+            ? "tel.: " + full.shipping.recipient_phone
+            : null,
+          full.shipping.recipient_email,
+        ]
+          .filter(Boolean)
+          .join("<br/>"),
+        invoiceBlock: full.invoice?.name
+          ? `<h3 style="margin:25px 0 5px 0;color:#333;font-size:16px">Dane do faktury</h3>
+             <p style="margin:0;color:#555">${[
+               full.invoice.name,
+               full.invoice.street,
+               `${full.invoice.zip} ${full.invoice.city}`,
+               full.invoice.country,
+               full.invoice.nip ? "NIP: " + full.invoice.nip : null,
+               full.invoice.email,
+             ]
+               .filter(Boolean)
+               .join("<br/>")}</p>`
+          : "",
+        notesBlock: full.shipping?.notes
+          ? `<h3 style="margin:25px 0 5px 0;color:#333;font-size:16px">Uwagi do zamówienia</h3>
+             <p style="margin:0;color:#555">${full.shipping.notes}</p>`
+          : "",
+      });
+    }
+
     res.json({ message: "Status zamówienia zaktualizowany" });
   } catch (err) {
     console.error("Błąd aktualizacji statusu:", err);
