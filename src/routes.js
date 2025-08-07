@@ -21,6 +21,7 @@ import DeliveryPage from "./pages/checkout/DeliveryPage";
 import CheckoutSummaryPage from "./pages/checkout/CheckoutSummaryPage";
 import ReturnComplaintsPage from "./pages/ReturnComplaintsPage";
 import DeliveryInfoPage from "./pages/DeliveryInfoPage";
+import OurStoresPage from "./pages/OurStoresPage";
 
 import AdminLayout from "./components/auth/AdminLayout";
 import AdminPage from "./pages/admin/AdminPage";
@@ -37,6 +38,7 @@ export default [
   { path: "/informacje-o-dostawie", element: <DeliveryInfoPage /> },
   { path: "/logowanie", element: <AuthPage /> },
   { path: "/kontakt", element: <ContactPage /> },
+  { path: "/nasze-sklepy", element: <OurStoresPage /> },
   {
     path: "/sklep/:categorySlug/:productSlug",
     element: <ProductPage />,

@@ -1,0 +1,101 @@
+/* src/styles/pages/_our_stores.scss */
+
+.our-stores-page {
+    .our-stores-section {
+        min-height: 77vh;
+    }
+  /* ---------- nagłówek strony ---------- */
+  h1 {
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    text-align: center;
+    margin-bottom: clamp(3rem, 8vw, 5rem);
+  }
+
+  /* ---------- lista sklepów ---------- */
+  .stores-list {
+    display: flex;
+    flex-direction: column;
+    row-gap: clamp(3rem, 6vw, 6rem);
+  }
+
+  /* ---------- pojedynczy sklep ---------- */
+  .store-item {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;   /* ≈55 % / 45 % */
+    column-gap: clamp(2rem, 4vw, 5rem);
+    align-items: center;                  /* pionowe centrowanie */
+
+    /* obrazek */
+    .store-image {
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,.08);
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+    }
+
+    /* tekst */
+    .store-info {
+      h2 {
+        font-family: $font-heading;
+        font-size: clamp(1.6rem, 3vw, 2.4rem);
+        letter-spacing: 0.02em;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+        color: $secondary-color;
+      }
+
+      .description {
+        font-size: clamp(1rem, 1.4vw, 1.25rem);
+        line-height: 1.55;
+        margin-bottom: 1.25rem;
+        max-width: 60ch;
+      }
+
+      .address {
+        font-size: clamp(1rem, 1.3vw, 1.2rem);
+        font-weight: 600;
+      }
+    }
+
+    /* układ naprzemienny */
+    &.reverse {
+      grid-template-columns: 0.9fr 1.1fr;
+      .store-image { order: 2; }
+      .store-info  { order: 1; text-align: right; }
+      .address, .description, h2 { margin-left: auto; }
+    }
+  }
+
+  /* ---------- ≤ 1200 px ---------- */
+  @media (max-width: 1200px) {
+    .store-item {
+      grid-template-columns: 1fr 1fr;       // 50 / 50
+    }
+  }
+
+  /* ---------- ≤ 768 px: jedna kolumna ---------- */
+  @media (max-width: 768px) {
+    .store-item,
+    .store-item.reverse {
+        justify-items: center;
+      grid-template-columns: 1fr;
+      row-gap: 1.5rem;
+
+      .store-image,
+      .store-info {
+        order: 0;
+        text-align: center;
+      }
+
+      .store-image {
+        height: clamp(220px, 50vw, 340px);
+      }
+    }
+  }
+}
