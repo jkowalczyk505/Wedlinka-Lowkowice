@@ -2,7 +2,6 @@
 - w stopce i na kontakt prawdziwe adresy/telefony itp
 
 BACKEND
-- zabezpieczenie multera - przy bledzie niezapisywanie i nienadpisywanie zdjec, brak usuwania starych
 - czyszczenie i wyzerowanie bazy, utworzenie uzytkownika dla admina
 
 ACCOUNT
@@ -28,8 +27,7 @@ FAKTURY
 - wystawianie faktury dopiero po zaplacie!!
 
 NA KONIEC
-- MAILE - faktura, CZY MAILE PRZYCHODZA NA ADRES MAILOWY PODANY W ZAMOWIENIU A NIE KONTO
-- BACKEND zabezpieczyc - rate limit, helmet, ukrycie express
+- MAILE - faktura
 - seo + sitemap + robots + index jak zhkr (+og.jpg) + manifest json
 - wysłać sitemap do google
 - react helmet async?? chyba ze nic to nie da w react spa
