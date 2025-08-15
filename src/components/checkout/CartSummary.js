@@ -92,7 +92,11 @@ export default function CartSummary({
               onChange={handleChange}
             />{" "}
             Oświadczam, że zapoznałem się i akceptuję{" "}
-            <a href="/regulamin" target="_blank" rel="noopener noreferrer">
+            <a
+              href="/files/Regulamin_sklepu.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Regulamin
             </a>{" "}
             oraz{" "}

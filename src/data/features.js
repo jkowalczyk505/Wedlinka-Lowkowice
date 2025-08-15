@@ -12,22 +12,22 @@ export const homeFeatures = [
     icon: <TbTruckDelivery />,
     title: "Bezpieczna dostawa",
     subtitle:
-      "Wysyłamy nasze wędliny specjalnie zabezpieczone, prosto do Twoich drzwi."
+      "Nasze wędliny pakujemy z wyjątkową starannością, aby dotarły do Ciebie świeże, aromatyczne i w idealnym stanie – prosto pod Twoje drzwi.",
   },
   {
     id: "always-fresh",
     icon: <SiCodefresh />,
     title: "Zawsze świeże",
     subtitle:
-      "Dbamy o najwyższą jakość i świeżość – bez żadnych zbędnych dodatków."
+      "Starannie dbamy, by nasze wyroby były zawsze naturalne, aromatyczne i wolne od niepotrzebnych dodatków.",
   },
   {
     id: "secure-payments",
     icon: <RiSecurePaymentFill />,
     title: "Bezpieczne płatności",
     subtitle:
-      "Zapłać szybko i bez obaw przez Przelewy24 lub tradycyjny przelew."
-  }
+      "Gwarantujemy bezpieczne transakcje – skorzystaj z Przelewy24 lub tradycyjnego przelewu.",
+  },
 ];
 
 export const contactFeatures = [
@@ -35,21 +35,18 @@ export const contactFeatures = [
     id: "telephone",
     icon: <BsTelephoneFill />,
     title: "Masz jakieś pytania?",
-    subtitle:
-      "Zadzwoń: +48 123 456 789"
+    subtitle: "Zadzwoń: +48 500 877 347",
   },
   {
     id: "email",
     icon: <IoIosMail />,
     title: "Napisz wiadomość",
-    subtitle:
-      "kontakt@wedlinkalowkowice.pl"
+    subtitle: "kontakt@wedlinkalowkowice.pl",
   },
   {
     id: "address",
     icon: <IoLocationSharp />,
     title: "Odwiedź nas",
-    subtitle:
-      "ul. Przykładowa 12e, 11-999 Łowkowice"
-  }
-]
+    subtitle: "ul. Księdza Rigola 42, 46-211 Łowkowice",
+  },
+];

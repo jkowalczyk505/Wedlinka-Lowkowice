@@ -18,17 +18,20 @@ function Footer() {
           <address className="footer__address">
             Wędlinka Łowkowice
             <br />
-            ul. Przykładowa 12, 08-500 Łowkowice
+            ul. Księdza Rigola 42, 46-211 Łowkowice
             <br />
-            NIP 123-456-78-90
+            NIP 751-155-63-05
             <br />
             e-mail: kontakt@wedlinkalowkowice.pl
             <br />
-            tel. +48 123 456 789
+            tel. +48 500 877 347
           </address>
 
           <div className="footer__social">
-            <a href="#" aria-label="Facebook">
+            <a
+              href="https://www.facebook.com/profile.php?id=100082854926240&locale=pl_PL"
+              aria-label="Facebook"
+            >
               <FaFacebookF />
             </a>
           </div>
@@ -51,7 +54,13 @@ function Footer() {
               <NavLink to="/nasze-sklepy">Nasze sklepy</NavLink>
             </li>
             <li>
-              <NavLink to="/regulamin">Regulamin</NavLink>
+              <a
+                href="/files/Regulamin_sklepu.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Regulamin
+              </a>
             </li>
             <li>
               <a

@@ -1,31 +1,21 @@
-import lowkowiceImg from "../assets/stores/lowkowice.jpg";
-import kkImg from "../assets/stores/kk.jpg";
+import lowkowiceImg from "../assets/stores/zdjęcie sklepu.webp";
 
 const stores = [
   {
     id: 1,
-    name: "Sklep firmowy w Łowkowicach",
+    name: "Sklep Firmowy na Targowisku w Kluczborku",
     description:
-      "Główny sklep firmowy znajdujący się przy zakładzie produkcyjnym. Znajdziesz tu pełen asortyment naszych wyrobów wędliniarskich, świeże mięso oraz pakowane produkty gotowe do spożycia.",
-    address: "ul. Główna 12, 47-300 Łowkowice",
+      "Zapraszamy do naszego sklepu na Kluczborskim targowisku, gdzie znajdziesz szeroki wybór świeżych wędlin, mięsa oraz gotowych produktów, które powstały w naszym zakładzie. To doskonałe miejsce, by zakupić nasze najlepsze wyroby wędliniarskie bezpośrednio od producenta.",
+    address: "Targowisko Miejskie ul. Moniuszki 1, 46-200 Kluczbork",
     image: lowkowiceImg,
   },
-  {
-    id: 2,
-    name: "Sklep partnerski w Kędzierzynie-Koźlu",
-    description:
-      "Sklep partnerski zlokalizowany w centrum miasta, oferujący codziennie świeże dostawy z naszego zakładu. Idealne miejsce na szybkie zakupy przed obiadem.",
-    address: "ul. Piastowska 8, 47-200 Kędzierzyn-Koźle",
-    image: kkImg,
-  },
-  // kolejne obiekty, gdy pojawią się nowe sklepy
 ];
 
 export default function OurStoresPage() {
   return (
     <main className="page our-stores-page">
       <section className="our-stores-section pattern-section">
-        <h1>Nasze sklepy stacjonarne</h1>
+        <h1>Miejsca, gdzie nas znajdziesz</h1>
 
         <div className="stores-list">
           {stores.map((store, index) => (

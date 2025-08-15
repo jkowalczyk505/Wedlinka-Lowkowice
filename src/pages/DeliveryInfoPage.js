@@ -33,109 +33,97 @@ export default function DeliveryInfoPage() {
           {/* ---------------------------------------- */}
           <h2 className="info-title">Koszty dostawy</h2>
           <p>
-            Oferujemy <strong>darmową wysyłkę</strong> dla zamówień o wartości
-            co najmniej{" "}
+            Z radością oferujemy naszym Klientom{" "}
+            <strong>darmową wysyłkę</strong> przy zamówieniach o wartości co
+            najmniej{" "}
             <strong>
               {freeThreshold.toLocaleString("pl-PL", {
                 minimumFractionDigits: 0,
               })}{" "}
               zł
             </strong>
-            . Koszt wysyłki jest uzależniony od wybranej formy przesyłki oraz przewoźnika. Koszty te pokrywają specjalistyczne opakowania
-            termoizolacyjne oraz wkłady chłodzące, które zapewniają bezpieczny
-            transport produktów.
+            . Koszt transportu zależy od wybranej metody dostawy oraz
+            przewoźnika. Cena obejmuje także specjalistyczne opakowania
+            termoizolacyjne oraz wkłady chłodzące, które gwarantują bezpieczny i
+            odpowiedni transport naszych produktów.
           </p>
           <table className="shipping-table">
             <thead>
-                <tr>
+              <tr>
                 <th>Sposób wysyłki</th>
                 <th>Cena</th>
-                </tr>
+              </tr>
             </thead>
             <tbody>
-                {methods.flatMap((m) => {
+              {methods.flatMap((m) => {
                 const formattedBase =
-                    m.price
+                  m.price
                     .toLocaleString("pl-PL", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
                     })
                     .replace(".", ",") + " zł";
 
-                const formattedCod =
-                    m.cod
-                    ? (m.price + m.codFee)
-                        .toLocaleString("pl-PL", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                        })
-                        .replace(".", ",") + " zł"
-                    : null;
+                const formattedCod = m.cod
+                  ? (m.price + m.codFee)
+                      .toLocaleString("pl-PL", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })
+                      .replace(".", ",") + " zł"
+                  : null;
 
                 const rows = [
-                    <tr key={`${m.id}-std`}>
+                  <tr key={`${m.id}-std`}>
                     <td>{m.label}</td>
                     <td>{formattedBase}</td>
-                    </tr>,
+                  </tr>,
                 ];
                 if (m.cod) {
-                    rows.push(
+                  rows.push(
                     <tr key={`${m.id}-cod`}>
-                        <td>{m.label} (za pobraniem)</td>
-                        <td>{formattedCod}</td>
+                      <td>{m.label} (za pobraniem)</td>
+                      <td>{formattedCod}</td>
                     </tr>
-                    );
+                  );
                 }
                 return rows;
-                })}
+              })}
             </tbody>
-            </table>
+          </table>
 
           {/* ---------------------------------------- */}
           <h2 className="info-title">Czas dostawy</h2>
           <p>
-            Standardowy kurier: <strong>1–2 dni robocze</strong> od momentu
+            Kurier standardowy: <strong>1–2 dni robocze</strong> od momentu
             wysyłki.
           </p>
           <p>
-            Paczkomaty InPost: zazwyczaj{" "}
-            <strong>następny dzień roboczy</strong>.
+            Paczkomaty InPost: <strong>1–2 dni robocze</strong> od momentu
+            wysyłki.
           </p>
           <p>
-            List polecony: <strong>2–4 dni robocze</strong>.
-          </p>
-          <p>
-            Odbiór osobisty w sklepie: gotowe do odbioru w ciągu
-            <strong> 2 godzin</strong> od potwierdzenia zamówienia.
+            Odbiór osobisty: dostępność do odbioru w ciągu{" "}
+            <strong>2 godzin</strong> od zmiany statusu zamówienia na gotowe do
+            odbioru.
           </p>
 
           {/* ---------------------------------------- */}
           <h2 className="info-title">Pakowanie</h2>
           <p>
-            Asortyment wysyłamy wyłącznie w opakowaniach termoizolacyjnych ze
-            specjalnym <strong>wkładem chłodniczym</strong>. Dokładamy
-            wszelkich starań, aby nasze produkty bezpiecznie dotarły do
-            odbiorcy.
+            Dbamy o najwyższą jakość usług, dlatego wszystkie nasze produkty
+            wysyłamy w specjalistycznych opakowaniach termoizolacyjnych, które
+            zapewniają odpowiednią ochronę oraz świeżość towarów. Nasze artykuły
+            pakujemy w kartony wyposażone w torby termoizolacyjne – innowacyjne
+            rozwiązanie, które skutecznie chroni produkty przed zmianami
+            temperatury, wilgocią, światłem oraz uszkodzeniami mechanicznymi.
           </p>
           <p>
-            Produkty pakowane są w specjalistyczne{" "}
-            <strong>styroboxy</strong> z dodatkowym wkładem chłodniczym.
-            Styrobox jest to opakowanie styropianowe, termoizolacyjne,
-            pozwalające zachować świeżość produktów, chroniąc je jednocześnie
-            przed wysychaniem czy utratą zapachu. Stryoboxy zabezpieczają towar
-            przed działaniem temperatury, światła, wilgoci czy uszkodzeniami
-            mechanicznymi. Opakowanie powstaje z materiałów{" "}
-            <strong>wysokiej jakości</strong> i posiada świadectwo jakości
-            zdrowotnej PZH do transportu i magazynowania artykułów spożywczych.
-          </p>
-          <p>
-            Dodatkowe zabezpieczenie stanowi wkład chłodzący. Jest to specjalny
-            wkład żelowy, który pozwala na utrzymanie niskiej temperatury
-            wewnątrz opakowania termicznego do <strong>48 godzin</strong>. Tak
-            jak opakowania, tak też wkłady żelowe są bezpiecznym rozwiązaniem w
-            przypadku transportu i zabezpieczenia artykułów spożywczych.
-            Stosowane przez nas wkłady żelowe to produkty dopuszczone do
-            kontaktu z żywnością.
+            Aby zapewnić optymalną temperaturę, stosujemy również wkłady
+            chłodzące. Są to specjalistyczne wkłady żelowe, które utrzymują
+            niską temperaturę wewnątrz opakowania. Wkłady te są w pełni
+            bezpieczne do kontaktu z żywnością, co czyni je idealnym
+            rozwiązaniem do transportu produktów spożywczych.
           </p>
         </div>
       </section>
