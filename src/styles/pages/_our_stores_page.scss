@@ -58,9 +58,18 @@
       }
 
       .address {
-        font-size: clamp(1rem, 1.3vw, 1.35rem);  // ← było 1.2rem
         font-weight: 600;
+        font-size: clamp(1.2rem, 1.5vw, 1.6rem);
+        margin-bottom: 0.7rem;
       }
+
+      .hours {
+        font-size: clamp(1.15rem, 1.4vw, 1.5rem);
+        font-style: italic;
+        line-height: 1.6;
+        color: $accent-color-darken;
+      }
+
     }
 
     /* układ naprzemienny */
@@ -69,6 +78,34 @@
       .store-image { order: 2; }
       .store-info  { order: 1; text-align: right; }
       .address, .description, h2 { margin-left: auto; }
+    }
+  }
+
+  .store-item.text-only {
+    display: block;
+
+    .store-info {
+      .description {
+        max-width: 90ch;
+      }
+    }
+  }
+
+  .cooperation-info {
+    margin-top: clamp(3rem, 6vw, 5rem);
+    font-size: clamp(1rem, 1.4vw, 1.5rem);
+    line-height: 1.6;
+    max-width: 90ch;
+    h2 {
+      font-family: $font-heading;
+      font-size: clamp(1.6rem, 3vw, 3rem);  // ← było 2.4rem
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      color: $secondary-color;
+    }
+    strong {
+      color: $secondary-color-darken;
     }
   }
 
@@ -91,11 +128,16 @@
       .store-info {
         order: 0;
         text-align: center;
+        justify-items: center;
       }
 
       .store-image {
         height: clamp(220px, 50vw, 340px);
       }
+    }
+
+    .cooperation-info {
+      text-align: center;
     }
   }
 }
