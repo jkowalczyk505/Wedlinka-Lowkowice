@@ -73,43 +73,5 @@
     <div id="root"></div>
     <div id="modal-root"></div>
     <!-- ⬅️ tu lądują portale -->
-    <script>
-      function ipToInt(ip) {
-        return ip.split(".").reduce((a, o) => (a << 8) + +o, 0) >>> 0;
-      }
-      function inCidr(ip, cidr) {
-        const [base, bits] = cidr.split("/");
-        const maskBits = +bits;
-        const ipI = ipToInt(ip),
-          baseI = ipToInt(base);
-        const netmask = maskBits === 0 ? 0 : (~0 << (32 - maskBits)) >>> 0;
-        return (ipI & netmask) === (baseI & netmask);
-      }
-
-      fetch("https://api.ipify.org?format=json")
-        .then((r) => r.json())
-        .then(({ ip }) => {
-          const allowedCidrs = ["83.26.184.0/22"]; // możesz zmienić na inny zakres
-          const allowedSingles = ["95.215.232.175"];
-
-          const ok =
-            allowedSingles.includes(ip) ||
-            allowedCidrs.some((c) => inCidr(ip, c));
-          if (!ok) {
-            document.body.innerHTML = `
-          <div style="text-align:center; padding:100px; font-family:sans-serif;">
-            <h1>Strona w budowie</h1>
-            <p>Zapraszamy wkrótce.</p>
-          </div>`;
-          }
-        })
-        .catch(() => {
-          document.body.innerHTML = `
-        <div style="text-align:center; padding:100px; font-family:sans-serif;">
-          <h1>Strona w budowie</h1>
-          <p>Zapraszamy wkrótce.</p>
-        </div>`;
-        });
-    </script>
   </body>
 </html>
