@@ -9,10 +9,11 @@ const FailedPage = () => {
     <div className="page page-failed">
       <h1>Ups, coś poszło nie tak...</h1>
       <h2>
-        Niestety płatność nie została zakończona poprawnie. Twoje zamówienie
-        zostało zapisane w naszym systemie, ale nie jest jeszcze opłacone.
+        Niestety płatność prawdopodobnie nie została zakończona poprawnie. Twoje
+        zamówienie zostało jednak zapisane w naszym systemie.
       </h2>
       <p>Co możesz zrobić?</p>
+      <span>- Zweryfikować status płatności i zamówienia w zakładce Konto</span>
       <span>- Skontaktować się z nami</span>
       <span>- Ponownie złożyć nowe zamówienie</span>
       <div className="button-wrapper">

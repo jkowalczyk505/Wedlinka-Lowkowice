@@ -40,7 +40,7 @@ const PaymentModel = {
     );
     if (existsOk) return;
 
-    // 3) spróbuj zaktualizować istniejącą 'pending'
+    // 3) spróbuj zaktualizować istniejącą
     const [upd] = await db.query(
       `
     UPDATE payments
@@ -51,7 +51,7 @@ const PaymentModel = {
            provider = ?,
            updated_at = NOW()
      WHERE order_id = ?
-       AND (status = 'pending' OR status IS NULL)
+       AND (status <> 'ok' OR status IS NULL)
     `,
       [providerTransactionId, amount, currency, provider, ord.id]
     );

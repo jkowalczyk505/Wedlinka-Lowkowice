@@ -507,12 +507,8 @@ const OrderModel = {
   // --- używane przez P24 webhook/return ---
   async getByOrderNumber(orderNumber) {
     const [rows] = await db.query(
-      `SELECT o.id,
-              o.order_number,
-              o.status,
-              o.total_brut,
-              IFNULL(s.cost,0)         AS shipping_cost,
-              p.status                 AS payment_status
+      `SELECT o.id, o.order_number, o.access_token, o.status, o.total_brut,
+        IFNULL(s.cost,0) AS shipping_cost, p.status AS payment_status
          FROM orders o
          LEFT JOIN shipping_details s ON s.order_id = o.id
          LEFT JOIN payments p         ON p.order_id = o.id

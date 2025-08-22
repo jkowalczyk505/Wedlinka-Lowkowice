@@ -143,9 +143,6 @@ async function notify(req, res) {
 }
 
 /* -------- powrót klienta z P24 (GET) -------- */
-/**
- * Query: p24_session_id|sessionId|order|orderNumber, p24_order_id|orderId, p24_amount, token
- */
 async function returnAfterPay(req, res) {
   logP24Hit("return", req, { query: req.query });
   try {
@@ -156,81 +153,66 @@ async function returnAfterPay(req, res) {
       req.query.orderNumber;
 
     const orderId = req.query.p24_order_id || req.query.orderId || null;
-    const token = req.query.token || null;
-
+    const tokenFromQuery = req.query.token || "";
     const amountPlnFromQuery = req.query.p24_amount
       ? Number(req.query.p24_amount) / 100
       : null;
 
-    if (!sessionId) {
-      // nie wyświetlamy 400 — kierujemy usera na stałą stronę błędu
-      return res.redirect(302, FAIL_URL);
-    }
+    if (!sessionId) return res.redirect(302, FAIL_URL);
 
-    try {
-      const order = await OrderModel.getByOrderNumber(sessionId);
-      if (!order) {
-        return res.redirect(302, `${FAIL_URL}`);
-      }
-      if (order && orderId) {
-        const totalPlnDb =
-          Number(order.total_brut) + Number(order.shipping_cost || 0);
-        const amountToVerify = Number.isFinite(amountPlnFromQuery)
-          ? amountPlnFromQuery
-          : totalPlnDb;
+    const order = await OrderModel.getByOrderNumber(sessionId);
+    if (!order) return res.redirect(302, FAIL_URL);
 
-        await verifyTransaction({
-          sessionId,
-          orderId,
-          amountPln: amountToVerify,
-        });
+    // helper: URL podsumowania
+    const tokenForOk = order.access_token || tokenFromQuery || "";
+    const summaryUrl = `${FRONT_URL}/podsumowanie?order=${encodeURIComponent(
+      sessionId
+    )}&token=${encodeURIComponent(tokenForOk)}`;
 
-        await PaymentModel.markPaidByOrderNumber(sessionId, {
-          providerTransactionId: String(orderId),
-          amount: amountToVerify,
-          currency: "PLN",
-        });
-        await OrderModel.updatePaymentStatusByOrderNumber(sessionId, "ok");
-        await OrderModel.updateStatusByOrderNumber(sessionId, "paid");
+    // ── 1) Brak orderId => sprawdź, czy już opłacone (np. przez webhook)
+    if (!orderId) {
+      const paidSet = new Set(["ok", "paid", "completed"]);
+      const isPaid =
+        paidSet.has(String(order.payment_status || "").toLowerCase()) ||
+        paidSet.has(String(order.status || "").toLowerCase());
 
-        // sukces → podsumowanie
-        const okUrl = `${FRONT_URL}/podsumowanie?order=${encodeURIComponent(
-          sessionId
-        )}${token ? `&token=${encodeURIComponent(token)}` : ""}`;
-        return res.redirect(302, okUrl);
-      }
-
-      // brak orderId → oznacz failed/cancelled (jeśli nie opłacone) i przekieruj
-      if (order) {
-        const paidSet = new Set(["ok", "paid", "completed"]);
-        const isPaid =
-          paidSet.has(String(order.payment_status || "").toLowerCase()) ||
-          paidSet.has(String(order.status || "").toLowerCase());
-        if (!isPaid) {
-          try {
-            await PaymentModel.markFailedByOrderNumber(sessionId, {});
-            await OrderModel.updatePaymentStatusByOrderNumber(
-              sessionId,
-              "failed"
-            );
-            await OrderModel.updateStatusByOrderNumber(sessionId, "cancelled");
-          } catch (e2) {
-            console.error("[P24 return] mark failed (no orderId) error:", e2);
-          }
+      if (isPaid) {
+        // ✅ opłacone wcześniej → pokaż podsumowanie
+        return res.redirect(302, summaryUrl);
+      } else {
+        // ❌ nieopłacone → oznacz failed/cancelled i pokaż stronę błędu
+        try {
+          await PaymentModel.markFailedByOrderNumber(sessionId, {});
+          await OrderModel.updatePaymentStatusByOrderNumber(
+            sessionId,
+            "failed"
+          );
+          await OrderModel.updateStatusByOrderNumber(sessionId, "cancelled");
+        } catch (e2) {
+          console.error("[P24 return] mark failed (no orderId) error:", e2);
         }
+        return res.redirect(302, FAIL_URL);
       }
-      return res.redirect(302, FAIL_URL);
-    } catch (e) {
-      // 🔴 weryfikacja nie przeszła – oznacz failed/cancelled i skieruj na stronę niepowodzenia
-      try {
-        await OrderModel.updatePaymentStatusByOrderNumber(sessionId, "failed");
-        await OrderModel.updateStatusByOrderNumber(sessionId, "cancelled");
-      } catch (e2) {
-        console.error("[P24 return] FAIL path DB update error:", e2);
-      }
-
-      return res.redirect(302, FAIL_URL);
     }
+
+    // ── 2) Mamy orderId → ścieżka sukcesu (weryfikacja + update + podsumowanie)
+    const totalPlnDb =
+      Number(order.total_brut) + Number(order.shipping_cost || 0);
+    const amountToVerify = Number.isFinite(amountPlnFromQuery)
+      ? amountPlnFromQuery
+      : totalPlnDb;
+
+    await verifyTransaction({ sessionId, orderId, amountPln: amountToVerify });
+
+    await PaymentModel.markPaidByOrderNumber(sessionId, {
+      providerTransactionId: String(orderId),
+      amount: amountToVerify,
+      currency: "PLN",
+    });
+    await OrderModel.updatePaymentStatusByOrderNumber(sessionId, "ok");
+    await OrderModel.updateStatusByOrderNumber(sessionId, "paid");
+
+    return res.redirect(302, summaryUrl);
   } catch (e) {
     console.error("P24 return error (top-level):", e);
     return res.redirect(302, FAIL_URL);

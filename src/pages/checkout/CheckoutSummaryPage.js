@@ -41,25 +41,12 @@ export default function CheckoutSummaryPage() {
     }
   }, [initialData, orderNumberFromUrl]);
 
-  // ➜ Jeśli pobranie się wywaliło (np. brak tokenu) – leć na stronę błędu
-  useEffect(() => {
-    if (error) {
-      const q = orderNumberFromUrl
-        ? `?order=${encodeURIComponent(orderNumberFromUrl)}`
-        : "";
-      navigate(`${FAIL_PATH}${q}`, { replace: true });
-    }
-  }, [error, orderNumberFromUrl, navigate]);
-
-  // ➜ Po załadowaniu danych: jeżeli to P24 i nie jest opłacone → przekieruj na stronę błędu
   useEffect(() => {
     if (!orderData) return;
-    const isP24 =
-      (orderData?.payment?.method || "").toLowerCase() === "przelewy24";
-    const isPaid =
-      (orderData?.payment?.status || "").toLowerCase() === "ok" ||
-      (orderData?.orderStatus || "").toLowerCase() === "paid";
-    if (isP24 && !isPaid) {
+    const pay = (orderData?.payment?.status || "").toLowerCase();
+    const ord = (orderData?.orderStatus || "").toLowerCase();
+    const isFailed = pay === "failed" || ord === "cancelled";
+    if (isFailed) {
       const on = orderData?.orderNumber || orderNumberFromUrl || "";
       const q = on ? `?order=${encodeURIComponent(on)}` : "";
       navigate(`${FAIL_PATH}${q}`, { replace: true });
