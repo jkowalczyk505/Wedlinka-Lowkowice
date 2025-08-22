@@ -503,6 +503,43 @@ const OrderModel = {
       [trackingNumber, orderId]
     );
   },
+
+  // --- używane przez P24 webhook/return ---
+  async getByOrderNumber(orderNumber) {
+    const [rows] = await db.query(
+      `SELECT o.id,
+              o.order_number,
+              o.status,
+              o.total_brut,
+              IFNULL(s.cost,0)         AS shipping_cost,
+              p.status                 AS payment_status
+         FROM orders o
+         LEFT JOIN shipping_details s ON s.order_id = o.id
+         LEFT JOIN payments p         ON p.order_id = o.id
+        WHERE o.order_number = ?
+        LIMIT 1`,
+      [orderNumber]
+    );
+    return rows[0] || null;
+  },
+
+  async updatePaymentStatusByOrderNumber(orderNumber, status) {
+    await db.query(
+      `UPDATE payments
+          SET status = ?, updated_at = NOW()
+        WHERE order_id = (SELECT id FROM orders WHERE order_number = ? LIMIT 1)`,
+      [status, orderNumber]
+    );
+  },
+
+  async updateStatusByOrderNumber(orderNumber, status) {
+    await db.query(
+      `UPDATE orders
+          SET status = ?, updated_at = NOW()
+        WHERE order_number = ?`,
+      [status, orderNumber]
+    );
+  },
 };
 
 module.exports = OrderModel;

@@ -82,14 +82,11 @@ async function createOrder(req, res) {
     }
     if (paymentMethod === "przelewy24") {
       try {
-        // <<< TU BUDUJEMY *ISTNIEJĄCY* adres powrotu + token dostępow y >>>
         const returnUrl = `${
-          process.env.PUBLIC_FRONTEND_URL
-        }/podsumowanie?order=${encodeURIComponent(
+          process.env.PUBLIC_BACKEND_URL
+        }/api/p24/return?order=${encodeURIComponent(
           orderNumber
         )}&token=${encodeURIComponent(accessToken)}`;
-
-        // a tu możesz odesłać np. do koszyka, gdy użytkownik anuluje płatność
         const cancelUrl = `${
           process.env.PUBLIC_FRONTEND_URL
         }/koszyk?cancel=${encodeURIComponent(orderNumber)}`;
@@ -99,8 +96,8 @@ async function createOrder(req, res) {
           amountPln: totalWithShipping,
           email: form.email,
           description: `Zamówienie ${orderNumber}`,
-          returnUrl, // <── PRZEKAZUJEMY
-          cancelUrl, // <── PRZEKAZUJEMY
+          returnUrl, // <── backend
+          cancelUrl,
         });
 
         payment.redirectUrl = redirectUrl;
