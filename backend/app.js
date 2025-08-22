@@ -1,4 +1,3 @@
-// app.js
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -8,66 +7,58 @@ const db = require("./config/db");
 const path = require("path");
 
 const app = express();
-
-/** Jeśli siedzisz za proxy/load balancerem (hosting), to włącz to,
- *  żeby limiter poprawnie widział IP klienta. */
 app.set("trust proxy", 1);
 
-/** 1) HELMET – nagłówki bezpieczeństwa + ukrycie Express */
-app.disable("x-powered-by"); // ukryj X-Powered-By
-app.use(helmet()); // domyślny zestaw nagłówków
+// 1) Security
+app.disable("x-powered-by");
+app.use(helmet());
 
-/** 2) CORS – tylko zaufane domeny */
+// 2) CORS
 const allowedOrigins = [
   "http://localhost:3000",
   "https://wedlinka.hosting24.pl",
   "https://wedlinkalowkowice.pl",
 ];
-
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: (origin, cb) =>
+      !origin || allowedOrigins.includes(origin)
+        ? cb(null, true)
+        : cb(new Error("Not allowed by CORS")),
     credentials: true,
     exposedHeaders: ["X-Cart-Removed"],
   })
 );
 
-/** Parsowanie ciastek i JSON-a */
+// 3) Parsers (KOLEJNOŚĆ WAŻNA)
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: false })); // <— DODANE dla P24 (form-data)
 app.use(express.json());
 
-/** Wstrzyknięcie DB do req */
+// 4) DB in req
 app.use((req, res, next) => {
   req.db = db;
   next();
 });
 
-/** 3) RATE LIMIT – globalny dla całego API */
+// 5) Rate limit
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minut
-  max: 1000, // 1000 zapytań / IP / okno
+  windowMs: 15 * 60 * 1000,
+  max: 1000,
   standardHeaders: true,
   legacyHeaders: false,
 });
 app.use("/api", apiLimiter);
-
-/** Dodatkowo: ostrzejszy limiter na logowanie/rejestrację */
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minut
-  max: 20, // 20 prób / IP
+  windowMs: 15 * 60 * 1000,
+  max: 20,
   message: { error: "Za dużo prób. Spróbuj ponownie za chwilę." },
   standardHeaders: true,
   legacyHeaders: false,
 });
 app.use("/api/auth", authLimiter);
 
-/** Trasy API */
+// 6) API routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/products", require("./routes/productRoutes"));
@@ -75,15 +66,17 @@ app.use("/api/cart", require("./routes/cartRoutes"));
 app.use("/api/shipping", require("./routes/shippingRoutes"));
 app.use("/api/reviews", require("./routes/reviewRoutes"));
 app.use("/api/orders", require("./routes/orderRoutes"));
-app.use("/api/contact", require("./routes/contactRoutes"));
 
-/** Pliki statyczne ze zdjęciami produktów */
+// webhook P24 (urlStatus)
+app.use("/api/p24", require("./routes/p24Routes"));
+
+// 7) Static uploads
 app.use(
   "/api/uploads/products",
   express.static(path.join(__dirname, "uploads", "products"))
 );
 
-/** Obsługa błędów */
+// 8) Errors
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ error: err.message || "Server error" });

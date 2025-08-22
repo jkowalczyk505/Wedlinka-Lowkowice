@@ -5,7 +5,7 @@ const Cart = require("../models/cartModel");
 const PaymentModel = require("../models/paymentModel");
 
 const { calculateCartSummary } = require("../helpers/orderHelpers");
-const { generateP24RedirectUrl } = require("../services/p24"); // mock P24
+const { registerTransaction } = require("../services/p24");
 const {
   sendBankTransferDetailsEmail,
   sendOrderConfirmationEmail,
@@ -81,10 +81,37 @@ async function createOrder(req, res) {
       payment.title = orderNumber;
     }
     if (paymentMethod === "przelewy24") {
-      payment.redirectUrl = await generateP24RedirectUrl(
-        orderNumber,
-        totalWithShipping
-      );
+      try {
+        // <<< TU BUDUJEMY *ISTNIEJĄCY* adres powrotu + token dostępow y >>>
+        const returnUrl = `${
+          process.env.PUBLIC_FRONTEND_URL
+        }/podsumowanie?order=${encodeURIComponent(
+          orderNumber
+        )}&token=${encodeURIComponent(accessToken)}`;
+
+        // a tu możesz odesłać np. do koszyka, gdy użytkownik anuluje płatność
+        const cancelUrl = `${
+          process.env.PUBLIC_FRONTEND_URL
+        }/koszyk?cancel=${encodeURIComponent(orderNumber)}`;
+
+        const { token, redirectUrl } = await registerTransaction({
+          sessionId: orderNumber,
+          amountPln: totalWithShipping,
+          email: form.email,
+          description: `Zamówienie ${orderNumber}`,
+          returnUrl, // <── PRZEKAZUJEMY
+          cancelUrl, // <── PRZEKAZUJEMY
+        });
+
+        payment.redirectUrl = redirectUrl;
+        payment.token = token;
+      } catch (e) {
+        console.error("P24 register failed:", e?.message || e);
+        return res.status(502).json({
+          error: "P24_REGISTER_FAILED",
+          details: String(e?.message || e),
+        });
+      }
     }
 
     // 5. Zapis do tabeli payments
@@ -93,7 +120,7 @@ async function createOrder(req, res) {
       provider: payment.method,
       amount: payment.amount,
       currency: "PLN",
-      transactionId: payment.redirectUrl,
+      transactionId: payment.token || null, // token z P24
       status: "pending",
     });
 
