@@ -79,9 +79,7 @@ async function registerTransaction({
 
   // powrót kierujemy na backend – P24 dopnie p24_session_id, p24_order_id, p24_amount
   const p24UrlReturn = returnUrl || `${PUBLIC_BACKEND_URL}/api/p24/return`;
-  const p24UrlCancel =
-    cancelUrl ||
-    `${PUBLIC_FRONTEND_URL}/zamowienie/${encodeURIComponent(safeId)}/anulowano`;
+  const p24UrlCancel = cancelUrl || `${PUBLIC_BACKEND_URL}/api/p24/cancel`;
 
   const payload = {
     p24_merchant_id: String(P24_MERCHANT_ID),

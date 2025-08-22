@@ -69,6 +69,40 @@ const PaymentModel = {
       // INSERT INTO payments (..., created_at) VALUES (..., NOW())
     }
   },
+
+  async markFailedByOrderNumber(
+    orderNumber,
+    { providerTransactionId = null } = {}
+  ) {
+    const [[ord]] = await db.query(
+      `SELECT id FROM orders WHERE order_number = ? LIMIT 1`,
+      [orderNumber]
+    );
+    if (!ord) throw new Error("Order not found for orderNumber=" + orderNumber);
+
+    const [upd] = await db.query(
+      `
+    UPDATE payments
+       SET status = 'failed',
+           transaction_id = COALESCE(?, transaction_id),
+           updated_at = NOW()
+     WHERE order_id = ?
+       AND (status <> 'ok' OR status IS NULL)
+    `,
+      [providerTransactionId, ord.id]
+    );
+
+    // jeżeli nie było rekordu (lub nie 'pending'), wstaw ślad failed
+    if (upd.affectedRows === 0) {
+      await db.query(
+        `
+      INSERT INTO payments (order_id, provider, amount, currency, transaction_id, status, created_at)
+      VALUES (?, 'przelewy24', 0, 'PLN', ?, 'failed', NOW())
+      `,
+        [ord.id, providerTransactionId]
+      );
+    }
+  },
 };
 
 module.exports = PaymentModel;

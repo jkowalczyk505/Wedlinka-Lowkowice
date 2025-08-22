@@ -526,8 +526,9 @@ const OrderModel = {
   async updatePaymentStatusByOrderNumber(orderNumber, status) {
     await db.query(
       `UPDATE payments
-          SET status = ?, updated_at = NOW()
-        WHERE order_id = (SELECT id FROM orders WHERE order_number = ? LIMIT 1)`,
+        SET status = ?, updated_at = NOW()
+      WHERE order_id = (SELECT id FROM orders WHERE order_number = ? LIMIT 1)
+        AND (status <> 'ok' OR status IS NULL)`,
       [status, orderNumber]
     );
   },

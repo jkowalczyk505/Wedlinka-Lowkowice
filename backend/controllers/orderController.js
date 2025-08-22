@@ -87,9 +87,7 @@ async function createOrder(req, res) {
         }/api/p24/return?order=${encodeURIComponent(
           orderNumber
         )}&token=${encodeURIComponent(accessToken)}`;
-        const cancelUrl = `${
-          process.env.PUBLIC_FRONTEND_URL
-        }/koszyk?cancel=${encodeURIComponent(orderNumber)}`;
+        const cancelUrl = `${process.env.PUBLIC_BACKEND_URL}/api/p24/cancel`;
 
         const { token, redirectUrl } = await registerTransaction({
           sessionId: orderNumber,
