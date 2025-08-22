@@ -10,6 +10,7 @@ import Button from "../../components/common/Button";
 import DownloadPaymentPDFButton from "../../components/checkout/DownloadPaymentPDFButton";
 
 const API_URL = process.env.REACT_APP_API_URL;
+const FAIL_PATH = "/platnosc-niepowodzenie";
 
 export default function CheckoutSummaryPage() {
   const navigate = useNavigate();
@@ -40,6 +41,31 @@ export default function CheckoutSummaryPage() {
     }
   }, [initialData, orderNumberFromUrl]);
 
+  // ➜ Jeśli pobranie się wywaliło (np. brak tokenu) – leć na stronę błędu
+  useEffect(() => {
+    if (error) {
+      const q = orderNumberFromUrl
+        ? `?order=${encodeURIComponent(orderNumberFromUrl)}`
+        : "";
+      navigate(`${FAIL_PATH}${q}`, { replace: true });
+    }
+  }, [error, orderNumberFromUrl, navigate]);
+
+  // ➜ Po załadowaniu danych: jeżeli to P24 i nie jest opłacone → przekieruj na stronę błędu
+  useEffect(() => {
+    if (!orderData) return;
+    const isP24 =
+      (orderData?.payment?.method || "").toLowerCase() === "przelewy24";
+    const isPaid =
+      (orderData?.payment?.status || "").toLowerCase() === "ok" ||
+      (orderData?.orderStatus || "").toLowerCase() === "paid";
+    if (isP24 && !isPaid) {
+      const on = orderData?.orderNumber || orderNumberFromUrl || "";
+      const q = on ? `?order=${encodeURIComponent(on)}` : "";
+      navigate(`${FAIL_PATH}${q}`, { replace: true });
+    }
+  }, [orderData, orderNumberFromUrl, navigate]);
+
   // Bezpieczne destrukturyzowanie
   const {
     orderNumber = "",
@@ -67,7 +93,12 @@ export default function CheckoutSummaryPage() {
 
         {!loading && !error && orderData && (
           <>
-            <h1 className="summary-title">Dziękujemy za zamówienie!</h1>
+            <h1 className="summary-title">
+              {(payment?.status || "").toLowerCase() === "ok" ||
+              (orderData?.orderStatus || "").toLowerCase() === "paid"
+                ? "Dziękujemy za zamówienie!"
+                : "Podsumowanie zamówienia"}
+            </h1>
             <p>
               Zamówienie <strong>{orderNumber}</strong> zostało przyjęte do
               realizacji.
