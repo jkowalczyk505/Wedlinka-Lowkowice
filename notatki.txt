@@ -9,11 +9,6 @@ PANEL ADMINA
 - zamowienia - przycisk pobierz fakture (dopiero po zaplacie)
 *FAKTURY - potrzebne?
 
-ZAMAWIANIE
-- zmiana statusow wysylek, zamowien, platnosci
-- ekran z bledem
-- jakies inne statusy platnosci obsluzyc?
-
 FAKTURY
 - wfirma
 - wystawianie faktury dopiero po zaplacie!!
