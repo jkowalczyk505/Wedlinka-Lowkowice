@@ -1,0 +1,43 @@
+.page-failed {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    padding: 6rem 2rem;
+    background-image: url('/assets/pattern.png');
+    background-size: cover;
+    background-position: center;
+
+    h1 {
+        font-size: 4rem;
+        color: $secondary-color;
+        font-family: $font-heading;
+        margin-bottom: 1rem;
+    }
+
+    h2 {
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+        font-family: $font-main;
+        text-transform: none;
+        color: $dark-color;
+        max-width: 1000px;
+        font-weight: 400;
+    }
+
+    p {
+        font-size: 1.5rem;
+        font-family: $font-main;
+        color: $accent-color-darken;
+        font-weight: 600;
+    }
+
+    span {
+        font-size: 1.2rem;
+    }
+
+    .button-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+}

@@ -2,6 +2,7 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import NotFoundPage from "./pages/NotFoundPage";
+import FailedPage from "./pages/FailedPage";
 import ProtectedLayout from "./components/auth/ProtectedLayout";
 import AccountPage from "./pages/account/AccountPage";
 import AccountDashboard from "./pages/account/AccountDashboard";
@@ -109,6 +110,10 @@ export default [
   {
     path: "/reset-hasla/:token",
     element: <PasswordResetConfirmPage />,
+  },
+  {
+    path: "/platnosc-niepowodzenie",
+    element: <FailedPage />,
   },
 
   // ewentualnie catch-all 404
