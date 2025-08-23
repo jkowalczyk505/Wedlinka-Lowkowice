@@ -5,6 +5,7 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const db = require("./config/db");
 const path = require("path");
+const cronRoutes = require("./routes/cron.routes.js");
 
 const app = express();
 app.set("trust proxy", 1);
@@ -69,6 +70,9 @@ app.use("/api/orders", require("./routes/orderRoutes"));
 
 // webhook P24 (urlStatus)
 app.use("/api/p24", require("./routes/p24Routes"));
+
+// cron
+app.use("/api/cron", cronRoutes);
 
 // 7) Static uploads
 app.use(
