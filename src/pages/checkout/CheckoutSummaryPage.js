@@ -1,6 +1,7 @@
 // src/pages/checkout/CheckoutSummaryPage.jsx
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useCart } from "../../components/cart/CartContext";
 import CartRow from "../../components/cart/CartRow";
 import OrderSummaryDetails from "../../components/checkout/OrderSummaryDetails";
 import { formatGrossPrice } from "../../utils/product";
@@ -16,6 +17,7 @@ export default function CheckoutSummaryPage() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const [searchParams] = useSearchParams();
+  const { reloadCart } = useCart();
 
   const orderNumberFromUrl = searchParams.get("order");
   const initialData = state && Array.isArray(state.items) ? state : null;
@@ -40,6 +42,23 @@ export default function CheckoutSummaryPage() {
         .finally(() => setLoading(false));
     }
   }, [initialData, orderNumberFromUrl]);
+
+  // Po udanym P24 (paid) lub dla metod offline (przelew/cod) wyczyść koszyk gościa
+  useEffect(() => {
+    if (!orderData) return;
+    const method = (orderData?.payment?.method || "").toLowerCase();
+    const pay = (orderData?.payment?.status || "").toLowerCase();
+    const ord = (orderData?.orderStatus || "").toLowerCase();
+    const isPaid = pay === "ok" || ord === "paid";
+    const isOffline = method === "bank_transfer" || method === "cod";
+    if (isPaid || isOffline) {
+      try {
+        localStorage.removeItem("cart");
+        localStorage.removeItem("deliveryForm");
+      } catch {}
+      reloadCart?.();
+    }
+  }, [orderData, reloadCart]);
 
   useEffect(() => {
     if (!orderData) return;
