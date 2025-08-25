@@ -27,6 +27,7 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [freeThreshold, setFreeThreshold] = useState(null);
 
   const [imgError, setImgError] = useState(false);
   const imgUrl = product?.image
@@ -65,6 +66,21 @@ export default function ProductPage() {
   useEffect(() => {
     fetchProduct();
   }, [fetchProduct]);
+
+    // pobierz /api/shipping (freeShippingThreshold)
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/shipping`);
+        if (!res.ok) throw new Error("shipping fetch failed");
+        const data = await res.json();
+        setFreeThreshold(data.freeShippingThreshold ?? null);
+      } catch (e) {
+        console.warn("Nie udało się pobrać progu darmowej dostawy:", e);
+        setFreeThreshold(null);
+      }
+    })();
+  }, []);
 
   // spinner podczas ładowania
   if (loading) {
@@ -108,6 +124,29 @@ export default function ProductPage() {
     { label: categoryTitle, to: `/sklep/${categorySlug}` },
     { label: productTitle },
   ];
+
+    // funkcja pomocnicza: cena za kg (tylko gdy unit === "kg")
+  const renderPricePerKg = () => {
+    if (product.unit.toLowerCase() !== "kg") return null;
+    if (!product.quantity || product.quantity <= 0) return null;
+    const perKg = product.price_brut / product.quantity;
+    return (
+      <p className="price-kg">
+        Cena za 1 kg: {formatGrossPrice(perKg)} zł
+      </p>
+    );
+  };
+
+  // funkcja pomocnicza: respektowanie \n w tekście
+  const renderMultiline = (text) => {
+    if (!text) return null;
+    return text.split("\n").map((line, idx) => (
+      <span key={idx}>
+        {line}
+        <br />
+      </span>
+    ));
+  };
 
   return (
     <main className="page">
@@ -157,6 +196,28 @@ export default function ProductPage() {
             </div>
 
             <p className="price">{formatGrossPrice(product.price_brut)} zł</p>
+            {renderPricePerKg()}
+
+            <div className="delivery-info-panel">
+              <ul>
+                 {freeThreshold !== null && (
+                   <li>
+                     Darmowa dostawa od{" "}
+                     <strong>
+                       {freeThreshold.toLocaleString("pl-PL", {
+                         minimumFractionDigits: 0,
+                       })}{" "}
+                       zł
+                     </strong>
+                   </li>
+                 )}
+                 <li>
+                   Paczki wysyłamy w poniedziałki i wtorki w tygodniu
+                   następującym po złożeniu zamówienia
+                 </li>
+                 <li>Czas wysyłki 4–8 dni</li>
+               </ul>
+             </div>
 
             <form
               className="cart-form"
@@ -189,13 +250,13 @@ export default function ProductPage() {
         <div className="product-details">
           <div className="product-description">
             <h2 className>Opis</h2>
-            <p>{product.description}</p>
+            <p>{renderMultiline(product.description)}</p>
           </div>
           <div className="product-ingredients">
             <h2>Składniki</h2>
-            <p>{product.ingredients}</p>
+            <p>{renderMultiline(product.ingredients)}</p>
             <h3>Alergeny</h3>
-            <p>{product.allergens}</p>
+            <p>{renderMultiline(product.allergens)}</p>
           </div>
         </div>
 
