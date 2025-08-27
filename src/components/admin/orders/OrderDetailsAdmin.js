@@ -58,13 +58,25 @@ export default function OrderDetailsAdmin({ id }) {
   const { order: summary, items, shipping, payment, invoice } = order;
 
   const handleGenerateInvoice = async () => {
-    // TODO: tu zrobisz POST /api/invoices/:orderId/create
-    console.log("Generuj fakturę (placeholder)");
+      try {
+      const res = await AuthFetch(`${API_URL}/api/invoices/${summary.id}/create`, {
+        method: "POST",
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(data.message || "Nie udało się wystawić faktury");
+        return;
+      }
+      // opcjonalnie możesz odświeżyć dane zamówienia albo zapisać numer w stanie:
+      alert(`Faktura ${data?.invoice?.number || ""} wystawiona i wysłana do klienta.`);
+    } catch (e) {
+      alert("Błąd połączenia przy wystawianiu faktury");
+    }
   };
 
   const handleDownloadInvoice = () => {
-    // Otwiera PDF w nowej karcie (backend autoryzuje po cookie admina)
-    window.open(`${API_URL}/api/invoices/${summary.id}/pdf`, "_blank");
+    // jeżeli chcesz, by działało w SPA bez blokad popupów:
+    window.open(`${API_URL}/api/invoices/${summary.id}/pdf`, "_blank", "noopener,noreferrer");
   };
 
   // handler zapisu numeru przesyłki

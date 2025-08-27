@@ -1,39 +1,71 @@
-// backend/routes/invoiceRoutes.js
 const express = require("express");
 const router = express.Router();
 const { upsertContractor, createDocument, getDocumentPdf } = require("../services/wfirma");
-const pool = require("../config/db"); // jeśli masz eksport poola; w razie czego zaimportuj tak jak w innych routach
-const { protect, adminOnly } = require("../middleware/authMiddleware"); // użyj Twoich middleware
+const pool = require("../config/db");
+const { protect, adminOnly } = require("../middleware/authMiddleware");
 
-// POST /api/invoices/:orderId/create  (ADMIN) -> tworzy + wysyła
+const SHIPPING_VAT_DEFAULT = process.env.WFIRMA_SHIPPING_VAT || "23";
+
+// POST /api/invoices/:orderId/create  (ADMIN)
 router.post("/:orderId/create", protect, adminOnly, async (req, res) => {
   const { orderId } = req.params;
   const conn = await pool.getConnection();
   try {
+    // --- zamówienie ---
     const [orders] = await conn.query("SELECT * FROM orders WHERE id = ?", [orderId]);
     if (!orders.length) return res.status(404).json({ message: "Order not found" });
     const order = orders[0];
 
-    if (!order.is_paid) return res.status(400).json({ message: "Order not paid" });
-    if (!order.want_invoice) return res.status(400).json({ message: "Customer did not request invoice" });
+    // --- płatność ---
+    const [payRows] = await conn.query(
+      "SELECT status, provider FROM payments WHERE order_id = ? LIMIT 1",
+      [orderId]
+    );
+    const pay = payRows[0];
+    if (!pay || pay.status !== "ok") {
+      return res.status(400).json({ message: "Order not paid" });
+    }
 
-    // czy już wystawiona?
+    // --- czy klient chciał fakturę ---
+    if (!order.invoice_type) {
+      return res.status(400).json({ message: "Customer did not request invoice" });
+    }
+
+    // --- już wystawiona? (idempotencja) ---
     const [invs] = await conn.query("SELECT * FROM invoices WHERE order_id = ?", [orderId]);
     if (invs.length) {
-      // idempotencja: nic nie tworzymy ponownie – ale możemy od razu wysłać jeszcze raz maila, jeśli chcesz
       return res.status(409).json({ message: "Already invoiced", invoice: invs[0] });
     }
 
-    const [items] = await conn.query("SELECT * FROM order_items WHERE order_id = ?", [orderId]);
+    // --- pozycje (JOIN z products, bo order_items nie ma name/unit) ---
+    const [items] = await conn.query(
+      `SELECT 
+         p.name,
+         p.unit,
+         oi.quantity         AS qty,
+         oi.price_brut_snapshot AS price_brut,
+         oi.vat_rate_snapshot   AS vat_rate
+       FROM order_items oi
+       JOIN products p ON p.id = oi.product_id
+      WHERE oi.order_id = ?`,
+      [orderId]
+    );
 
+    // --- dostawa ---
+    const [[shipping]] = await conn.query(
+      "SELECT cost FROM shipping_details WHERE order_id = ? LIMIT 1",
+      [orderId]
+    );
+
+    // --- dane do kontrahenta bierzemy z kolumn invoice_* ---
     const billing = {
-      name: order.company_name || `${order.first_name} ${order.last_name}`,
-      nip: order.nip || null,
-      email: order.email,
-      street: order.street,
-      city: order.city,
-      zip: order.zip,
-      country: order.country || "PL",
+      name:    order.invoice_name,
+      nip:     order.invoice_nip || null,
+      email:   order.invoice_email, // fallback mógłby być do maila z dostawy
+      street:  order.invoice_street,
+      city:    order.invoice_city,
+      zip:     order.invoice_zip,
+      country: order.invoice_country || "Polska",
     };
 
     const contractorId = await upsertContractor(billing);
@@ -41,16 +73,16 @@ router.post("/:orderId/create", protect, adminOnly, async (req, res) => {
     const { id: wfirmaId, number } = await createDocument({
       contractorId,
       order: {
-        isPaid: !!order.is_paid,
+        isPaid: true, // skoro status 'ok'
         items: items.map((it) => ({
           name: it.name,
-          qty: it.quantity,
-          unit: it.unit,
+          qty: it.qty,
+          unit: it.unit || "szt",
           priceBrut: it.price_brut,
           vatRate: it.vat_rate,
         })),
-        shippingCost: order.shipping_price || 0,
-        shippingVatRate: order.shipping_vat_rate || "23",
+        shippingCost: shipping ? Number(shipping.cost) : 0,
+        shippingVatRate: SHIPPING_VAT_DEFAULT,
       },
     });
 
@@ -59,14 +91,15 @@ router.post("/:orderId/create", protect, adminOnly, async (req, res) => {
       [orderId, wfirmaId, number]
     );
 
-    // pobierz PDF i wyślij mailem
+    // --- PDF + e-mail do klienta ---
     const pdf = await getDocumentPdf(wfirmaId);
     const emailService = require("../services/emailService");
+    const targetEmail = order.invoice_email; // tu świadomie wysyłamy na mail z sekcji fakturowej
     await emailService.sendMail({
-      to: order.email,
-      subject: `Faktura ${number} do zamówienia #${order.id}`,
+      to: targetEmail,
+      subject: `Faktura ${number} do zamówienia ${order.order_number}`,
       template: "invoiceEmail",
-      vars: { orderNumber: order.id, invoiceNumber: number },
+      vars: { orderNumber: order.order_number, invoiceNumber: number },
       attachments: [{ filename: `${number}.pdf`, content: pdf }],
     });
 
@@ -79,7 +112,7 @@ router.post("/:orderId/create", protect, adminOnly, async (req, res) => {
   }
 });
 
-// GET /api/invoices/:orderId/pdf  (admin albo właściciel zamówienia)
+// GET /api/invoices/:orderId/pdf  (admin lub właściciel)
 router.get("/:orderId/pdf", protect, async (req, res) => {
   const { orderId } = req.params;
   const conn = await pool.getConnection();
@@ -88,7 +121,6 @@ router.get("/:orderId/pdf", protect, async (req, res) => {
     if (!orders.length) return res.status(404).end();
     const order = orders[0];
 
-    // autoryzacja: admin lub właściciel
     const isAdmin = req.user?.role === "admin";
     if (!isAdmin && String(order.user_id) !== String(req.user.id)) {
       return res.status(403).end();
