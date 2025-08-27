@@ -43,6 +43,8 @@ function ProductTile({ product }) {
               src={imgUrl}
               alt={name}
               className="product-image"
+              loading="lazy"
+              decoding="async"
               onError={() => setImgError(true)}
             />
           ) : (
