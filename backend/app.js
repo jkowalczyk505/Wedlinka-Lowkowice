@@ -10,6 +10,9 @@ const cronRoutes = require("./routes/cron.routes.js");
 const app = express();
 app.set("trust proxy", 1);
 
+const invoiceRoutes = require("./routes/invoiceRoutes");
+app.use("/api/invoices", invoiceRoutes);
+
 // 1) Security
 app.disable("x-powered-by");
 app.use(helmet());
