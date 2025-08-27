@@ -57,6 +57,16 @@ export default function OrderDetailsAdmin({ id }) {
 
   const { order: summary, items, shipping, payment, invoice } = order;
 
+  const handleGenerateInvoice = async () => {
+    // TODO: tu zrobisz POST /api/invoices/:orderId/create
+    console.log("Generuj fakturę (placeholder)");
+  };
+
+  const handleDownloadInvoice = () => {
+    // Otwiera PDF w nowej karcie (backend autoryzuje po cookie admina)
+    window.open(`${API_URL}/api/invoices/${summary.id}/pdf`, "_blank");
+  };
+
   // handler zapisu numeru przesyłki
   const saveTracking = async () => {
     try {
@@ -172,14 +182,14 @@ export default function OrderDetailsAdmin({ id }) {
               {invoice.email} <br />
               {invoice.nip && `NIP: ${invoice.nip}`}
             </p>
-            <Button
-              onClick={() => {
-                // TODO: logika pobierania faktury
-                console.log("Pobierz fakturę (placeholder)");
-              }}
-            >
-              Pobierz fakturę
-            </Button>
+            <div style={{ display: "flex", gap: ".2rem", flexWrap: "wrap" }}>
+              <Button variant="red" onClick={handleGenerateInvoice}>
+                Generuj
+              </Button>
+              <Button onClick={handleDownloadInvoice}>
+                Pobierz (PDF)
+              </Button>
+            </div>
           </section>
         )}
 
