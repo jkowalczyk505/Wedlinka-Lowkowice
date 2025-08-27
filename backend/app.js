@@ -10,9 +10,6 @@ const cronRoutes = require("./routes/cron.routes.js");
 const app = express();
 app.set("trust proxy", 1);
 
-const invoiceRoutes = require("./routes/invoiceRoutes");
-app.use("/api/invoices", invoiceRoutes);
-
 // 1) Security
 app.disable("x-powered-by");
 app.use(helmet());
@@ -70,12 +67,13 @@ app.use("/api/cart", require("./routes/cartRoutes"));
 app.use("/api/shipping", require("./routes/shippingRoutes"));
 app.use("/api/reviews", require("./routes/reviewRoutes"));
 app.use("/api/orders", require("./routes/orderRoutes"));
-
 // webhook P24 (urlStatus)
 app.use("/api/p24", require("./routes/p24Routes"));
-
 // cron
 app.use("/api/cron", cronRoutes);
+// faktury
+const invoiceRoutes = require("./routes/invoiceRoutes");
+app.use("/api/invoices", invoiceRoutes);
 
 // 7) Static uploads
 app.use(
