@@ -68,7 +68,7 @@ async function registerTransaction({
   sessionId,
   amountPln,
   email,
-  description = "Zamówienie",
+  description = "Zamowienie",
   returnUrl,
   cancelUrl,
 }) {
