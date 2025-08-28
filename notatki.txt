@@ -1,9 +1,6 @@
 ACCOUNT
 - dashboard - faktury
 - moje zamowienia: faktury pobieranie (dopiero jak wygenerowana - wpis w tabeli)
-    
-PANEL ADMINA
-- zamowienia - przycisk generuj (tylko jak zaplacone)
 
 FAKTURY
 - wystawianie faktury dopiero po zaplacie(?)

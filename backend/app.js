@@ -75,6 +75,9 @@ app.use("/api/cron", cronRoutes);
 const invoiceRoutes = require("./routes/invoiceRoutes");
 app.use("/api/invoices", invoiceRoutes);
 
+// zmiana webp na png
+app.use("/api/email", require("./routes/emailAssets"));
+
 // 7) Static uploads
 app.use(
   "/api/uploads/products",

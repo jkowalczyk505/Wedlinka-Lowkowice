@@ -140,10 +140,11 @@ exports.sendOrderConfirmationEmail = async (to, data) => {
       const unitsLabel = `${unitsTotal.toLocaleString("pl-PL")} ${p.unit}`;
 
       /* 3. miniatura (60 px, zaokr. rogi) -------------------------------- */
+      const BACK = process.env.PUBLIC_BACKEND_URL;
       const thumb = p.image
-        ? `<img src="https://wedlinkalowkowice.pl/api/uploads/products/${p.image}"
-            width="60" height="60"
-            alt="" style="object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle">`
+        ? `<img src="${BACK}/api/email/thumb/${encodeURIComponent(p.image)}"
+      width="60" height="60"
+      alt="" style="object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle">`
         : "";
 
       /* 4. wiersz -------------------------------------------------------- */
@@ -241,10 +242,11 @@ exports.sendOrderStatusChangedEmail = async (to, data) => {
       const unitsTotal = perPack * item.quantity;
       const unitsLabel = `${unitsTotal.toLocaleString("pl-PL")} ${p.unit}`;
 
+      const BACK = process.env.PUBLIC_BACKEND_URL;
       const thumb = p.image
-        ? `<img src="https://wedlinkalowkowice.pl/api/uploads/products/${p.image}"
-                width="60" height="60"
-                alt="" style="object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle">`
+        ? `<img src="${BACK}/api/email/thumb/${encodeURIComponent(p.image)}"
+      width="60" height="60"
+      alt="" style="object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle">`
         : "";
 
       return `
