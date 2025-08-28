@@ -3,7 +3,7 @@ ACCOUNT
 - moje zamowienia: faktury pobieranie (dopiero jak wygenerowana - wpis w tabeli)
     
 PANEL ADMINA
-- zamowienia - przycisk pobierz fakture (tylko jak wpis w tabeli istnieje) + generuj (tylko jak zaplacone)
+- zamowienia - przycisk generuj (tylko jak zaplacone)
 
 FAKTURY
 - wystawianie faktury dopiero po zaplacie(?)
@@ -11,7 +11,7 @@ FAKTURY
 - do zaplaty jeszcze cala kwota (ponoc przy zwyklej fakturze mozna ustawic ze oplacono? i ze niby samo sie ogarnie to?)
 - alert o bledach/sukcesie
 - stawka vat
-- widocznosc przzyciskow w odpowiednich sytuacjach
+- metoda platnosci? odpowiednio dla bramki, przelewu, za pobraniem?
 - termin platnosci w wfirma??
 - weryfikacja pdf - zawartosc pobranego + zawartosc w mailu
 

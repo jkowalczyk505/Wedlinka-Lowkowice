@@ -38,6 +38,7 @@ export default function OrderDetailsAdmin({ id }) {
   const [error, setError] = useState(false);
   const [editingTrack, setEditingTrack] = useState(false);
   const [trackingNumber, setTrackingNumber] = useState("");
+  const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -56,9 +57,20 @@ export default function OrderDetailsAdmin({ id }) {
   if (error) return <LoadError onRetry={() => window.location.reload()} />;
 
   const { order: summary, items, shipping, payment, invoice } = order;
+  const hasInvoice = !!order.hasInvoice; // czy jest faktura w DB
+  const isPaid = payment?.status === "ok"; // czy płatność opłacona
+  const canGenerateInvoice =
+    !!invoice?.type && // klient chce fakturę
+    !hasInvoice && // jeszcze nie wystawiona
+    isPaid; // i jest opłacone
 
   const handleGenerateInvoice = async () => {
+    if (!isPaid) {
+      alert("Nie można wystawić faktury – zamówienie nie jest opłacone.");
+      return;
+    }
     try {
+      setGenerating(true);
       const res = await AuthFetch(
         `${API_URL}/api/invoices/${summary.id}/create`,
         {
@@ -70,6 +82,15 @@ export default function OrderDetailsAdmin({ id }) {
         alert(data.message || "Nie udało się wystawić faktury");
         return;
       }
+      // przeskocz na tryb "Pobierz" bez ponownego fetchu
+      setOrder((o) => ({
+        ...o,
+        hasInvoice: true,
+        invoiceDoc: {
+          number: data?.invoice?.number || o?.invoiceDoc?.number || null,
+          wfirmaId: data?.invoice?.wfirmaId || o?.invoiceDoc?.wfirmaId || null,
+        },
+      }));
       // opcjonalnie możesz odświeżyć dane zamówienia albo zapisać numer w stanie:
       alert(
         `Faktura ${
@@ -78,6 +99,8 @@ export default function OrderDetailsAdmin({ id }) {
       );
     } catch (e) {
       alert("Błąd połączenia przy wystawianiu faktury");
+    } finally {
+      setGenerating(false);
     }
   };
 
@@ -243,11 +266,27 @@ export default function OrderDetailsAdmin({ id }) {
               {invoice.email} <br />
               {invoice.nip && `NIP: ${invoice.nip}`}
             </p>
-            <div style={{ display: "flex", gap: ".2rem", flexWrap: "wrap" }}>
-              <Button variant="red" onClick={handleGenerateInvoice}>
-                Generuj
-              </Button>
-              <Button onClick={handleDownloadInvoice}>Pobierz (PDF)</Button>
+            <div
+              style={{
+                display: "flex",
+                gap: ".2rem",
+                flexWrap: "wrap",
+                alignItems: "center",
+              }}
+            >
+              {canGenerateInvoice && (
+                <Button variant="red" onClick={handleGenerateInvoice}>
+                  Generuj
+                </Button>
+              )}
+              {hasInvoice && (
+                <Button onClick={handleDownloadInvoice}>Pobierz (PDF)</Button>
+              )}
+              {!hasInvoice && !isPaid && (
+                <span style={{ color: "#777", fontSize: 13 }}>
+                  (Wystawienie dostępne po opłaceniu)
+                </span>
+              )}
             </div>
           </section>
         )}

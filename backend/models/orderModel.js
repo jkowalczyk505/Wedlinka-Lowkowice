@@ -461,6 +461,15 @@ const OrderModel = {
     );
     const pay = paymentRows[0] || {};
 
+    // sprawdź, czy w invoices istnieje wpis dla tego order_id
+    const [[inv]] = await db.query(
+      `SELECT wfirma_invoice_id AS wfirmaId, wfirma_number AS number
+       FROM invoices
+      WHERE order_id = ?
+      LIMIT 1`,
+      [id]
+    );
+
     const invoice = {
       type: o.invoice_type,
       name: o.invoice_name,
@@ -492,6 +501,8 @@ const OrderModel = {
         bankAccount: process.env.BANK_ACCOUNT || "BRAK_NUMERU_KONTA",
       },
       invoice,
+      hasInvoice: !!inv,
+      invoiceDoc: inv || null, // opcjonalnie: numer/ID do wyświetlenia
     };
   },
 
