@@ -283,3 +283,31 @@ exports.sendOrderStatusChangedEmail = async (to, data) => {
     html,
   });
 };
+
+// services/emailService.js
+exports.sendInvoiceIssuedEmail = async (
+  to,
+  { orderId, orderNumber, invoiceNumber, pdfBuf, isProforma }
+) => {
+  const html = renderTemplate("invoiceIssued", {
+    orderNumber,
+    invoiceLabel: isProforma ? `proforma ${invoiceNumber}` : invoiceNumber,
+    downloadUrl: `${process.env.PUBLIC_BACKEND_URL}/api/invoices/${orderId}/pdf`,
+  });
+
+  await transporter.sendMail({
+    from: '"Wędlinka Łowkowice" <system@wedlinkalowkowice.pl>',
+    to,
+    subject: `Faktura ${
+      isProforma ? "proforma " : ""
+    }${invoiceNumber} do zamówienia ${orderNumber}`,
+    html,
+    attachments: [
+      {
+        filename: `${invoiceNumber || "faktura"}.pdf`,
+        content: pdfBuf, // Buffer z wFirma
+        contentType: "application/pdf",
+      },
+    ],
+  });
+};

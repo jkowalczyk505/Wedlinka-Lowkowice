@@ -105,17 +105,34 @@ router.post("/:orderId/create", protect, adminOnly, async (req, res) => {
       [orderId, wfirmaId, number]
     );
 
-    // // --- PDF + e-mail do klienta ---
-    // const pdf = await getDocumentPdf(wfirmaId);
-    // const emailService = require("../services/emailService");
-    // const targetEmail = order.invoice_email; // tu świadomie wysyłamy na mail z sekcji fakturowej
-    // await emailService.sendMail({
-    //   to: targetEmail,
-    //   subject: `Faktura ${number} do zamówienia ${order.order_number}`,
-    //   template: "invoiceEmail",
-    //   vars: { orderNumber: order.order_number, invoiceNumber: number },
-    //   attachments: [{ filename: `${number}.pdf`, content: pdf }],
-    // });
+    // --- PDF + e-mail do klienta (best effort) ---
+    try {
+      const pdf = await getDocumentPdf(wfirmaId); // Buffer
+      const { sendInvoiceIssuedEmail } = require("../services/emailService");
+      // preferuj mail z sekcji fakturowej, w razie braku — z dostawy
+      let targetEmail = order.invoice_email;
+      if (!targetEmail) {
+        const [[ship]] = await conn.query(
+          "SELECT email FROM shipping_details WHERE order_id = ? LIMIT 1",
+          [orderId]
+        );
+        targetEmail = ship?.email || null;
+      }
+      if (targetEmail) {
+        await sendInvoiceIssuedEmail(targetEmail, {
+          orderId,
+          orderNumber: order.order_number,
+          invoiceNumber: number,
+          pdfBuf: pdf,
+          isProforma: true, // obecnie wystawiasz proformy
+        });
+      } else {
+        console.warn("[invoice mail] brak adresu e-mail dla order", orderId);
+      }
+    } catch (mailErr) {
+      console.error("[invoice mail] wysyłka nieudana:", mailErr);
+      // nie przerywamy — faktura już została utworzona
+    }
 
     res.json({ ok: true, invoice: { wfirmaId, number } });
   } catch (e) {

@@ -10,10 +10,10 @@ FAKTURY
 - dziwna jedostka na wfirmie (1,0000) - chyba trzeba zsumowac wagi/ilosci a nie ze wyswietla sie ilosc danego produktu z koszyka (np. 2 balerony po 0,7kg wyswietla sie jako 2,0000), albo do nazwy produktu dodac wage a ilosci niech beda z koszyka
 - do zaplaty jeszcze cala kwota (ponoc przy zwyklej fakturze mozna ustawic ze oplacono? i ze niby samo sie ogarnie to?)
 - alert o bledach/sukcesie
+- stawka vat
 - widocznosc przzyciskow w odpowiednich sytuacjach
-- mail z faktura przy generowaniu
 - termin platnosci w wfirma??
-- weryfikacja pdf
+- weryfikacja pdf - zawartosc pobranego + zawartosc w mailu
 
 NA KONIEC
 - seo + sitemap + robots + index jak zhkr (+og.jpg) + manifest json
