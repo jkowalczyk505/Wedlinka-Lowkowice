@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { upsertContractor, createDocument, getDocumentPdf } = require("../services/wfirma");
+const {
+  upsertContractor,
+  createDocument,
+  getDocumentPdf,
+} = require("../services/wfirma");
 const pool = require("../config/db");
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 
@@ -12,8 +16,11 @@ router.post("/:orderId/create", protect, adminOnly, async (req, res) => {
   const conn = await pool.getConnection();
   try {
     // --- zamówienie ---
-    const [orders] = await conn.query("SELECT * FROM orders WHERE id = ?", [orderId]);
-    if (!orders.length) return res.status(404).json({ message: "Order not found" });
+    const [orders] = await conn.query("SELECT * FROM orders WHERE id = ?", [
+      orderId,
+    ]);
+    if (!orders.length)
+      return res.status(404).json({ message: "Order not found" });
     const order = orders[0];
 
     // --- płatność ---
@@ -28,13 +35,20 @@ router.post("/:orderId/create", protect, adminOnly, async (req, res) => {
 
     // --- czy klient chciał fakturę ---
     if (!order.invoice_type) {
-      return res.status(400).json({ message: "Customer did not request invoice" });
+      return res
+        .status(400)
+        .json({ message: "Customer did not request invoice" });
     }
 
     // --- już wystawiona? (idempotencja) ---
-    const [invs] = await conn.query("SELECT * FROM invoices WHERE order_id = ?", [orderId]);
+    const [invs] = await conn.query(
+      "SELECT * FROM invoices WHERE order_id = ?",
+      [orderId]
+    );
     if (invs.length) {
-      return res.status(409).json({ message: "Already invoiced", invoice: invs[0] });
+      return res
+        .status(409)
+        .json({ message: "Already invoiced", invoice: invs[0] });
     }
 
     // --- pozycje (JOIN z products, bo order_items nie ma name/unit) ---
@@ -59,12 +73,12 @@ router.post("/:orderId/create", protect, adminOnly, async (req, res) => {
 
     // --- dane do kontrahenta bierzemy z kolumn invoice_* ---
     const billing = {
-      name:    order.invoice_name,
-      nip:     order.invoice_nip || null,
-      email:   order.invoice_email, // fallback mógłby być do maila z dostawy
-      street:  order.invoice_street,
-      city:    order.invoice_city,
-      zip:     order.invoice_zip,
+      name: order.invoice_name,
+      nip: order.invoice_nip || null,
+      email: order.invoice_email, // fallback mógłby być do maila z dostawy
+      street: order.invoice_street,
+      city: order.invoice_city,
+      zip: order.invoice_zip,
       country: order.invoice_country || "Polska",
     };
 
@@ -91,17 +105,17 @@ router.post("/:orderId/create", protect, adminOnly, async (req, res) => {
       [orderId, wfirmaId, number]
     );
 
-    // --- PDF + e-mail do klienta ---
-    const pdf = await getDocumentPdf(wfirmaId);
-    const emailService = require("../services/emailService");
-    const targetEmail = order.invoice_email; // tu świadomie wysyłamy na mail z sekcji fakturowej
-    await emailService.sendMail({
-      to: targetEmail,
-      subject: `Faktura ${number} do zamówienia ${order.order_number}`,
-      template: "invoiceEmail",
-      vars: { orderNumber: order.order_number, invoiceNumber: number },
-      attachments: [{ filename: `${number}.pdf`, content: pdf }],
-    });
+    // // --- PDF + e-mail do klienta ---
+    // const pdf = await getDocumentPdf(wfirmaId);
+    // const emailService = require("../services/emailService");
+    // const targetEmail = order.invoice_email; // tu świadomie wysyłamy na mail z sekcji fakturowej
+    // await emailService.sendMail({
+    //   to: targetEmail,
+    //   subject: `Faktura ${number} do zamówienia ${order.order_number}`,
+    //   template: "invoiceEmail",
+    //   vars: { orderNumber: order.order_number, invoiceNumber: number },
+    //   attachments: [{ filename: `${number}.pdf`, content: pdf }],
+    // });
 
     res.json({ ok: true, invoice: { wfirmaId, number } });
   } catch (e) {
@@ -117,7 +131,9 @@ router.get("/:orderId/pdf", protect, async (req, res) => {
   const { orderId } = req.params;
   const conn = await pool.getConnection();
   try {
-    const [orders] = await conn.query("SELECT * FROM orders WHERE id = ?", [orderId]);
+    const [orders] = await conn.query("SELECT * FROM orders WHERE id = ?", [
+      orderId,
+    ]);
     if (!orders.length) return res.status(404).end();
     const order = orders[0];
 
@@ -126,14 +142,30 @@ router.get("/:orderId/pdf", protect, async (req, res) => {
       return res.status(403).end();
     }
 
-    const [invs] = await conn.query("SELECT * FROM invoices WHERE order_id = ?", [orderId]);
+    const [invs] = await conn.query(
+      "SELECT * FROM invoices WHERE order_id = ?",
+      [orderId]
+    );
     if (!invs.length) return res.status(404).json({ message: "No invoice" });
     const inv = invs[0];
 
-    const pdf = await getDocumentPdf(inv.wfirma_invoice_id);
+    const pdf = await getDocumentPdf(inv.wfirma_invoice_id); // Buffer
+
+    const base = inv.wfirma_number || `invoice-${order.order_number}`;
+    const safe = String(base).replace(/[^\w\-\.]/g, "_");
+
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", `inline; filename="${inv.wfirma_number || "invoice"}.pdf"`);
-    res.send(pdf);
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${safe}.pdf"; filename*=UTF-8''${encodeURIComponent(
+        safe
+      )}.pdf`
+    );
+    res.setHeader("Content-Length", Buffer.byteLength(pdf)); // <—
+    res.setHeader("Cache-Control", "private, no-store");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+
+    res.end(pdf); // <— zamiast res.send()
   } catch (e) {
     console.error("[invoices/pdf]", e);
     res.status(500).json({ ok: false, message: e.message });

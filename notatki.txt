@@ -1,18 +1,22 @@
 ACCOUNT
 - dashboard - faktury
-- moje zamowienia: faktury pobieranie (dopiero po zaplacie)
+- moje zamowienia: faktury pobieranie (dopiero jak wygenerowana - wpis w tabeli)
     
 PANEL ADMINA
-- zamowienia - przycisk pobierz fakture (dopiero po zaplacie)
-*FAKTURY - potrzebne?
+- zamowienia - przycisk pobierz fakture (tylko jak wpis w tabeli istnieje) + generuj (tylko jak zaplacone)
 
 FAKTURY
-- wfirma
-- wystawianie faktury dopiero po zaplacie!!
+- wystawianie faktury dopiero po zaplacie(?)
+- dziwna jedostka na wfirmie (1,0000) - chyba trzeba zsumowac wagi/ilosci a nie ze wyswietla sie ilosc danego produktu z koszyka (np. 2 balerony po 0,7kg wyswietla sie jako 2,0000), albo do nazwy produktu dodac wage a ilosci niech beda z koszyka
+- do zaplaty jeszcze cala kwota (ponoc przy zwyklej fakturze mozna ustawic ze oplacono? i ze niby samo sie ogarnie to?)
+- alert o bledach/sukcesie
+- widocznosc przzyciskow w odpowiednich sytuacjach
+- mail z faktura przy generowaniu
+- termin platnosci w wfirma??
+- weryfikacja pdf
 
 NA KONIEC
-- MAILE - faktura
 - seo + sitemap + robots + index jak zhkr (+og.jpg) + manifest json
 - wysłać sitemap do google
 - react helmet async?? chyba ze nic to nie da w react spa
-- zmienic w env dane do p24 i wyl debug
+- zmienic w env dane do p24, wfirma i wyl debug

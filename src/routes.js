@@ -32,7 +32,6 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminReviews from "./pages/admin/AdminReviews";
-import AdminInvoices from "./pages/admin/AdminInvoices";
 import AdminShipping from "./pages/admin/AdminShipping";
 
 export default [
@@ -96,7 +95,6 @@ export default [
           { path: "produkty", element: <AdminProducts /> },
           { path: "zamowienia", element: <AdminOrders /> },
           { path: "opinie", element: <AdminReviews /> },
-          { path: "faktury", element: <AdminInvoices /> },
           { path: "koszty-wysylek", element: <AdminShipping /> },
           { path: "*", element: <Navigate to="/admin" replace /> },
         ],

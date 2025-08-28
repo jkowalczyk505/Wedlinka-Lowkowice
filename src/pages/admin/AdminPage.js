@@ -25,14 +25,6 @@ export default function AdminPage() {
             <FileText size={25} /> Zamówienia
           </NavLink>
           <NavLink
-            to="/admin/faktury"
-            className={({ isActive }) =>
-              isActive ? "nav-link active" : "nav-link"
-            }
-          >
-            <Receipt size={25} /> Faktury
-          </NavLink>
-          <NavLink
             to="/admin/opinie"
             className={({ isActive }) =>
               isActive ? "nav-link active" : "nav-link"

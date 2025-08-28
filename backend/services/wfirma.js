@@ -4,8 +4,10 @@ const axios = require("axios");
 const {
   WFIRMA_ACCESS_KEY,
   WFIRMA_SECRET_KEY,
+  WFIRMA_APP_KEY, // <— NOWE
   WFIRMA_COMPANY_ID,
   WFIRMA_SERIES,
+  WFIRMA_SERIES_ID, // <- NOWE: ID serii
   WFIRMA_MODE, // 'proforma' | 'normal'
   WFIRMA_SHIPPING_VAT,
 } = process.env;
@@ -26,15 +28,15 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/xml; charset=utf-8",
     "User-Agent": "wedlinka-app/1.0",
+    // API Key auth — 3 nagłówki wymagane przez wFirmę
+    accessKey: WFIRMA_ACCESS_KEY,
+    secretKey: WFIRMA_SECRET_KEY,
+    appKey: WFIRMA_APP_KEY,
   },
   params: {
     company_id: WFIRMA_COMPANY_ID,
     inputFormat: "xml",
     outputFormat: "json", // <- kluczowe
-  },
-  auth: {
-    username: WFIRMA_ACCESS_KEY,
-    password: WFIRMA_SECRET_KEY,
   },
 });
 
@@ -92,6 +94,15 @@ const normZip = (s = "") =>
     .replace(/^(\d{2})[- ]?(\d{3})$/, "$1-$2");
 const normNip = (s = "") => String(s).replace(/\D+/g, "");
 
+// NIP – usuń znaki niecyfrowe + sprawdź sumę kontrolną
+const cleanNip = (s = "") => String(s).replace(/\D+/g, "");
+function isValidNip(nip) {
+  const w = [6, 5, 7, 2, 3, 4, 5, 6, 7];
+  if (!/^\d{10}$/.test(nip)) return false;
+  const sum = w.reduce((acc, wv, i) => acc + wv * Number(nip[i]), 0);
+  return sum % 11 === Number(nip[9]);
+}
+
 // ——— ujednolicenie odpowiedzi ———
 function rootApi(data) {
   // wFirma czasem zwraca { api: {...} }, a czasem już „gołe” drzewo
@@ -127,7 +138,15 @@ function ensureOkOrThrow(data, what = "Operacja") {
   if (code === "OK") return;
 
   const errs = collectErrors(data);
-  const msg = errs.length ? errs.join("; ") : `status: ${code || "UNKNOWN"}`;
+  const rawHint = (() => {
+    try {
+      return " | raw=" + JSON.stringify(root).slice(0, 300);
+    } catch {
+      return "";
+    }
+  })();
+  const msg =
+    (errs.length ? errs.join("; ") : `status: ${code || "UNKNOWN"}`) + rawHint;
   throw new Error(`${what} nie powiodła się – ${msg}`);
 }
 
@@ -147,6 +166,58 @@ function today() {
   return d.toISOString().slice(0, 10);
 }
 
+// --- SERIE: ustal ID serii po ENV lub po nazwie ---
+let cachedSeriesId = null;
+
+async function getSeriesId() {
+  if (cachedSeriesId) return cachedSeriesId;
+  if (WFIRMA_SERIES_ID) {
+    cachedSeriesId = String(WFIRMA_SERIES_ID);
+    return cachedSeriesId;
+  }
+  if (!WFIRMA_SERIES) {
+    throw new Error(
+      "Brak WFIRMA_SERIES_ID oraz WFIRMA_SERIES – nie wiem, jaką serię użyć"
+    );
+  }
+
+  // Szukamy serii po nazwie (i typie proforma – żeby trafić właściwą)
+  const findXml = `
+    <api>
+      <series>
+        <parameters>
+          <conditions>
+            <condition>
+              <field>name</field>
+              <operator>eq</operator>
+              <value>${escapeXml(WFIRMA_SERIES)}</value>
+            </condition>
+            <condition>
+              <field>type</field>
+              <operator>eq</operator>
+              <value>proforma</value>
+            </condition>
+          </conditions>
+          <limit>1</limit>
+        </parameters>
+      </series>
+    </api>`;
+  const res = await api.post("/series/find", findXml);
+  ensureOkOrThrow(res.data, "Pobieranie serii");
+  const ent = pickFirstEntity(
+    res.data.api ? res.data.api : res.data,
+    "series",
+    "series"
+  );
+  const id = ent?.id;
+  if (!id)
+    throw new Error(
+      `Nie znaleziono serii o nazwie "${WFIRMA_SERIES}" i typie "proforma"`
+    );
+  cachedSeriesId = String(id);
+  return cachedSeriesId;
+}
+
 // --- kontrahent: najpierw ADD, jeśli błąd (np. duplikat) -> FIND różnymi polami ---
 async function upsertContractor(billing) {
   if (!billing?.name) throw new Error("Brak nazwy kontrahenta (name)");
@@ -157,6 +228,7 @@ async function upsertContractor(billing) {
   // helper: wyślij find z warunkiem field=..., op=eq, value=...
   const tryFind = async (field, value) => {
     const findXml = `
+    <api>
       <contractors>
         <parameters>
           <conditions>
@@ -168,22 +240,32 @@ async function upsertContractor(billing) {
           </conditions>
           <limit>1</limit>
         </parameters>
-      </contractors>`;
+      </contractors>
+    </api>`;
     try {
       const resp = await api.post("/contractors/find", findXml);
-      // UWAGA: wFirma często zwraca NOT FOUND/ERROR przy braku – potraktujmy to jako "brak trafienia"
-      if (resp.data?.status?.code !== "OK") return null;
-      const ent = pickFirstEntity(resp.data, "contractors", "contractor");
+      if ((resp.data?.status?.code || resp.data?.api?.status?.code) !== "OK")
+        return null;
+      const ent = pickFirstEntity(
+        resp.data.api ? resp.data.api : resp.data,
+        "contractors",
+        "contractor"
+      );
       return ent?.id ? String(ent.id) : null;
     } catch {
-      return null; // jakiekolwiek 4xx/5xx – traktuj jako brak
+      return null;
     }
   };
 
   // normalizacja
   billing.zip = normZip(billing.zip || "");
-  if (billing.nip) billing.nip = normNip(billing.nip);
-  if (!billing.country) billing.country = "Polska"; // NIE "PL"
+  let nip = billing.nip ? cleanNip(billing.nip) : null;
+  // jeśli NIP podany, ale nieprawidłowy – NIE wysyłamy go do wFirma
+  if (nip && !isValidNip(nip)) nip = null;
+  billing.nip = nip;
+
+  // wFirma oczekuje kodu kraju – użyjemy "PL"
+  billing.country = "PL";
 
   console.log("[wFirma contractors/add INPUT]", {
     name: billing.name,
@@ -196,17 +278,26 @@ async function upsertContractor(billing) {
   });
 
   const addXml = `
-  <contractors>
-    <contractor>
-      <name>${escapeXml(billing.name)}</name>
-      ${billing.nip ? `<nip>${escapeXml(billing.nip)}</nip>` : ""}
-      ${billing.email ? `<email>${escapeXml(billing.email)}</email>` : ""}
-      <street>${escapeXml(billing.street)}</street>
-      <city>${escapeXml(billing.city)}</city>
-      <zip>${escapeXml(billing.zip)}</zip>
-      <country>${escapeXml(billing.country)}</country>
-    </contractor>
-  </contractors>`;
+  <api>
+    <contractors>
+      <contractor>
+        <name>${escapeXml(billing.name)}</name>
+        ${
+          billing.nip
+            ? `<tax_id_type>nip</tax_id_type>`
+            : `<tax_id_type>none</tax_id_type>`
+        }
+        ${billing.nip ? `<nip>${escapeXml(billing.nip)}</nip>` : ""}
+        ${billing.email ? `<email>${escapeXml(billing.email)}</email>` : ""}
+        <street>${escapeXml(billing.street)}</street>
+        <city>${escapeXml(billing.city)}</city>
+        <zip>${escapeXml(billing.zip)}</zip>
+        <country>${escapeXml(billing.country)}</country>
+      </contractor>
+    </contractors>
+  </api>`;
+
+  console.log("[wFirma contractors/add XML] =>\n", addXml);
 
   try {
     const res = await api.post("/contractors/add", addXml);
@@ -222,7 +313,6 @@ async function upsertContractor(billing) {
     }
     return String(id);
   } catch (addErr) {
-    // pokaż surowe body z wFirma (na czas diagnozy)
     const body = addErr?.response?.data;
     if (body) {
       console.error(
@@ -232,10 +322,13 @@ async function upsertContractor(billing) {
       try {
         ensureOkOrThrow(body, "Dodawanie kontrahenta");
       } catch (detailed) {
-        // to już zbiera standardowe 'errors -> error -> field/message'
-        throw new Error(`[wFirma] ${detailed.message}`);
+        // >>> KLUCZOWE: zwróć 1:1 treść walidacji (field: message) do routera
+        const msg = String(detailed.message || "").replace(
+          /^Operacja nie powiodła się – /,
+          ""
+        );
+        throw new Error(`[wFirma] ${msg}`);
       }
-      // jeśli ensureOkOrThrow nie rzuciło (nietypowa struktura) – wywal surowe body
       throw new Error(
         `[wFirma] Dodawanie kontrahenta nie powiodło się – RAW: ${JSON.stringify(
           body
@@ -248,8 +341,8 @@ async function upsertContractor(billing) {
 
 // --- dokument: proforma/normal ---
 async function createDocument({ contractorId, order }) {
-  const series = WFIRMA_SERIES;
-  const isProforma = (WFIRMA_MODE || "proforma") === "proforma";
+  const seriesId = await getSeriesId();
+  const isProforma = true; // wymuszamy proformę
 
   const itemsXml = order.items
     .map(
@@ -258,7 +351,7 @@ async function createDocument({ contractorId, order }) {
       <name>${escapeXml(it.name)}</name>
       <count>${it.qty}</count>
       <unit>${escapeXml(it.unit || "szt")}</unit>
-      <price_brutto>${to2(it.priceBrut)}</price_brutto>
+      <price>${to2(it.priceBrut)}</price>
       <vat>${escapeXml(it.vatRate || "23")}</vat>
     </invoicecontent>
   `
@@ -271,7 +364,7 @@ async function createDocument({ contractorId, order }) {
       <name>Koszt dostawy</name>
       <count>1</count>
       <unit>szt</unit>
-      <price_brutto>${to2(order.shippingCost)}</price_brutto>
+      <price>${to2(order.shippingCost)}</price>
       <vat>${escapeXml(
         order.shippingVatRate || WFIRMA_SHIPPING_VAT || "23"
       )}</vat>
@@ -280,11 +373,15 @@ async function createDocument({ contractorId, order }) {
     : "";
 
   const xml = `
+  <api>
     <invoices>
       <invoice>
         <contractor_id>${contractorId}</contractor_id>
-        <series>${escapeXml(series)}</series>
-        ${isProforma ? `<kind>proforma</kind>` : `<kind>normal</kind>`}
+
+        <series><id>${seriesId}</id></series>
+        <type>proforma</type>
+        <price_type>brutto</price_type>
+
         <payment_kind>${escapeXml(
           order.isPaid ? "zapłacono" : "przelew"
         )}</payment_kind>
@@ -296,7 +393,7 @@ async function createDocument({ contractorId, order }) {
         </invoicecontents>
       </invoice>
     </invoices>
-  `;
+  </api>`;
 
   try {
     const res = await api.post("/invoices/add", xml);
@@ -319,14 +416,66 @@ async function createDocument({ contractorId, order }) {
 
 // --- PDF ---
 async function getDocumentPdf(invoiceId) {
+  // Minimalne body (możesz dodać parametry z dokumentacji, np. page=all)
+  const bodyXml = `
+  <api>
+    <invoices>
+      <parameters>
+        <parameter><name>page</name><value>all</value></parameter>
+        <parameter><name>address</name><value>0</value></parameter>
+        <parameter><name>leaflet</name><value>0</value></parameter>
+        <parameter><name>duplicate</name><value>0</value></parameter>
+        <parameter><name>payment_cashbox_documents</name><value>0</value></parameter>
+        <parameter><name>warehouse_documents</name><value>0</value></parameter>
+      </parameters>
+    </invoices>
+  </api>`.trim();
+
   try {
-    const xml = `<invoices><parameters><invoice_id>${invoiceId}</invoice_id></parameters></invoices>`;
-    const res = await api.post("/invoices/download", xml, {
-      responseType: "arraybuffer",
-      headers: { Accept: "application/pdf" },
-    });
-    return Buffer.from(res.data);
+    const res = await api.post(
+      // <— ŚCIEŻKA z ID, zgodnie z dokumentacją
+      `/invoices/download/${invoiceId}`,
+      bodyXml,
+      {
+        responseType: "arraybuffer",
+        headers: { Accept: "application/pdf" },
+        // <— Nadpisujemy PARAMS, żeby NIE było globalnego outputFormat=json
+        params: {
+          company_id: WFIRMA_COMPANY_ID,
+          inputFormat: "xml",
+          // UWAGA: brak outputFormat — wtedy API zwraca binarny PDF, honorując Accept
+        },
+      }
+    );
+
+    const buf = Buffer.from(res.data);
+    // sanity-check: pierwszy bytes PDF
+    if (!buf.slice(0, 5).toString().startsWith("%PDF-")) {
+      const preview = buf.toString("utf8").slice(0, 200);
+      console.error("[wFirma download] Nie wygląda na PDF", {
+        ct: res.headers?.["content-type"],
+        preview,
+      });
+      throw new Error(
+        "wFirma nie zwróciła PDF (sprawdź query params i invoiceId)."
+      );
+    }
+    return buf;
   } catch (e) {
+    // Dodatkowy debug: spróbuj wyciągnąć błąd w JSON
+    try {
+      const dbg = await api.post(`/invoices/download/${invoiceId}`, bodyXml, {
+        responseType: "arraybuffer",
+        headers: { Accept: "application/json" },
+        params: {
+          company_id: WFIRMA_COMPANY_ID,
+          inputFormat: "xml",
+          outputFormat: "json",
+        },
+      });
+      const txt = Buffer.from(dbg.data).toString("utf8");
+      console.error("[wFirma download DEBUG json]", txt.slice(0, 600));
+    } catch {}
     throw normErr(e);
   }
 }

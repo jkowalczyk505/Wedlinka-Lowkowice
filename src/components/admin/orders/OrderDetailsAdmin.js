@@ -58,25 +58,74 @@ export default function OrderDetailsAdmin({ id }) {
   const { order: summary, items, shipping, payment, invoice } = order;
 
   const handleGenerateInvoice = async () => {
-      try {
-      const res = await AuthFetch(`${API_URL}/api/invoices/${summary.id}/create`, {
-        method: "POST",
-      });
+    try {
+      const res = await AuthFetch(
+        `${API_URL}/api/invoices/${summary.id}/create`,
+        {
+          method: "POST",
+        }
+      );
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         alert(data.message || "Nie udało się wystawić faktury");
         return;
       }
       // opcjonalnie możesz odświeżyć dane zamówienia albo zapisać numer w stanie:
-      alert(`Faktura ${data?.invoice?.number || ""} wystawiona i wysłana do klienta.`);
+      alert(
+        `Faktura ${
+          data?.invoice?.number || ""
+        } wystawiona i wysłana do klienta.`
+      );
     } catch (e) {
       alert("Błąd połączenia przy wystawianiu faktury");
     }
   };
 
-  const handleDownloadInvoice = () => {
-    // jeżeli chcesz, by działało w SPA bez blokad popupów:
-    window.open(`${API_URL}/api/invoices/${summary.id}/pdf`, "_blank", "noopener,noreferrer");
+  const handleDownloadInvoice = async () => {
+    const doDownload = async () => {
+      const res = await fetch(`${API_URL}/api/invoices/${summary.id}/pdf`, {
+        method: "GET",
+        credentials: "include",
+        headers: { Accept: "application/pdf" },
+      });
+      return res;
+    };
+
+    try {
+      let res = await doDownload();
+
+      if (res.status === 401) {
+        // spróbuj odświeżyć sesję (endpoint przykładowy – użyj swojego)
+        const r = await fetch(`${API_URL}/api/auth/refresh`, {
+          method: "POST",
+          credentials: "include",
+        });
+        // jeśli odświeżenie OK – ponów pobranie
+        if (r.ok) res = await doDownload();
+      }
+
+      if (!res.ok) {
+        const msg = await res.text().catch(() => "");
+        alert(`Nie udało się pobrać PDF (${res.status}). ${msg}`);
+        return;
+      }
+
+      const blob = await res.blob();
+      const cd = res.headers.get("Content-Disposition") || "";
+      const m = cd.match(/filename="([^"]+)"/);
+      const filename = m ? m[1] : `faktura-${summary.order_number}.pdf`;
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename; // wymusza „Zapisz jako…”
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      alert("Błąd połączenia przy pobieraniu PDF");
+    }
   };
 
   // handler zapisu numeru przesyłki
@@ -198,9 +247,7 @@ export default function OrderDetailsAdmin({ id }) {
               <Button variant="red" onClick={handleGenerateInvoice}>
                 Generuj
               </Button>
-              <Button onClick={handleDownloadInvoice}>
-                Pobierz (PDF)
-              </Button>
+              <Button onClick={handleDownloadInvoice}>Pobierz (PDF)</Button>
             </div>
           </section>
         )}
