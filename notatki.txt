@@ -1,13 +1,8 @@
 ACCOUNT
 - dashboard - faktury
-- moje zamowienia: faktury pobieranie (dopiero jak wygenerowana - wpis w tabeli)
 
 FAKTURY
-- wystawianie faktury dopiero po zaplacie(?)
-- do zaplaty jeszcze cala kwota (ponoc przy zwyklej fakturze mozna ustawic ze oplacono? i ze niby samo sie ogarnie to?)
-- metoda platnosci? odpowiednio dla bramki, przelewu, za pobraniem?
-- termin platnosci w wfirma??
-- weryfikacja pdf - zawartosc pobranego + zawartosc w mailu
+- do zaplaty jeszcze cala kwota (ponoc przy zwyklej fakturze mozna ustawic ze oplacono? i ze niby samo sie ogarnie to?) lub tworzyc jakis payment?
 
 NA KONIEC
 - seo + sitemap + robots + index jak zhkr (+og.jpg) + manifest json

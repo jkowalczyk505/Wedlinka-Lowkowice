@@ -3,12 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../components/auth/AuthContext";
 import { AuthFetch } from "../../components/auth/AuthFetch";
 import { Link } from "react-router-dom";
-import {
-  User,
-  MapPin,
-  Mail,
-  AtSign,
-} from "lucide-react";
+import { User, MapPin, Mail, AtSign } from "lucide-react";
 import Button from "../../components/common/Button";
 import InfoTip from "../../components/common/InfoTip";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
@@ -16,19 +11,22 @@ import CartItemTile from "../../components/cart/CartItemTile";
 import { useAlert } from "../../components/common/alert/AlertContext";
 import OrderTile from "../../components/account/OrderTile";
 import { useNavigate } from "react-router-dom";
+import DownloadInvoicePDFButton from "../../components/account/DownloadInvoicePDFButton";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const AccountDashboard = () => {
   const { user, setLogoutInProgress, logout, setUser } = useAuth();
-  const navigate = useNavigate();    // ⬅️ tu definiujemy navigate
+  const navigate = useNavigate(); // ⬅️ tu definiujemy navigate
 
   const [stats, setStats] = useState({ total: 0, pending: 0, unpaid: 0 });
   const [latestOrders, setLatestOrders] = useState([]);
   const [cartItems, setCartItems] = useState([]);
   const cartPreview = cartItems.slice(0, 3);
   const [invoices, setInvoices] = useState([]);
+  const [hasMoreInvoices, setHasMoreInvoices] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+
   const { showAlert } = useAlert();
 
   useEffect(() => {
@@ -68,13 +66,13 @@ const AccountDashboard = () => {
 
       .catch(() => {});
 
-      // 2 ostatnie zamówienia
-      AuthFetch(`${API_URL}/api/orders/latest?limit=2`)
-      .then(res => {
+    // 2 ostatnie zamówienia
+    AuthFetch(`${API_URL}/api/orders/latest?limit=2`)
+      .then((res) => {
         if (!res.ok) throw new Error("Nie udało się pobrać zamówień");
         return res.json();
       })
-      .then(data => {
+      .then((data) => {
         // jeśli to nie tablica, to traktujemy jak "brak zamówień"
         if (Array.isArray(data)) {
           setLatestOrders(data);
@@ -83,15 +81,18 @@ const AccountDashboard = () => {
           setLatestOrders([]);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
-        setLatestOrders([]);  // reset stanu na pustą tablicę
+        setLatestOrders([]); // reset stanu na pustą tablicę
       });
 
     // pobierz 2 ostatnie faktury
-    fetch("/api/invoices?limit=2", { credentials: "include" })
-      .then((r) => r.json())
-      .then((d) => setInvoices(d.slice(0, 2)))
+    AuthFetch(`${API_URL}/api/invoices?limit=2`)
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((d) => {
+        setInvoices(d.invoices || []);
+        setHasMoreInvoices(!!d.hasMore);
+      })
       .catch(() => {});
   }, []);
 
@@ -106,17 +107,18 @@ const AccountDashboard = () => {
       <section className="order-summary">
         <h2>Ostatnie zamówienia</h2>
 
-        { latestOrders.length > 0
-          ? latestOrders.map(o => (
-              <OrderTile
-                key={o.id}
-                {...o}
-                // zamiast rozwijać tu — robimy przejście
-                onToggle={() => navigate(`/konto/zamowienia?open=${o.id}`)}
-              />
-            ))
-          : <p>Nie masz jeszcze żadnych zamówień.</p>
-        }
+        {latestOrders.length > 0 ? (
+          latestOrders.map((o) => (
+            <OrderTile
+              key={o.id}
+              {...o}
+              // zamiast rozwijać tu — robimy przejście
+              onToggle={() => navigate(`/konto/zamowienia?open=${o.id}`)}
+            />
+          ))
+        ) : (
+          <p>Nie masz jeszcze żadnych zamówień.</p>
+        )}
 
         <Link to="/konto/zamowienia">
           <Button variant="beige">Przeglądaj wszystkie</Button>
@@ -185,13 +187,30 @@ const AccountDashboard = () => {
         </div>
       </section>
 
-      {/* ▷ Faktury */}
       <section className="invoices-preview">
         <h2>Faktury</h2>
-        <p>............</p>
-        <Link to="/konto/zamowienia">
-          <Button variant="beige">Więcej faktur</Button>
-        </Link>
+
+        {invoices.length > 0 ? (
+          <ul className="invoice-list">
+            {invoices.map((inv) => (
+              <li key={inv.id} className="invoice-item">
+                <span>{inv.wfirma_number}</span>
+                <DownloadInvoicePDFButton
+                  orderId={inv.order_id}
+                  fallbackName={`${inv.wfirma_number}.pdf`}
+                />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>Brak faktur.</p>
+        )}
+
+        {hasMoreInvoices && (
+          <Link to="/konto/zamowienia">
+            <Button variant="beige">Pokaż więcej</Button>
+          </Link>
+        )}
       </section>
 
       {/* ▷ Usuwanie konta */}

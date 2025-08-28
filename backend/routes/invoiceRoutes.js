@@ -68,7 +68,7 @@ router.post("/:orderId/create", protect, adminOnly, async (req, res) => {
 
     // --- dostawa ---
     const [[shipping]] = await conn.query(
-      "SELECT cost FROM shipping_details WHERE order_id = ? LIMIT 1",
+      "SELECT cost, method FROM shipping_details WHERE order_id = ? LIMIT 1",
       [orderId]
     );
 
@@ -110,7 +110,9 @@ router.post("/:orderId/create", protect, adminOnly, async (req, res) => {
     const { id: wfirmaId, number } = await createDocument({
       contractorId,
       order: {
-        isPaid: true,
+        isPaid: true, // bo sprawdzasz pay.status === 'ok'
+        paymentMethod: pay.provider, // 'przelewy24' | 'bank_transfer' | 'cod'
+        deliveryMethod: shipping?.method, // 'pickup' | 'inpost' | 'courier' | ...
         items: itemsForDoc, // <── UŻYJ nowej tablicy
         shippingCost: shipping ? Number(shipping.cost) : 0,
         shippingVatRate: SHIPPING_VAT_DEFAULT,
@@ -202,6 +204,33 @@ router.get("/:orderId/pdf", protect, async (req, res) => {
     res.end(pdf); // <— zamiast res.send()
   } catch (e) {
     console.error("[invoices/pdf]", e);
+    res.status(500).json({ ok: false, message: e.message });
+  } finally {
+    conn.release();
+  }
+});
+
+// GET /api/invoices?limit=2  – lista faktur zalogowanego użytkownika
+router.get("/", protect, async (req, res) => {
+  const limit = parseInt(req.query.limit, 10) || 10;
+  const conn = await pool.getConnection();
+  try {
+    const [rows] = await conn.query(
+      `SELECT i.id, i.order_id, i.wfirma_number, i.issue_date
+         FROM invoices i
+         JOIN orders o ON o.id = i.order_id
+        WHERE o.user_id = ?
+        ORDER BY i.issue_date DESC
+        LIMIT ?`,
+      [req.user.id, limit + 1] // +1 żeby sprawdzić czy jest „więcej”
+    );
+
+    const hasMore = rows.length > limit;
+    const slice = hasMore ? rows.slice(0, limit) : rows;
+
+    res.json({ invoices: slice, hasMore });
+  } catch (e) {
+    console.error("[invoices/list]", e);
     res.status(500).json({ ok: false, message: e.message });
   } finally {
     conn.release();

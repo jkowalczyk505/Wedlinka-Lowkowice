@@ -358,20 +358,53 @@ async function upsertContractor(billing) {
 // --- dokument: proforma/normal ---
 async function createDocument({ contractorId, order }) {
   const seriesId = await getSeriesId();
-  const isProforma = true; // wymuszamy proformę
+
+  // --- MAPA METOD PŁATNOŚCI NA WYMAGANE SŁÓWKA W WFIRMA ---
+  // dostosuj w razie potrzeb (np. jeśli księgowość chce zawsze „przelew” dla P24)
+  function mapPaymentMethod({ paymentMethod, deliveryMethod, isPaid }) {
+    // 1) Odbiór osobisty + płatność przy odbiorze => gotówka
+    if (deliveryMethod === "pickup" && paymentMethod === "cod") {
+      return "gotówka";
+    }
+
+    // 2) Kurier za pobraniem => pobranie
+    if (paymentMethod === "cod" || deliveryMethod === "courier_cod") {
+      return "pobranie";
+    }
+
+    // 3) Przelew tradycyjny
+    if (paymentMethod === "bank_transfer") {
+      return "przelew";
+    }
+
+    // 4) Bramka online (Przelewy24) – księgowo zwykle traktuje jak przelew/kartę;
+    //    jeśli wolicie „karta”, podmień na "karta".
+    if (paymentMethod === "przelewy24") {
+      return "przelew";
+    }
+
+    // 5) Domyślnie
+    return "przelew";
+  }
+
+  const date = order.issueDate || today(); // data wystawienia/sprzedaży
+  const paid = !!order.isPaid;
+  const wfPaymentMethod = mapPaymentMethod(order);
+
+  // Polityka terminów:
+  // - jeśli zapłacone (P24/odbiór gotówką/pobraniem) → paymentdays=0, paymentdate=today
+  // - jeśli przelew tradycyjny i nieopłacone (u Ciebie i tak generujesz po 'ok', ale zostawiam logikę)
+  const paymentdays = paid ? 0 : 7;
+  const paymentdate = paid ? date : date; // możesz tu dodać +7 dni gdybyś wystawiał przed płatnością
 
   const itemsXml = order.items
     .map(
       (it) => `
     <invoicecontent>
       <name>${escapeXml(it.name)}</name>
-      <count>${to2(
-        it.totalUnits
-      )}</count>                 <!-- ILOŚĆ = suma jednostek -->
+      <count>${to2(it.totalUnits)}</count>
       <unit>${escapeXml(it.unit || "szt")}</unit>
-      <price>${to2(
-        it.priceBrut
-      )}</price>                  <!-- na razie cena za opakowanie -->
+      <price>${to2(it.priceBrut)}</price>
       <vat>${escapeXml(toWfirmaVat(it.vatRate))}</vat>
     </invoicecontent>
   `
@@ -402,36 +435,26 @@ async function createDocument({ contractorId, order }) {
         <type>proforma</type>
         <price_type>brutto</price_type>
 
-        <payment_kind>${escapeXml(
-          order.isPaid ? "zapłacono" : "przelew"
-        )}</payment_kind>
-        <issue_date>${order.issueDate || today()}</issue_date>
-        <sale_date>${order.saleDate || today()}</sale_date>
+        <!-- metoda płatności w jasnym słowie -->
+        <paymentmethod>${escapeXml(wfPaymentMethod)}</paymentmethod>
+        <paymentdate>${paymentdate}</paymentdate>
+        <paymentdays>${paymentdays}</paymentdays>
+
+        <date>${date}</date>            <!-- data wystawienia -->
+        <disposaldate>${date}</disposaldate>  <!-- data sprzedaży -->
+
         <invoicecontents>
           ${itemsXml}
           ${shippingXml}
         </invoicecontents>
       </invoice>
     </invoices>
-  </api>`;
+  </api>`.trim();
 
-  try {
-    const res = await api.post("/invoices/add", xml);
-    ensureOkOrThrow(res.data, "Tworzenie dokumentu");
-    const ent = pickFirstEntity(res.data, "invoices", "invoice");
-    const id = ent?.id;
-    const number = ent?.fullnumber;
-    if (!id) {
-      console.error(
-        "[wFirma invoices/add] Odpowiedź bez id:",
-        JSON.stringify(res.data, null, 2)
-      );
-      throw new Error("Brak ID faktury w odpowiedzi");
-    }
-    return { id: String(id), number: String(number || "") };
-  } catch (e) {
-    throw normErr(e);
-  }
+  const res = await api.post("/invoices/add", xml);
+  ensureOkOrThrow(res.data, "Tworzenie dokumentu");
+  const ent = pickFirstEntity(res.data, "invoices", "invoice");
+  return { id: String(ent?.id), number: String(ent?.fullnumber || "") };
 }
 
 // --- PDF ---

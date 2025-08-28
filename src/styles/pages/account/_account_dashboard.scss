@@ -4,18 +4,18 @@
 
     // Nagłówek
     h1 {
-    font-family: $font-heading;
-    color: $secondary-color;
-    font-size: clamp(1.6rem, 3vw, 2.2rem);
-    margin-bottom: 0.5rem;
-  }
+        font-family: $font-heading;
+        color: $secondary-color;
+        font-size: clamp(1.6rem, 3vw, 2.2rem);
+        margin-bottom: 0.5rem;
+    }
 
-  .welcome-text {
-    font-family: $font-main;
-    color: $dark-color;
-    font-size: clamp(1rem, 2vw, 1.25rem);
-    margin-bottom: 2rem;
-  }
+    .welcome-text {
+        font-family: $font-main;
+        color: $dark-color;
+        font-size: clamp(1rem, 2vw, 1.25rem);
+        margin-bottom: 2rem;
+    }
 
     section {
         margin-bottom: 2.5rem;
@@ -106,7 +106,34 @@
             letter-spacing: 0.05rem;
             margin-bottom: 1rem;
         }
+
+        .invoice-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1rem;
+
+            .invoice-item {
+                display: flex;
+                align-items: center;
+                padding: 0.5rem 0;
+                border-bottom: 1px solid #eee;
+
+                span {
+                    font-family: $font-main;
+                    color: $dark-color;
+                }
+
+                .custom-button {
+                    margin-left: 1rem;
+                    background: none;
+                    text-decoration: underline;
+                    color: $secondary-color-darken;
+                    padding: 0.2rem 0.5rem;
+                }
+            }
+        }
     }
+
 
     .account-delete {
         h2 {

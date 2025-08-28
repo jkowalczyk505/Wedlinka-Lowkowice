@@ -418,6 +418,14 @@ const OrderModel = {
       bankAccount: process.env.BANK_ACCOUNT || "BRAK_NUMERU_KONTA",
     };
 
+    const [[inv]] = await db.query(
+      `SELECT wfirma_invoice_id AS wfirmaId, wfirma_number AS number
+     FROM invoices
+    WHERE order_id = ?
+    LIMIT 1`,
+      [orderId]
+    );
+
     const invoice = o.invoice_type
       ? {
           type: o.invoice_type,
@@ -431,7 +439,15 @@ const OrderModel = {
         }
       : null;
 
-    return { order: o, items, shipping: ship, payment, invoice };
+    return {
+      order: o, // <-- już zwracasz 'order', nie tylko number
+      items,
+      shipping: ship,
+      payment,
+      invoice,
+      hasInvoice: !!inv, // <-- DODANE
+      invoiceDoc: inv || null, // opcjonalnie do wyświetlenia numeru
+    };
   },
 
   async getByIdAdmin(id) {

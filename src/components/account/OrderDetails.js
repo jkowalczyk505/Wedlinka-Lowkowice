@@ -17,6 +17,7 @@ import DownloadPaymentPDFButton from "../checkout/DownloadPaymentPDFButton";
 import { ReactComponent as DefaultIcon } from "../../assets/szynka-ikona.svg";
 
 import Button from "../common/Button";
+import DownloadInvoicePDFButton from "./DownloadInvoicePDFButton";
 import ReviewModal from "../reviews/ReviewModal";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -206,6 +207,14 @@ export default function OrderDetails({ id }) {
               </p>
             ) : (
               <p>Brak – faktura nie wystawiona</p>
+            )}
+            {invoice?.type && data.hasInvoice && (
+              <div className="invoice-download">
+                <DownloadInvoicePDFButton
+                  orderId={order.id}
+                  fallbackName={`faktura-${order.order_number}.pdf`}
+                />
+              </div>
             )}
           </section>
         </div>

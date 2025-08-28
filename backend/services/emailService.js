@@ -175,8 +175,7 @@ exports.sendOrderConfirmationEmail = async (to, data) => {
         const total = (brut * item.quantity).toFixed(2);
 
         const perPack = Number(p.quantityPerUnit ?? p.quantity ?? 1);
-        const unitsTotal = perPack * item.quantity;
-        const unitsLabel = `${unitsTotal.toLocaleString("pl-PL")} ${p.unit}`;
+        const unitsLabel = `${perPack.toLocaleString("pl-PL")} ${p.unit}`;
 
         // ► miniatura jako CID z HTTP + konwersja do PNG
         let thumb = "";
@@ -280,8 +279,7 @@ exports.sendOrderStatusChangedEmail = async (to, data) => {
         const total = (brut * item.quantity).toFixed(2);
 
         const perPack = Number(p.quantityPerUnit ?? p.quantity ?? 1);
-        const unitsTotal = perPack * item.quantity;
-        const unitsLabel = `${unitsTotal.toLocaleString("pl-PL")} ${p.unit}`;
+        const unitsLabel = `${perPack.toLocaleString("pl-PL")} ${p.unit}`;
 
         // ► miniatura jako CID z HTTP + konwersja do PNG
         let thumb = "";
