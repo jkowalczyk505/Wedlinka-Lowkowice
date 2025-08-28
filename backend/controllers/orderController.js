@@ -263,68 +263,91 @@ async function getOrderDetails(req, res) {
   }
 }
 
+// controllers/orderController.js
 async function updateOrderStatus(req, res) {
   try {
     const id = parseInt(req.params.id, 10);
     const { status } = req.body;
 
+    // 1) aktualizacja w DB
     await OrderModel.updateStatus(id, status);
 
-    // pobierz dane do maila
+    // 2) przygotuj dane do maila
     const full = await OrderModel.getByIdAdmin(id);
-    const email = full.invoice?.email || full.shipping?.recipient_email;
+    const email =
+      full?.invoice?.email || full?.shipping?.recipient_email || null;
+
+    let emailSent = false;
+    let emailWarning = null;
 
     if (email) {
-      await sendOrderStatusChangedEmail(email, {
-        orderNumber: full.order.order_number,
-        orderStatus: status,
-        token: full.order.access_token,
-        items: full.items,
-        shippingLine: `${full.shipping.name} – ${Number(
-          full.shipping.priceTotal
-        ).toFixed(2)} zł`,
-        shippingExtra: full.shipping.locker_code
-          ? `<strong>Paczkomat:</strong> ${full.shipping.locker_code}<br/>`
-          : "",
-        paymentLabel:
-          PAYMENT_PL[full.payment.provider] || full.payment.provider,
-        total: Number(full.payment.amount),
-        shippingAddressHtml: [
-          `${full.shipping.recipient_first_name} ${full.shipping.recipient_last_name}`,
-          full.shipping.street,
-          `${full.shipping.postal_code} ${full.shipping.city}`,
-          "Polska",
-          full.shipping.recipient_phone
-            ? "tel.: " + full.shipping.recipient_phone
-            : null,
-          full.shipping.recipient_email,
-        ]
-          .filter(Boolean)
-          .join("<br/>"),
-        invoiceBlock: full.invoice?.name
-          ? `<h3 style="margin:25px 0 5px 0;color:#333;font-size:16px">Dane do faktury</h3>
-             <p style="margin:0;color:#555">${[
-               full.invoice.name,
-               full.invoice.street,
-               `${full.invoice.zip} ${full.invoice.city}`,
-               full.invoice.country,
-               full.invoice.nip ? "NIP: " + full.invoice.nip : null,
-               full.invoice.email,
-             ]
-               .filter(Boolean)
-               .join("<br/>")}</p>`
-          : "",
-        notesBlock: full.shipping?.notes
-          ? `<h3 style="margin:25px 0 5px 0;color:#333;font-size:16px">Uwagi do zamówienia</h3>
-             <p style="margin:0;color:#555">${full.shipping.notes}</p>`
-          : "",
-      });
+      try {
+        await sendOrderStatusChangedEmail(email, {
+          orderNumber: full.order.order_number,
+          orderStatus: status,
+          token: full.order.access_token,
+          items: full.items,
+          shippingLine: `${full.shipping.name} – ${Number(
+            full.shipping.priceTotal
+          ).toFixed(2)} zł`,
+          shippingExtra: full.shipping.locker_code
+            ? `<strong>Paczkomat:</strong> ${full.shipping.locker_code}<br/>`
+            : "",
+          paymentLabel:
+            PAYMENT_PL[full.payment.provider] || full.payment.provider,
+          total: Number(full.payment.amount),
+          shippingAddressHtml: [
+            `${full.shipping.recipient_first_name} ${full.shipping.recipient_last_name}`,
+            full.shipping.street,
+            `${full.shipping.postal_code} ${full.shipping.city}`,
+            "Polska",
+            full.shipping.recipient_phone
+              ? "tel.: " + full.shipping.recipient_phone
+              : null,
+            full.shipping.recipient_email,
+          ]
+            .filter(Boolean)
+            .join("<br/>"),
+          invoiceBlock: full.invoice?.name
+            ? `<h3 style="margin:25px 0 5px 0;color:#333;font-size:16px">Dane do faktury</h3>
+               <p style="margin:0;color:#555">${[
+                 full.invoice.name,
+                 full.invoice.street,
+                 `${full.invoice.zip} ${full.invoice.city}`,
+                 full.invoice.country,
+                 full.invoice.nip ? "NIP: " + full.invoice.nip : null,
+                 full.invoice.email,
+               ]
+                 .filter(Boolean)
+                 .join("<br/>")}</p>`
+            : "",
+          notesBlock: full.shipping?.notes
+            ? `<h3 style="margin:25px 0 5px 0;color:#333;font-size:16px">Uwagi do zamówienia</h3>
+               <p style="margin:0;color:#555">${full.shipping.notes}</p>`
+            : "",
+        });
+        emailSent = true;
+      } catch (mailErr) {
+        console.error("Błąd wysyłki maila o zmianie statusu:", mailErr);
+        // wyciągnij z nodemailera czytelny komunikat (550 itp.)
+        const srv = mailErr?.response || mailErr?.message || String(mailErr);
+        emailWarning = `Nie udało się wysłać powiadomienia e-mail (${srv}).`;
+      }
+    } else {
+      emailWarning =
+        "Brak adresu e-mail odbiorcy – powiadomienie nie zostało wysłane.";
     }
 
-    res.json({ message: "Status zamówienia zaktualizowany" });
+    // 3) ZAWSZE 200 – a o mailu informujemy dodatkowymi polami
+    return res.json({
+      ok: true,
+      message: "Status zamówienia zaktualizowany",
+      emailSent,
+      emailWarning, // null lub treść ostrzeżenia do pokazania w UI
+    });
   } catch (err) {
     console.error("Błąd aktualizacji statusu:", err);
-    res.status(500).json({ error: "Błąd aktualizacji statusu" });
+    return res.status(500).json({ error: "Błąd aktualizacji statusu" });
   }
 }
 

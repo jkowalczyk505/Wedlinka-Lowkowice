@@ -103,6 +103,22 @@ function isValidNip(nip) {
   return sum % 11 === Number(nip[9]);
 }
 
+// --- helpers (dopisz obok innych) ---
+function toWfirmaVat(value) {
+  if (value == null) return "23"; // fallback
+  const s = String(value).trim().toLowerCase();
+
+  // obsługa kodów specjalnych (gdybyś kiedyś używał)
+  if (s === "zw" || s === "np" || s === "oo") return s;
+
+  const n = Number(s.replace(",", ".")); // akceptuj "5", "0.05", "5,0"
+  if (Number.isFinite(n)) {
+    if (n > 1) return String(Math.round(n)); // "5" -> "5", "8" -> "8"
+    if (n >= 0) return String(Math.round(n * 100)); // "0.05" -> "5"
+  }
+  return "23"; // ostatni fallback
+}
+
 // ——— ujednolicenie odpowiedzi ———
 function rootApi(data) {
   // wFirma czasem zwraca { api: {...} }, a czasem już „gołe” drzewo
@@ -349,10 +365,14 @@ async function createDocument({ contractorId, order }) {
       (it) => `
     <invoicecontent>
       <name>${escapeXml(it.name)}</name>
-      <count>${it.qty}</count>
+      <count>${to2(
+        it.totalUnits
+      )}</count>                 <!-- ILOŚĆ = suma jednostek -->
       <unit>${escapeXml(it.unit || "szt")}</unit>
-      <price>${to2(it.priceBrut)}</price>
-      <vat>${escapeXml(it.vatRate || "23")}</vat>
+      <price>${to2(
+        it.priceBrut
+      )}</price>                  <!-- na razie cena za opakowanie -->
+      <vat>${escapeXml(toWfirmaVat(it.vatRate))}</vat>
     </invoicecontent>
   `
     )

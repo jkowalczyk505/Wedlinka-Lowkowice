@@ -56,6 +56,7 @@ router.post("/:orderId/create", protect, adminOnly, async (req, res) => {
       `SELECT 
          p.name,
          p.unit,
+         p.quantity              AS per_unit,     -- <── DODANE
          oi.quantity         AS qty,
          oi.price_brut_snapshot AS price_brut,
          oi.vat_rate_snapshot   AS vat_rate
@@ -84,17 +85,33 @@ router.post("/:orderId/create", protect, adminOnly, async (req, res) => {
 
     const contractorId = await upsertContractor(billing);
 
+    // helper: normalizacja jednostki (usuń kropkę, spacje)
+    const normalizeUnit = (u) =>
+      String(u || "szt")
+        .trim()
+        .replace(/\.$/, "");
+
+    const itemsForDoc = items.map((it) => {
+      const perUnit = Number(it.per_unit) || 1; // np. 0.7 kg lub 8 szt
+      const totalUnits = Number(it.qty) * perUnit; // np. 2 * 0.7 = 1.4 kg
+      const unitPrice =
+        (Number(it.price_brut) || 0) / (Number(it.per_unit) || 1);
+      return {
+        name: it.name,
+        unit: normalizeUnit(it.unit), // "szt" / "kg"
+        qtyPacks: it.qty, // ile opakowań (gdyby kiedyś potrzebne)
+        perUnit, // rozmiar opakowania
+        totalUnits, // <── to pójdzie w count
+        priceBrut: unitPrice, // <── cena za 1 kg / 1 szt
+        vatRate: it.vat_rate,
+      };
+    });
+
     const { id: wfirmaId, number } = await createDocument({
       contractorId,
       order: {
-        isPaid: true, // skoro status 'ok'
-        items: items.map((it) => ({
-          name: it.name,
-          qty: it.qty,
-          unit: it.unit || "szt",
-          priceBrut: it.price_brut,
-          vatRate: it.vat_rate,
-        })),
+        isPaid: true,
+        items: itemsForDoc, // <── UŻYJ nowej tablicy
         shippingCost: shipping ? Number(shipping.cost) : 0,
         shippingVatRate: SHIPPING_VAT_DEFAULT,
       },

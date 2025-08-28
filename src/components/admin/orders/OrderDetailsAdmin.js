@@ -12,6 +12,7 @@ import {
 } from "../../../utils/product";
 import Button from "../../common/Button";
 import { ReactComponent as DefaultIcon } from "../../../assets/szynka-ikona.svg";
+import { useAlert } from "../../common/alert/AlertContext";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -40,6 +41,8 @@ export default function OrderDetailsAdmin({ id }) {
   const [trackingNumber, setTrackingNumber] = useState("");
   const [generating, setGenerating] = useState(false);
 
+  const { showAlert } = useAlert(); // <— hook do Twojego alertu
+
   useEffect(() => {
     setLoading(true);
     setError(false);
@@ -66,7 +69,10 @@ export default function OrderDetailsAdmin({ id }) {
 
   const handleGenerateInvoice = async () => {
     if (!isPaid) {
-      alert("Nie można wystawić faktury – zamówienie nie jest opłacone.");
+      showAlert(
+        "Nie można wystawić faktury – zamówienie nie jest opłacone.",
+        "error"
+      );
       return;
     }
     try {
@@ -79,7 +85,7 @@ export default function OrderDetailsAdmin({ id }) {
       );
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        alert(data.message || "Nie udało się wystawić faktury");
+        showAlert(data.message || "Nie udało się wystawić faktury", "error");
         return;
       }
       // przeskocz na tryb "Pobierz" bez ponownego fetchu
@@ -92,13 +98,14 @@ export default function OrderDetailsAdmin({ id }) {
         },
       }));
       // opcjonalnie możesz odświeżyć dane zamówienia albo zapisać numer w stanie:
-      alert(
+      showAlert(
         `Faktura ${
           data?.invoice?.number || ""
-        } wystawiona i wysłana do klienta.`
+        } wystawiona i wysłana do klienta.`,
+        "success"
       );
     } catch (e) {
-      alert("Błąd połączenia przy wystawianiu faktury");
+      showAlert("Błąd połączenia przy wystawianiu faktury", "error");
     } finally {
       setGenerating(false);
     }
@@ -129,7 +136,7 @@ export default function OrderDetailsAdmin({ id }) {
 
       if (!res.ok) {
         const msg = await res.text().catch(() => "");
-        alert(`Nie udało się pobrać PDF (${res.status}). ${msg}`);
+        showAlert(`Nie udało się pobrać PDF (${res.status}). ${msg}`, "error");
         return;
       }
 
@@ -146,8 +153,9 @@ export default function OrderDetailsAdmin({ id }) {
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
+      showAlert("Pobieranie PDF rozpoczęte.", "success");
     } catch (e) {
-      alert("Błąd połączenia przy pobieraniu PDF");
+      showAlert("Błąd połączenia przy pobieraniu PDF", "error");
     }
   };
 
@@ -169,8 +177,9 @@ export default function OrderDetailsAdmin({ id }) {
         shipping: { ...o.shipping, tracking_number: trackingNumber },
       }));
       setEditingTrack(false);
+      showAlert("Numer przesyłki zapisany.", "success");
     } catch {
-      alert("Nie udało się zapisać numeru przesyłki");
+      showAlert("Nie udało się zapisać numeru przesyłki", "error");
     }
   };
 

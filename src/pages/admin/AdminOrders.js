@@ -77,17 +77,41 @@ export default function AdminOrders() {
     setArchivedPage(1);
   }, [archivedSort]);
 
+  // AdminOrders.jsx (fragment)
   const updateOrderStatus = async (id, status) => {
-    const res = await AuthFetch(`${API_URL}/api/orders/${id}/status`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-    if (!res.ok) return showAlert("Błąd aktualizacji statusu", "error");
-    setOrders((prev) =>
-      prev.map((o) => (o.id === id ? { ...o, order_status: status } : o))
-    );
-    showAlert("Status zamówienia zaktualizowany", "success");
+    try {
+      const res = await AuthFetch(`${API_URL}/api/orders/${id}/status`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+
+      // gdy backend zwróci 500 z innych powodów
+      if (!res.ok) {
+        showAlert("Błąd aktualizacji statusu", "error");
+        return;
+      }
+
+      const data = await res.json().catch(() => ({}));
+
+      // zaktualizuj tabelę
+      setOrders((prev) =>
+        prev.map((o) => (o.id === id ? { ...o, order_status: status } : o))
+      );
+
+      // komunikaty zależnie od maila
+      if (data?.mail?.sent === false) {
+        const reason = data.mail.error ? ` (${data.mail.error})` : "";
+        showAlert(
+          `Status zmieniony, ale nie wysłano e-maila${reason}`,
+          "warning"
+        );
+      } else {
+        showAlert("Status zamówienia zaktualizowany", "success");
+      }
+    } catch {
+      showAlert("Błąd aktualizacji statusu", "error");
+    }
   };
 
   const updatePaymentStatus = async (id, status) => {

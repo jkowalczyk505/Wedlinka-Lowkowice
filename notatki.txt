@@ -4,10 +4,7 @@ ACCOUNT
 
 FAKTURY
 - wystawianie faktury dopiero po zaplacie(?)
-- dziwna jedostka na wfirmie (1,0000) - chyba trzeba zsumowac wagi/ilosci a nie ze wyswietla sie ilosc danego produktu z koszyka (np. 2 balerony po 0,7kg wyswietla sie jako 2,0000), albo do nazwy produktu dodac wage a ilosci niech beda z koszyka
 - do zaplaty jeszcze cala kwota (ponoc przy zwyklej fakturze mozna ustawic ze oplacono? i ze niby samo sie ogarnie to?)
-- alert o bledach/sukcesie
-- stawka vat
 - metoda platnosci? odpowiednio dla bramki, przelewu, za pobraniem?
 - termin platnosci w wfirma??
 - weryfikacja pdf - zawartosc pobranego + zawartosc w mailu
