@@ -1,3 +1,4 @@
+// routes/emailAssets.js
 const express = require("express");
 const router = express.Router();
 const path = require("path");
@@ -10,15 +11,15 @@ const BLANK_PNG = Buffer.from(
   "base64"
 );
 
-// Bezpieczeństwo: tylko nazwa pliku (bez ścieżek)
+// tylko nazwa pliku (bez ścieżek)
 const safeBase = (s = "") => path.basename(String(s));
 
-router.get("/thumb/:file", async (req, res) => {
+// jeden handler obsłuży /thumb/:file i /thumb-png/:file
+router.get(["/thumb/:file", "/thumb-png/:file"], async (req, res) => {
   try {
     const file = safeBase(req.params.file);
     const src = path.join(process.cwd(), "uploads", "products", file);
 
-    // sprawdź czy istnieje
     await fs.access(src);
 
     // render miniatury 60x60 jako PNG
@@ -27,13 +28,19 @@ router.get("/thumb/:file", async (req, res) => {
       .png({ quality: 80 })
       .toBuffer();
 
+    // ── NAGŁÓWKI WAŻNE DLA KLIENTÓW POCZTOWYCH/CDN ──────────────────────
     res.setHeader("Content-Type", "image/png");
-    res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader(
+      "Content-Disposition",
+      `inline; filename="${path.parse(file).name}.png"`
+    );
+    // unikanie „przepisywania” przez CDN (Cloudflare itp.)
+    res.setHeader("Cache-Control", "public, max-age=604800, no-transform"); // 7 dni
     return res.end(buf);
   } catch (e) {
-    // fallback: 1x1 PNG
     res.setHeader("Content-Type", "image/png");
-    res.setHeader("Cache-Control", "public, max-age=600");
+    res.setHeader("Cache-Control", "public, max-age=600, no-transform");
     return res.end(BLANK_PNG);
   }
 });

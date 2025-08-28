@@ -17,3 +17,4 @@ NA KONIEC
 - wysłać sitemap do google
 - react helmet async?? chyba ze nic to nie da w react spa
 - zmienic w env dane do p24, wfirma i wyl debug
+- polskie znaki w p24 mail

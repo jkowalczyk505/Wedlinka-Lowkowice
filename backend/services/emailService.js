@@ -1,5 +1,8 @@
 const nodemailer = require("nodemailer");
 const { renderTemplate } = require("../helpers/emailTemplates");
+const axios = require("axios");
+const sharp = require("sharp");
+const path = require("path");
 
 const transporter = nodemailer.createTransport({
   host: "mail.wedlinkalowkowice.pl",
@@ -10,6 +13,43 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SYSTEM_EMAIL_PASSWORD,
   },
 });
+
+// Zwraca { htmlImg, attachment } albo null, jeśli nie uda się pobrać/konwertować
+async function makeThumbCid(pImage, idOrIdx) {
+  try {
+    const BACK =
+      process.env.PUBLIC_BACKEND_URL || "https://wedlinkalowkowice.pl";
+    // użyj istniejącego URL-a uploadu – pobierz cokolwiek (webp/jpg/png)
+    const url = `${BACK}/api/uploads/products/${encodeURIComponent(pImage)}`;
+
+    const resp = await axios.get(url, {
+      responseType: "arraybuffer",
+      timeout: 15000,
+    });
+    const input = Buffer.from(resp.data);
+
+    // twardo konwertujemy do PNG 60x60
+    const png = await sharp(input)
+      .resize(60, 60, { fit: "cover" })
+      .png({ quality: 80 })
+      .toBuffer();
+
+    const base = path.parse(String(pImage)).name || `prod-${idOrIdx}`;
+    const cid = `prod-${idOrIdx}-${Date.now()}@wedlinka`;
+
+    return {
+      htmlImg: `<img src="cid:${cid}" width="60" height="60" alt="" style="object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle">`,
+      attachment: {
+        filename: `${base}.png`,
+        content: png,
+        contentType: "image/png",
+        cid, // <- klucz do <img src="cid:...">
+      },
+    };
+  } catch {
+    return null; // brak miniaturek nie blokuje maila
+  }
+}
 
 const SHIPPING_PL = {
   pickup: "Odbiór osobisty",
@@ -122,52 +162,51 @@ exports.sendBankTransferDetailsEmail = async (to, data) => {
 };
 
 exports.sendOrderConfirmationEmail = async (to, data) => {
-  /* ---------- tabela z pozycjami ---------- */
-  const itemsHtml = data.items
-    .map((item) => {
-      const p = item.product;
+  const attachments = [];
+  const MAX_THUMBS = 20; // limit, by mail nie był za ciężki
 
-      /* 1. kwoty --------------------------------------------------------- */
-      const brut = Number(p.price_brut ?? p.price ?? 0);
-      const price = brut.toFixed(2);
-      const total = (brut * item.quantity).toFixed(2);
+  const itemsHtml = (
+    await Promise.all(
+      data.items.map(async (item, idx) => {
+        const p = item.product;
 
-      /* 2. jednostki ----------------------------------------------------- */
-      const perPack = Number(
-        p.quantityPerUnit ?? p.quantity /* kolumna w DB */ ?? 1
-      );
-      const unitsTotal = perPack * item.quantity; // 2 × 8 szt = 16 szt
-      const unitsLabel = `${unitsTotal.toLocaleString("pl-PL")} ${p.unit}`;
+        const brut = Number(p.price_brut ?? p.price ?? 0);
+        const price = brut.toFixed(2);
+        const total = (brut * item.quantity).toFixed(2);
 
-      /* 3. miniatura (60 px, zaokr. rogi) -------------------------------- */
-      const BACK = process.env.PUBLIC_BACKEND_URL;
-      const thumb = p.image
-        ? `<img src="${BACK}/api/email/thumb/${encodeURIComponent(p.image)}"
-      width="60" height="60"
-      alt="" style="object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle">`
-        : "";
+        const perPack = Number(p.quantityPerUnit ?? p.quantity ?? 1);
+        const unitsTotal = perPack * item.quantity;
+        const unitsLabel = `${unitsTotal.toLocaleString("pl-PL")} ${p.unit}`;
 
-      /* 4. wiersz -------------------------------------------------------- */
-      return `
-    <tr>
-      <td style="padding:8px 10px;">
-        ${thumb}
-        <span style="vertical-align:middle">
-          ${p.name}<br/><small style="color:#777;">${unitsLabel}</small>
-        </span>
-      </td>
-      <td align="center" style="padding:8px 10px;">${price} zł</td>
-      <td align="center" style="padding:8px 10px;">${item.quantity}</td>
-      <td align="right"  style="padding:8px 10px;"><strong>${total} zł</strong></td>
-    </tr>`;
-    })
-    .join("");
+        // ► miniatura jako CID z HTTP + konwersja do PNG
+        let thumb = "";
+        if (p.image && attachments.length < MAX_THUMBS) {
+          const cidObj = await makeThumbCid(p.image, p.id || idx + 1);
+          if (cidObj) {
+            thumb = cidObj.htmlImg;
+            attachments.push(cidObj.attachment);
+          }
+        }
 
-  /* ---------- etykiety ---------- */
+        return `
+        <tr>
+          <td style="padding:8px 10px;">
+            ${thumb}
+            <span style="vertical-align:middle">
+              ${p.name}<br/><small style="color:#777;">${unitsLabel}</small>
+            </span>
+          </td>
+          <td align="center" style="padding:8px 10px;">${price} zł</td>
+          <td align="center" style="padding:8px 10px;">${item.quantity}</td>
+          <td align="right"  style="padding:8px 10px;"><strong>${total} zł</strong></td>
+        </tr>`;
+      })
+    )
+  ).join("");
+
   const shippingLabel = SHIPPING_PL[data.shippingMethod] || data.shippingMethod;
   const paymentLabel = PAYMENT_PL[data.paymentMethod] || data.paymentMethod;
 
-  /* ---------- dodatkowe wiersze ---------- */
   const shippingLine = `${shippingLabel} – ${Number(data.shippingCost).toFixed(
     2
   )} zł`;
@@ -175,7 +214,6 @@ exports.sendOrderConfirmationEmail = async (to, data) => {
     ? `<strong>Paczkomat:</strong> ${data.lockerCode}<br/>`
     : "";
 
-  /* ---------- adresy ---------- */
   const shippingAddressHtml = [
     `${data.shipping.firstName} ${data.shipping.lastName}`,
     data.shipping.street,
@@ -201,12 +239,11 @@ exports.sendOrderConfirmationEmail = async (to, data) => {
          .join("<br/>")}</p>`
     : "";
 
-  const notesBlock = data.notes.trim()
+  const notesBlock = (data.notes || "").trim()
     ? `<h3 style="margin:25px 0 5px 0;color:#333;font-size:16px">Uwagi do zamówienia</h3>
        <p style="margin:0;color:#555">${data.notes}</p>`
     : "";
 
-  /* ---------- render szablonu ---------- */
   const html = renderTemplate("orderConfirmation", {
     orderNumber: data.orderNumber,
     itemsHtml,
@@ -219,50 +256,58 @@ exports.sendOrderConfirmationEmail = async (to, data) => {
     notesBlock,
   });
 
-  /* ---------- wysyłka ---------- */
-  const info = await transporter.sendMail({
+  await transporter.sendMail({
     from: '"Wędlinka Łowkowice" <system@wedlinkalowkowice.pl>',
     to,
     subject: `Potwierdzenie zamówienia ${data.orderNumber}`,
     html,
+    attachments, // <— miniatury jako inline PNG
   });
 };
 
 exports.sendOrderStatusChangedEmail = async (to, data) => {
-  const itemsHtml = data.items
-    .map((item) => {
-      const p = item.product ?? item; // ← JEDNA ZMIANA
-      if (!p) return ""; // opcjonalne zabezpieczenie
+  const attachments = [];
+  const MAX_THUMBS = 20;
 
-      const brut = Number(p.price_brut ?? p.price ?? 0);
-      const price = brut.toFixed(2);
-      const total = (brut * item.quantity).toFixed(2);
+  const itemsHtml = (
+    await Promise.all(
+      data.items.map(async (item, idx) => {
+        const p = item.product ?? item;
+        if (!p) return "";
 
-      const perPack = Number(p.quantityPerUnit ?? p.quantity ?? 1);
-      const unitsTotal = perPack * item.quantity;
-      const unitsLabel = `${unitsTotal.toLocaleString("pl-PL")} ${p.unit}`;
+        const brut = Number(p.price_brut ?? p.price ?? 0);
+        const price = brut.toFixed(2);
+        const total = (brut * item.quantity).toFixed(2);
 
-      const BACK = process.env.PUBLIC_BACKEND_URL;
-      const thumb = p.image
-        ? `<img src="${BACK}/api/email/thumb/${encodeURIComponent(p.image)}"
-      width="60" height="60"
-      alt="" style="object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle">`
-        : "";
+        const perPack = Number(p.quantityPerUnit ?? p.quantity ?? 1);
+        const unitsTotal = perPack * item.quantity;
+        const unitsLabel = `${unitsTotal.toLocaleString("pl-PL")} ${p.unit}`;
 
-      return `
-      <tr>
-        <td style="padding:8px 10px;">
-          ${thumb}
-          <span style="vertical-align:middle">
-            ${p.name}<br/><small style="color:#777;">${unitsLabel}</small>
-          </span>
-        </td>
-        <td align="center" style="padding:8px 10px;">${price} zł</td>
-        <td align="center" style="padding:8px 10px;">${item.quantity}</td>
-        <td align="right"  style="padding:8px 10px;"><strong>${total} zł</strong></td>
-      </tr>`;
-    })
-    .join("");
+        // ► miniatura jako CID z HTTP + konwersja do PNG
+        let thumb = "";
+        if (p.image && attachments.length < MAX_THUMBS) {
+          const cidObj = await makeThumbCid(p.image, p.id || idx + 1);
+          if (cidObj) {
+            thumb = cidObj.htmlImg;
+            attachments.push(cidObj.attachment);
+          }
+        }
+
+        return `
+        <tr>
+          <td style="padding:8px 10px;">
+            ${thumb}
+            <span style="vertical-align:middle">
+              ${p.name}<br/><small style="color:#777;">${unitsLabel}</small>
+            </span>
+          </td>
+          <td align="center" style="padding:8px 10px;">${price} zł</td>
+          <td align="center" style="padding:8px 10px;">${item.quantity}</td>
+          <td align="right"  style="padding:8px 10px;"><strong>${total} zł</strong></td>
+        </tr>`;
+      })
+    )
+  ).join("");
 
   const html = renderTemplate("orderStatusChanged", {
     orderNumber: data.orderNumber,
@@ -278,11 +323,12 @@ exports.sendOrderStatusChangedEmail = async (to, data) => {
     token: data.token,
   });
 
-  const info = await transporter.sendMail({
+  await transporter.sendMail({
     from: '"Wędlinka Łowkowice" <system@wedlinkalowkowice.pl>',
     to,
     subject: `Nowy status zamówienia ${data.orderNumber}`,
     html,
+    attachments, // <— miniatury jako inline PNG
   });
 };
 
