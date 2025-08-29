@@ -4,6 +4,7 @@ FAKTURY
 POPRAWKI
 - usuwanie shipping details - usunac crona (+zmiana w polityce) lub jakos zabezpieczyc brak takich danych, bo jest biała strona przez orderDetais
 - p24 nie działają, zamówienie tworzy się bez wpisu do payments, przez to wyswietla sie 0 zl lacznie i pusto w info o platnosci
+- wejscie pierwszy raz na konto nie zaladowuje nazwiska i adresu, trzeba odswiezyc
 
 NA KONIEC
 - seo + sitemap + robots + index jak zhkr (+og.jpg) + manifest json
