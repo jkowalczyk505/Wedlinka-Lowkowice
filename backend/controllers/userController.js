@@ -59,7 +59,7 @@ exports.updateAddress = async (req, res, next) => {
   try {
     const { street, apartmentNumber, postalCode, city } = req.body;
 
-    if (!street || !apartmentNumber || !postalCode || !city) {
+    if (!street || !postalCode || !city) {
       return res.status(400).json({ error: "Brak wymaganych pól adresu" });
     }
 
