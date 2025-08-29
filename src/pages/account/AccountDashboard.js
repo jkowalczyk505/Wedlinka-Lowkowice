@@ -30,18 +30,6 @@ const AccountDashboard = () => {
   const { showAlert } = useAlert();
 
   useEffect(() => {
-    // statystyki zamówień
-    fetch("/api/orders/stats", { credentials: "include" })
-      .then((r) => r.json())
-      .then((d) =>
-        setStats({
-          total: d.totalOrders,
-          pending: d.pendingOrders,
-          unpaid: d.unpaidOrders,
-        })
-      )
-      .catch(() => {});
-
     // pobierz 2 produkty z koszyka
     fetch(`${API_URL}/api/cart`, { credentials: "include" })
       .then((r) => r.json())
@@ -120,9 +108,11 @@ const AccountDashboard = () => {
           <p>Nie masz jeszcze żadnych zamówień.</p>
         )}
 
-        <Link to="/konto/zamowienia">
-          <Button variant="beige">Przeglądaj wszystkie</Button>
-        </Link>
+        {latestOrders.length > 0 && (
+          <Link to="/konto/zamowienia">
+            <Button variant="beige">Przeglądaj wszystkie</Button>
+          </Link>
+        )}
       </section>
 
       {/* ▷ Koszyk */}

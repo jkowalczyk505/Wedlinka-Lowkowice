@@ -1,6 +1,9 @@
-
 FAKTURY
 - do zaplaty jeszcze cala kwota (ponoc przy zwyklej fakturze mozna ustawic ze oplacono? i ze niby samo sie ogarnie to?) lub tworzyc jakis payment?
+
+POPRAWKI
+- usuwanie shipping details - usunac crona (+zmiana w polityce) lub jakos zabezpieczyc brak takich danych, bo jest biała strona przez orderDetais
+- p24 nie działają, zamówienie tworzy się bez wpisu do payments, przez to wyswietla sie 0 zl lacznie i pusto w info o platnosci
 
 NA KONIEC
 - seo + sitemap + robots + index jak zhkr (+og.jpg) + manifest json
