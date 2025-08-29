@@ -135,7 +135,7 @@ async function verifyTransaction({ sessionId, orderId, amountPln }) {
   assertEnv();
 
   const amount = toCents(amountPln);
-  const safeId = sanitizeSessionId(sessionId);
+  const safeId = `${sanitizeSessionId(sessionId)}-${Date.now()}`;
   const numericOrderId = Number(orderId);
 
   const payload = {
