@@ -2,7 +2,6 @@ FAKTURY
 - do zaplaty jeszcze cala kwota (ponoc przy zwyklej fakturze mozna ustawic ze oplacono? i ze niby samo sie ogarnie to?) lub tworzyc jakis payment?
 
 NA KONIEC
-- seo + sitemap + robots + index jak zhkr (+og.jpg) + manifest json
+- sitemap + robots + manifest json
 - wysłać sitemap do google
-- react helmet async?? chyba ze nic to nie da w react spa
 - zmienic w env dane do wfirma

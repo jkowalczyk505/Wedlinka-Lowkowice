@@ -9,33 +9,48 @@
     <!-- viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- główny tytuł SEO -->
-    <title>Wędlinka Łowkowice</title>
+    <!-- SEO -->
+    <title>Wędlinka Łowkowice – Tradycyjne wyroby mięsne</title>
+    <meta
+      name="description"
+      content="Wędlinka Łowkowice – naturalne wędliny, kiełbasy i wyroby tradycyjne z małej rodzinnej masarni. Jakość, smak i lokalna produkcja."
+    />
+    <meta
+      name="keywords"
+      content="wędliny, kiełbasy, wyroby mięsne, Łowkowice, masarnia, sklep mięsny, Wędlinka Łowkowice"
+    />
 
-    <!-- meta description -->
-    <meta name="description" content="----------" />
-
-    <!-- meta keywords (opcjonalnie) -->
-    <meta name="keywords" content="--------" />
-
-    <!-- canonical URL -->
-    <link rel="canonical" href="https://twojastrona.pl/" />
+    <!-- canonical -->
+    <link rel="canonical" href="https://wedlinkalowkowice.pl/" />
 
     <!-- Open Graph (Facebook, LinkedIn) -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://twojastrona.pl/" />
-    <meta property="og:title" content="Wędlinka Łowkowice" />
-    <meta property="og:description" content="Informacje, aktualności" />
-    <meta property="og:image" content="https://twojastrona.pl/og-image.jpg" />
+    <meta property="og:url" content="https://wedlinkalowkowice.pl/" />
+    <meta
+      property="og:title"
+      content="Wędlinka Łowkowice – Tradycyjne wyroby mięsne"
+    />
+    <meta
+      property="og:description"
+      content="Wędlinka Łowkowice – naturalne wędliny, kiełbasy i wyroby tradycyjne z małej rodzinnej masarni."
+    />
+    <meta property="og:image" content="https://wedlinkalowkowice.pl/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="pl_PL" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Wędlinka Łowkowice" />
-    <meta name="twitter:description" content="Informacje, aktualności" />
     <meta
-      name="twitter:image"
-      content="https://twojastrona.pl/twitter-image.jpg"
+      name="twitter:title"
+      content="Wędlinka Łowkowice – Tradycyjne wyroby mięsne"
     />
+    <meta
+      name="twitter:description"
+      content="Wędlinka Łowkowice – naturalne wędliny, kiełbasy i wyroby tradycyjne z rodzinnej masarni."
+    />
+    <meta name="twitter:image" content="https://wedlinkalowkowice.pl/og.jpg" />
+    <meta name="twitter:image:alt" content="Logo Wędlinka Łowkowice" />
 
     <!-- JSON-LD: organizacja -->
     <script type="application/ld+json">
@@ -43,35 +58,43 @@
         "@context": "https://schema.org",
         "@type": "Organization",
         "name": "Wędlinka Łowkowice",
-        "url": "https://twojastrona.pl",
-        "logo": "https://twojastrona.pl/logo.png",
+        "url": "https://wedlinkalowkowice.pl",
+        "logo": "https://wedlinkalowkowice.pl/logo.png",
         "contactPoint": {
           "@type": "ContactPoint",
           "contactType": "customer support",
-          "email": "kontakt@twojastrona.pl",
-          "telephone": "+48 600 123 456"
+          "email": "kontakt@wedlinkalowkowice.pl",
+          "telephone": "+48 500 877 347"
         },
-        "sameAs": [
-          "https://www.facebook.com/TwojZHKR",
-          "https://www.instagram.com/TwojZHKR"
-        ]
+        "sameAs": ["https://www.facebook.com/100082854926240"]
       }
     </script>
 
-    <!-- link do mapy strony i manifest -->
+    <!-- sitemap -->
     <link
       rel="sitemap"
       type="application/xml"
       title="Sitemap"
       href="/sitemap.xml"
     />
+
+    <!-- manifest -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- performance: fonts preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
   </head>
+
   <body>
     <noscript
       >Musisz włączyć JavaScript, aby ta aplikacja działała poprawnie.</noscript
     >
     <div id="root"></div>
     <div id="modal-root"></div>
-    <!-- ⬅️ tu lądują portale -->
   </body>
 </html>
