@@ -30,7 +30,7 @@ export default function PaymentMethods({
             {paymentMethod === "przelewy24" && (
               <InfoTip>
                 Zostaniesz przekierowany do szybkiej płatności internetowej.
-                Obsługiwane są m.in. BLIK, przelewy ekspresowe, karty płatnicze.
+                Obsługiwane są m.in. BLIK, przelewy ekspresowe.
               </InfoTip>
             )}
           </label>

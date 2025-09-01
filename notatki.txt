@@ -5,4 +5,4 @@ NA KONIEC
 - seo + sitemap + robots + index jak zhkr (+og.jpg) + manifest json
 - wysłać sitemap do google
 - react helmet async?? chyba ze nic to nie da w react spa
-- zmienic w env dane do p24, wfirma i wyl debug
+- zmienic w env dane do wfirma
