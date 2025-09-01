@@ -22,6 +22,7 @@ const PAYMENT_PL = {
 
 // POST /api/orders
 async function createOrder(req, res) {
+  let created = null;
   try {
     // 1. Dane wejściowe
     const { items, form, paymentMethod, selectedShipping } = req.body;
@@ -41,7 +42,7 @@ async function createOrder(req, res) {
       id: orderId,
       orderNumber,
       accessToken,
-    } = await OrderModel.create({
+    } = (created = await OrderModel.create({
       user_id: userId,
       form,
       invoice_type:
@@ -53,7 +54,7 @@ async function createOrder(req, res) {
       total_net: summary.totalNet,
       total_vat: summary.totalVat,
       total_brut: summary.totalBrut,
-    });
+    }));
 
     await OrderModel.addOrderItems(orderId, enriched);
     await OrderModel.addShippingDetails(
@@ -103,6 +104,17 @@ async function createOrder(req, res) {
         payment.token = token;
       } catch (e) {
         console.error("P24 register failed:", e?.message || e);
+        // <<< NOWE: zawsze failed + cancelled >>>
+        try {
+          await PaymentModel.markFailedByOrderNumber(orderNumber, {});
+          await OrderModel.updatePaymentStatusByOrderNumber(
+            orderNumber,
+            "failed"
+          );
+          await OrderModel.updateStatusByOrderNumber(orderNumber, "cancelled");
+        } catch (e2) {
+          console.error("FAIL-SAFE cancelling order failed:", e2);
+        }
         return res.status(502).json({
           error: "P24_REGISTER_FAILED",
           details: String(e?.message || e),
@@ -218,6 +230,22 @@ async function createOrder(req, res) {
     });
   } catch (err) {
     console.error("Create order error:", err);
+    // <<< OPCJONALNY BEZPIECZNIK: jeśli order już powstał, to go anuluj i wpisz payments=failed >>>
+    if (created?.orderNumber) {
+      try {
+        await PaymentModel.markFailedByOrderNumber(created.orderNumber, {});
+        await OrderModel.updatePaymentStatusByOrderNumber(
+          created.orderNumber,
+          "failed"
+        );
+        await OrderModel.updateStatusByOrderNumber(
+          created.orderNumber,
+          "cancelled"
+        );
+      } catch (e2) {
+        console.error("FAIL-SAFE (outer) cancelling order failed:", e2);
+      }
+    }
     return res.status(500).json({ error: "Błąd tworzenia zamówienia" });
   }
 }

@@ -101,6 +101,9 @@ async function notify(req, res) {
     } catch (e) {
       // 🔴 WERYFIKACJA NIE PRZESZŁA → OZNACZ FAILED / CANCELLED
       try {
+        await PaymentModel.markFailedByOrderNumber(baseOrder, {
+          providerTransactionId: orderId ? String(orderId) : null,
+        });
         await OrderModel.updatePaymentStatusByOrderNumber(baseOrder, "failed");
         await OrderModel.updateStatusByOrderNumber(baseOrder, "cancelled");
       } catch (e2) {
