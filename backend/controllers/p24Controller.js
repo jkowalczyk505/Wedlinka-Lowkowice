@@ -9,6 +9,13 @@ const FAIL_URL =
 
 /* -------- helpers -------- */
 
+const ORDER_NO_RE = /[A-Z]{3}-\d{4}-\d{6}/;
+const getBaseOrderNumber = (sid) => {
+  const s = String(sid || "");
+  const m = s.match(ORDER_NO_RE);
+  return m ? m[0] : s;
+};
+
 function parsePossiblyStringBody(req) {
   if (
     req.body &&
@@ -48,7 +55,8 @@ async function notify(req, res) {
     const body = parsePossiblyStringBody(req);
     console.error("[P24] NOTIFY BODY:", body);
 
-    const sessionId = body.p24_session_id;
+    const sessionId = body.p24_session_id; // pełny, np. WLK-...::171...
+    const baseOrder = getBaseOrderNumber(sessionId); // goły, np. WLK-...
     const orderId = body.p24_order_id;
     const amountFromP24 = body.p24_amount; // grosze
     const currency = body.p24_currency || "PLN";
@@ -61,7 +69,7 @@ async function notify(req, res) {
     }
 
     phase = "load-order";
-    const order = await OrderModel.getByOrderNumber(sessionId);
+    const order = await OrderModel.getByOrderNumber(baseOrder);
     if (!order) {
       return res
         .status(200)
@@ -93,8 +101,8 @@ async function notify(req, res) {
     } catch (e) {
       // 🔴 WERYFIKACJA NIE PRZESZŁA → OZNACZ FAILED / CANCELLED
       try {
-        await OrderModel.updatePaymentStatusByOrderNumber(sessionId, "failed");
-        await OrderModel.updateStatusByOrderNumber(sessionId, "cancelled");
+        await OrderModel.updatePaymentStatusByOrderNumber(baseOrder, "failed");
+        await OrderModel.updateStatusByOrderNumber(baseOrder, "cancelled");
       } catch (e2) {
         console.error("[P24] FAIL path DB update error:", e2);
       }
@@ -106,7 +114,7 @@ async function notify(req, res) {
     phase = "db-update-payment";
     try {
       // success: oznacz OK (albo skorzystaj z własnego markPaidByOrderNumber)
-      await PaymentModel.markPaidByOrderNumber(sessionId, {
+      await PaymentModel.markPaidByOrderNumber(baseOrder, {
         providerTransactionId: String(orderId),
         amount: Number.isFinite(amountPlnFromP24)
           ? amountPlnFromP24
@@ -124,8 +132,8 @@ async function notify(req, res) {
     phase = "db-update-order";
     try {
       // Uwaga: payments.status = 'ok', orders.status = 'paid'
-      await OrderModel.updatePaymentStatusByOrderNumber(sessionId, "ok");
-      await OrderModel.updateStatusByOrderNumber(sessionId, "paid");
+      await OrderModel.updatePaymentStatusByOrderNumber(baseOrder, "ok");
+      await OrderModel.updateStatusByOrderNumber(baseOrder, "paid");
     } catch (e) {
       return res.status(200).json({
         ok: false,
@@ -152,6 +160,8 @@ async function returnAfterPay(req, res) {
       req.query.order ||
       req.query.orderNumber;
 
+    const baseOrder = getBaseOrderNumber(sessionId);
+
     const orderId = req.query.p24_order_id || req.query.orderId || null;
     const tokenFromQuery = req.query.token || "";
     const amountPlnFromQuery = req.query.p24_amount
@@ -160,13 +170,13 @@ async function returnAfterPay(req, res) {
 
     if (!sessionId) return res.redirect(302, FAIL_URL);
 
-    const order = await OrderModel.getByOrderNumber(sessionId);
+    const order = await OrderModel.getByOrderNumber(baseOrder);
     if (!order) return res.redirect(302, FAIL_URL);
 
     // helper: URL podsumowania
     const tokenForOk = order.access_token || tokenFromQuery || "";
     const summaryUrl = `${FRONT_URL}/podsumowanie?order=${encodeURIComponent(
-      sessionId
+      baseOrder
     )}&token=${encodeURIComponent(tokenForOk)}`;
 
     // ── 1) Brak orderId => sprawdź, czy już opłacone (np. przez webhook)
@@ -182,12 +192,12 @@ async function returnAfterPay(req, res) {
       } else {
         // ❌ nieopłacone → oznacz failed/cancelled i pokaż stronę błędu
         try {
-          await PaymentModel.markFailedByOrderNumber(sessionId, {});
+          await PaymentModel.markFailedByOrderNumber(baseOrder, {});
           await OrderModel.updatePaymentStatusByOrderNumber(
-            sessionId,
+            baseOrder,
             "failed"
           );
-          await OrderModel.updateStatusByOrderNumber(sessionId, "cancelled");
+          await OrderModel.updateStatusByOrderNumber(baseOrder, "cancelled");
         } catch (e2) {
           console.error("[P24 return] mark failed (no orderId) error:", e2);
         }
@@ -204,13 +214,13 @@ async function returnAfterPay(req, res) {
 
     await verifyTransaction({ sessionId, orderId, amountPln: amountToVerify });
 
-    await PaymentModel.markPaidByOrderNumber(sessionId, {
+    await PaymentModel.markPaidByOrderNumber(baseOrder, {
       providerTransactionId: String(orderId),
       amount: amountToVerify,
       currency: "PLN",
     });
-    await OrderModel.updatePaymentStatusByOrderNumber(sessionId, "ok");
-    await OrderModel.updateStatusByOrderNumber(sessionId, "paid");
+    await OrderModel.updatePaymentStatusByOrderNumber(baseOrder, "ok");
+    await OrderModel.updateStatusByOrderNumber(baseOrder, "paid");
 
     return res.redirect(302, summaryUrl);
   } catch (e) {
@@ -224,27 +234,28 @@ async function cancel(req, res) {
     // P24 zwykle wysyła p24_session_id w body (POST x-www-form-urlencoded),
     // ale zabezpieczmy też querystring.
     const body = parsePossiblyStringBody(req);
-    const sessionId =
+    const sidRaw =
       body?.p24_session_id ||
       req.query.p24_session_id ||
       req.query.order ||
       req.query.sessionId ||
       null;
+    const baseOrder = getBaseOrderNumber(sidRaw);
     const orderId =
       body?.p24_order_id || req.query.p24_order_id || req.query.orderId || null;
 
-    if (sessionId) {
+    if (baseOrder) {
       // oznacz płatność i zamówienie jako nieudane/anulowane
       try {
-        await PaymentModel.markFailedByOrderNumber(sessionId, {
+        await PaymentModel.markFailedByOrderNumber(baseOrder, {
           providerTransactionId: orderId ? String(orderId) : null,
         });
       } catch (e) {
         console.error("[P24 cancel] markFailed error:", e);
       }
       try {
-        await OrderModel.updatePaymentStatusByOrderNumber(sessionId, "failed");
-        await OrderModel.updateStatusByOrderNumber(sessionId, "cancelled");
+        await OrderModel.updatePaymentStatusByOrderNumber(baseOrder, "failed");
+        await OrderModel.updateStatusByOrderNumber(baseOrder, "cancelled");
       } catch (e) {
         console.error("[P24 cancel] update order error:", e);
       }
