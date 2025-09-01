@@ -96,7 +96,21 @@ export default function AdminProductModal({ open, initial, onClose, onSaved }) {
 
   const handleNumber = (e) => {
     const { name, value } = e.target;
-    if (/^[0-9]+([.,][0-9]{0,2})?$/.test(value)) {
+
+    // pozwól na czyszczenie pola
+    if (value === "") {
+      setForm((f) => ({ ...f, [name]: "" }));
+      return;
+    }
+
+    // opcjonalnie: pozwól na samą kropkę/przecinek w trakcie wpisywania
+    if (value === "." || value === ",") {
+      setForm((f) => ({ ...f, [name]: value }));
+      return;
+    }
+
+    // liczby z maks. 2 miejscami po przecinku (kropka lub przecinek)
+    if (/^\d+([.,]\d{0,2})?$/.test(value)) {
       setForm((f) => ({ ...f, [name]: value }));
     }
   };

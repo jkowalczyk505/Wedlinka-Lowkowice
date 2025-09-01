@@ -143,7 +143,9 @@ router.post("/:orderId/create", protect, adminOnly, async (req, res) => {
           orderNumber: order.order_number,
           invoiceNumber: number,
           pdfBuf: pdf,
-          isProforma: true, // obecnie wystawiasz proformy
+          isProforma:
+            String(process.env.WFIRMA_MODE || "proforma").toLowerCase() !==
+            "normal",
         });
       } else {
         console.warn("[invoice mail] brak adresu e-mail dla order", orderId);

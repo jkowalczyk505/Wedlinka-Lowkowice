@@ -191,11 +191,12 @@ async function getSeriesId() {
     cachedSeriesId = String(WFIRMA_SERIES_ID);
     return cachedSeriesId;
   }
-  if (!WFIRMA_SERIES) {
-    throw new Error(
-      "Brak WFIRMA_SERIES_ID oraz WFIRMA_SERIES – nie wiem, jaką serię użyć"
-    );
-  }
+  if (!WFIRMA_SERIES) return null;
+
+  const seriesType =
+    String(process.env.WFIRMA_MODE || "proforma").toLowerCase() === "normal"
+      ? "normal"
+      : "proforma";
 
   // Szukamy serii po nazwie (i typie proforma – żeby trafić właściwą)
   const findXml = `
@@ -211,7 +212,7 @@ async function getSeriesId() {
             <condition>
               <field>type</field>
               <operator>eq</operator>
-              <value>proforma</value>
+              <value>{seriesType}</value>
             </condition>
           </conditions>
           <limit>1</limit>
@@ -226,10 +227,7 @@ async function getSeriesId() {
     "series"
   );
   const id = ent?.id;
-  if (!id)
-    throw new Error(
-      `Nie znaleziono serii o nazwie "${WFIRMA_SERIES}" i typie "proforma"`
-    );
+  if (!id) return null;
   cachedSeriesId = String(id);
   return cachedSeriesId;
 }
@@ -358,6 +356,8 @@ async function upsertContractor(billing) {
 // --- dokument: proforma/normal ---
 async function createDocument({ contractorId, order }) {
   const seriesId = await getSeriesId();
+  const mode = String(process.env.WFIRMA_MODE || "proforma").toLowerCase();
+  const isNormal = mode === "normal";
 
   // --- MAPA METOD PŁATNOŚCI NA WYMAGANE SŁÓWKA W WFIRMA ---
   // dostosuj w razie potrzeb (np. jeśli księgowość chce zawsze „przelew” dla P24)
@@ -431,8 +431,8 @@ async function createDocument({ contractorId, order }) {
       <invoice>
         <contractor_id>${contractorId}</contractor_id>
 
-        <series><id>${seriesId}</id></series>
-        <type>proforma</type>
+       ${seriesId ? `<series><id>${seriesId}</id></series>` : ``}
+       <type>${isNormal ? "normal" : "proforma"}</type>
         <price_type>brutto</price_type>
 
         <!-- metoda płatności w jasnym słowie -->

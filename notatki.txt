@@ -1,6 +1,2 @@
 FAKTURY
 - do zaplaty jeszcze cala kwota (ponoc przy zwyklej fakturze mozna ustawic ze oplacono? i ze niby samo sie ogarnie to?) lub tworzyc jakis payment?
-
-NA KONIEC
-- sitemap + wyslac do google
-- zmienic w env dane do wfirma
