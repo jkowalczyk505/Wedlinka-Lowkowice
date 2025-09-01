@@ -29,11 +29,11 @@ router.post("/cleanup", async (req, res) => {
   try {
     await conn.beginTransaction();
 
-    // A) SHIPPING DETAILS > 6 mies. (po własnym created_at) → TWARDY DELETE
-    const [aDel] = await conn.query(`
-      DELETE FROM shipping_details
-      WHERE created_at < (NOW() - INTERVAL 6 MONTH)
-    `);
+    // A) Usuwanie shipping_details po 6 miesiącach – wyłączone
+    // Usuwanie danych z tabeli shipping_details po 6 miesiącach
+    // zostało wyłączone, by uniknąć błędów po stronie użytkownika.
+
+    const aDel = { affectedRows: 0 };
 
     // C) ANULOWANE > 90 dni (dzieci -> rodzic)
     const condCancelled = `
