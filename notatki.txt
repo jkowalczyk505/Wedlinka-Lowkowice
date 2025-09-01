@@ -1,9 +1,6 @@
 FAKTURY
 - do zaplaty jeszcze cala kwota (ponoc przy zwyklej fakturze mozna ustawic ze oplacono? i ze niby samo sie ogarnie to?) lub tworzyc jakis payment?
 
-POPRAWKI
-- wejscie pierwszy raz na konto nie zaladowuje nazwiska i adresu, trzeba odswiezyc
-
 NA KONIEC
 - seo + sitemap + robots + index jak zhkr (+og.jpg) + manifest json
 - wysłać sitemap do google

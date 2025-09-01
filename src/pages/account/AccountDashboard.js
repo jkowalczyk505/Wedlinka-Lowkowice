@@ -12,11 +12,14 @@ import { useAlert } from "../../components/common/alert/AlertContext";
 import OrderTile from "../../components/account/OrderTile";
 import { useNavigate } from "react-router-dom";
 import DownloadInvoicePDFButton from "../../components/account/DownloadInvoicePDFButton";
+import Spinner from "../../components/common/Spinner"; // jeśli chcesz pokazać loader
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const AccountDashboard = () => {
   const { user, setLogoutInProgress, logout, setUser } = useAuth();
+  const [hydrating, setHydrating] = useState(false);
+
   const navigate = useNavigate(); // ⬅️ tu definiujemy navigate
 
   const [stats, setStats] = useState({ total: 0, pending: 0, unpaid: 0 });
@@ -28,6 +31,37 @@ const AccountDashboard = () => {
   const [showConfirm, setShowConfirm] = useState(false);
 
   const { showAlert } = useAlert();
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      // jeśli nie ma nazwiska/adresu – dociągnij profil
+      if (
+        !user ||
+        !user.surname ||
+        !user.street ||
+        !user.postalCode ||
+        !user.city
+      ) {
+        try {
+          setHydrating(true);
+          const res = await AuthFetch(`${API_URL}/api/users/me`);
+          if (res.ok) {
+            const data = await res.json();
+            if (!cancelled) {
+              // zmerge’uj, żeby nie zgubić już znanych pól (np. email)
+              setUser((prev) => ({ ...(prev || {}), ...data }));
+            }
+          }
+        } finally {
+          if (!cancelled) setHydrating(false);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user, setUser]);
 
   useEffect(() => {
     // pobierz 2 produkty z koszyka
@@ -83,6 +117,8 @@ const AccountDashboard = () => {
       })
       .catch(() => {});
   }, []);
+
+  if (hydrating && !user) return <Spinner fullscreen />;
 
   return (
     <div className="account-dashboard">
