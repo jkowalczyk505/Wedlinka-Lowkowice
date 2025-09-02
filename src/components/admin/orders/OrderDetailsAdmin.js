@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Spinner from "../../common/Spinner";
 import LoadError from "../../common/LoadError";
 import { AuthFetch } from "../../auth/AuthFetch";
@@ -40,6 +40,9 @@ export default function OrderDetailsAdmin({ id }) {
   const [editingTrack, setEditingTrack] = useState(false);
   const [trackingNumber, setTrackingNumber] = useState("");
   const [generating, setGenerating] = useState(false);
+  const genLockRef = useRef(false);
+  const [downloading, setDownloading] = useState(false);
+  const dlLockRef = useRef(false);
 
   const { showAlert } = useAlert(); // <— hook do Twojego alertu
 
@@ -68,11 +71,16 @@ export default function OrderDetailsAdmin({ id }) {
     isPaid; // i jest opłacone
 
   const handleGenerateInvoice = async () => {
+    // twarda blokada przed podwójnym kliknięciem
+    if (genLockRef.current || generating) return;
+    genLockRef.current = true;
+
     if (!isPaid) {
       showAlert(
         "Nie można wystawić faktury – zamówienie nie jest opłacone.",
         "error"
       );
+      genLockRef.current = false;
       return;
     }
     try {
@@ -108,15 +116,22 @@ export default function OrderDetailsAdmin({ id }) {
       showAlert("Błąd połączenia przy wystawianiu faktury", "error");
     } finally {
       setGenerating(false);
+      genLockRef.current = false;
     }
   };
 
   const handleDownloadInvoice = async () => {
+    if (dlLockRef.current || downloading) return; // hard-lock
+    dlLockRef.current = true;
+    setDownloading(true);
+
     const doDownload = async () => {
+      downloadAbortRef.current = new AbortController();
       const res = await fetch(`${API_URL}/api/invoices/${summary.id}/pdf`, {
         method: "GET",
         credentials: "include",
         headers: { Accept: "application/pdf" },
+        signal: downloadAbortRef.current.signal,
       });
       return res;
     };
@@ -156,6 +171,10 @@ export default function OrderDetailsAdmin({ id }) {
       showAlert("Pobieranie PDF rozpoczęte.", "success");
     } catch (e) {
       showAlert("Błąd połączenia przy pobieraniu PDF", "error");
+    } finally {
+      setDownloading(false);
+      dlLockRef.current = false;
+      downloadAbortRef.current = null;
     }
   };
 
@@ -284,12 +303,18 @@ export default function OrderDetailsAdmin({ id }) {
               }}
             >
               {canGenerateInvoice && (
-                <Button variant="red" onClick={handleGenerateInvoice}>
-                  Generuj
+                <Button
+                  variant="red"
+                  onClick={handleGenerateInvoice}
+                  disabled={generating}
+                >
+                  {generating ? "Generuję…" : "Generuj"}
                 </Button>
               )}
               {hasInvoice && (
-                <Button onClick={handleDownloadInvoice}>Pobierz (PDF)</Button>
+                <Button onClick={handleDownloadInvoice} disabled={downloading}>
+                  {downloading ? "Pobieram…" : "Pobierz (PDF)"}
+                </Button>
               )}
               {!hasInvoice && !isPaid && (
                 <span style={{ color: "#777", fontSize: 13 }}>

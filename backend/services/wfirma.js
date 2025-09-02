@@ -212,7 +212,7 @@ async function getSeriesId() {
             <condition>
               <field>type</field>
               <operator>eq</operator>
-              <value>{seriesType}</value>
+              <value>${seriesType}</value>
             </condition>
           </conditions>
           <limit>1</limit>
@@ -359,70 +359,62 @@ async function createDocument({ contractorId, order }) {
   const mode = String(process.env.WFIRMA_MODE || "proforma").toLowerCase();
   const isNormal = mode === "normal";
 
-  // --- MAPA METOD PŁATNOŚCI NA WYMAGANE SŁÓWKA W WFIRMA ---
-  // dostosuj w razie potrzeb (np. jeśli księgowość chce zawsze „przelew” dla P24)
-  function mapPaymentMethod({ paymentMethod, deliveryMethod, isPaid }) {
-    // 1) Odbiór osobisty + płatność przy odbiorze => gotówka
-    if (deliveryMethod === "pickup" && paymentMethod === "cod") {
-      return "gotówka";
-    }
-
-    // 2) Kurier za pobraniem => pobranie
-    if (paymentMethod === "cod" || deliveryMethod === "courier_cod") {
-      return "pobranie";
-    }
-
-    // 3) Przelew tradycyjny
-    if (paymentMethod === "bank_transfer") {
-      return "przelew";
-    }
-
-    // 4) Bramka online (Przelewy24) – księgowo zwykle traktuje jak przelew/kartę;
-    //    jeśli wolicie „karta”, podmień na "karta".
-    if (paymentMethod === "przelewy24") {
-      return "przelew";
-    }
-
-    // 5) Domyślnie
-    return "przelew";
+  // --- token do pola <paymentmethod> w fakturze: transfer | cash | cod | payment_card | compensation
+  function mapInvoicePaymentMethodToken({ paymentMethod, deliveryMethod }) {
+    if (paymentMethod === "cod" || deliveryMethod === "courier_cod")
+      return "cod";
+    if (deliveryMethod === "pickup" && paymentMethod === "cod") return "cash";
+    if (paymentMethod === "przelewy24") return "transfer"; // ewentualnie 'payment_card' jeśli tak wolicie
+    if (paymentMethod === "bank_transfer") return "transfer";
+    return "transfer";
   }
 
-  const date = order.issueDate || today(); // data wystawienia/sprzedaży
+  const date = order.issueDate || today();
   const paid = !!order.isPaid;
-  const wfPaymentMethod = mapPaymentMethod(order);
+  const wfPaymentMethod = mapInvoicePaymentMethodToken(order);
 
-  // Polityka terminów:
-  // - jeśli zapłacone (P24/odbiór gotówką/pobraniem) → paymentdays=0, paymentdate=today
-  // - jeśli przelew tradycyjny i nieopłacone (u Ciebie i tak generujesz po 'ok', ale zostawiam logikę)
+  // terminy (zostawiamy jak było)
   const paymentdays = paid ? 0 : 7;
-  const paymentdate = paid ? date : date; // możesz tu dodać +7 dni gdybyś wystawiał przed płatnością
+  const paymentdate = paid ? date : date;
 
-  const itemsXml = order.items
+  // pozycje
+  const itemsXml = (order.items || [])
     .map(
       (it) => `
-    <invoicecontent>
-      <name>${escapeXml(it.name)}</name>
-      <count>${to2(it.totalUnits)}</count>
-      <unit>${escapeXml(it.unit || "szt")}</unit>
-      <price>${to2(it.priceBrut)}</price>
-      <vat>${escapeXml(toWfirmaVat(it.vatRate))}</vat>
-    </invoicecontent>
-  `
+        <invoicecontent>
+          <name>${escapeXml(it.name)}</name>
+          <count>${to2(it.totalUnits)}</count>
+          <unit>${escapeXml(it.unit || "szt")}</unit>
+          <price>${to2(it.priceBrut)}</price>
+          <vat>${escapeXml(toWfirmaVat(it.vatRate))}</vat>
+        </invoicecontent>`
     )
     .join("");
 
+  // dostawa
   const shippingXml = order.shippingCost
     ? `
-    <invoicecontent>
-      <name>Koszt dostawy</name>
-      <count>1</count>
-      <unit>szt</unit>
-      <price>${to2(order.shippingCost)}</price>
-      <vat>${escapeXml(
-        order.shippingVatRate || WFIRMA_SHIPPING_VAT || "23"
-      )}</vat>
-    </invoicecontent>
-  `
+        <invoicecontent>
+          <name>Koszt dostawy</name>
+          <count>1</count>
+          <unit>szt</unit>
+          <price>${to2(order.shippingCost)}</price>
+          <vat>${escapeXml(
+            order.shippingVatRate || WFIRMA_SHIPPING_VAT || "23"
+          )}</vat>
+        </invoicecontent>`
+    : "";
+
+  // suma brutto (pozycje + dostawa)
+  const itemsTotal = (order.items || []).reduce(
+    (acc, it) => acc + Number(it.priceBrut || 0) * Number(it.totalUnits || 0),
+    0
+  );
+  const shippingTotal = order.shippingCost ? Number(order.shippingCost) : 0;
+  const grandTotal = Number((itemsTotal + shippingTotal).toFixed(2));
+
+  const alreadypaidInitialXml = paid
+    ? `<alreadypaid_initial>${to2(grandTotal)}</alreadypaid_initial>`
     : "";
 
   const xml = `
@@ -430,18 +422,18 @@ async function createDocument({ contractorId, order }) {
     <invoices>
       <invoice>
         <contractor_id>${contractorId}</contractor_id>
-
-       ${seriesId ? `<series><id>${seriesId}</id></series>` : ``}
-       <type>${isNormal ? "normal" : "proforma"}</type>
+        ${seriesId ? `<series><id>${seriesId}</id></series>` : ``}
+        <type>${isNormal ? "normal" : "proforma"}</type>
         <price_type>brutto</price_type>
 
-        <!-- metoda płatności w jasnym słowie -->
         <paymentmethod>${escapeXml(wfPaymentMethod)}</paymentmethod>
         <paymentdate>${paymentdate}</paymentdate>
         <paymentdays>${paymentdays}</paymentdays>
 
-        <date>${date}</date>            <!-- data wystawienia -->
-        <disposaldate>${date}</disposaldate>  <!-- data sprzedaży -->
+        <date>${date}</date>
+        <disposaldate>${date}</disposaldate>
+
+        ${alreadypaidInitialXml}
 
         <invoicecontents>
           ${itemsXml}
@@ -523,4 +515,8 @@ async function getDocumentPdf(invoiceId) {
   }
 }
 
-module.exports = { upsertContractor, createDocument, getDocumentPdf };
+module.exports = {
+  upsertContractor,
+  createDocument,
+  getDocumentPdf,
+};
