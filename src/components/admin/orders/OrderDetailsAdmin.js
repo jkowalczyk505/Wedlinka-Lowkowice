@@ -43,8 +43,15 @@ export default function OrderDetailsAdmin({ id }) {
   const genLockRef = useRef(false);
   const [downloading, setDownloading] = useState(false);
   const dlLockRef = useRef(false);
+  const downloadAbortRef = useRef(null);
 
   const { showAlert } = useAlert(); // <— hook do Twojego alertu
+
+  useEffect(() => {
+    return () => {
+      downloadAbortRef.current?.abort();
+    };
+  }, []);
 
   useEffect(() => {
     setLoading(true);
